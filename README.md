@@ -1,2 +1,3 @@
-# web-app-project
-Project work for the course "Databases &amp; Web Programming"
+# Web App Project
+
+Project work for the course "Databases and Web Programming"
