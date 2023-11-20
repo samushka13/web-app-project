@@ -1,9 +1,10 @@
 from flask import Flask
 from flask import render_template
+from flask_sqlalchemy import SQLAlchemy
+from os import getenv
 
 app = Flask(__name__)
-
-if __name__ == '__main__':
-	app.run(debug=True)
+app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+db = SQLAlchemy(app)
 
 import routes
