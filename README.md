@@ -47,6 +47,26 @@ Only admins can:
 
     `pip install -r ./requirements.txt`
 
-6. Run the app with:
+6. Add a .env file with `DATABASE_URL` and `SECRET_KEY`:
+
+    ```
+    DATABASE_URL=<your_local_database_address>
+    SECRET_KEY=<a_random_string_to_enable_app_sessions_properly>
+    ```
+
+    The `DATABASE_URL` depends on your system and PostgreSQL setup.
+
+    The `SECRET_KEY` can be generated with, for example:
+
+    ```
+    $ python3
+    >>> import secrets
+    >>> secrets.token_hex(16)
+    ```
+
+7. Set your database to use the required schema with: 
+    `psql database_name < schema.sql`
+
+8. Run the app with:
 
     `flask run`
