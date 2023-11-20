@@ -44,3 +44,7 @@ def add_notice():
 @app.route("/add_poll")
 def add_poll():
     return render_template("add_poll.html")
+
+@app.route("/users")
+def users():
+    return render_template("users.html")
