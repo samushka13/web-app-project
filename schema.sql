@@ -36,7 +36,8 @@ CREATE TABLE notices (
     status STATUS,
     created_at TIMESTAMP,
     created_by INTEGER REFERENCES users,
-    views INTEGER,
+    viewed_by INTEGER REFERENCES users [],
+    supported_by INTEGER REFERENCES users [],
 );
 
 CREATE TABLE polls (
