@@ -42,8 +42,7 @@ def register():
         if zip_code == "":
             zip_code = None
 
-        if "is_admin" not in request.form:
-            is_admin = False
+        is_admin = "is_admin" in request.form
 
         if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
             flash("Rekisteröityminen ei onnistunut", "error")
