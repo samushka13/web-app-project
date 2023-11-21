@@ -4,15 +4,36 @@
 
 {% block content %}
 
+<center>
 <h1>Kirjaudu sisään</h1>
 
-<!--
-    TODO:
-    - inputs:
-        - username
-        - password
--->
+<form action="/login" method="post">
+  Käyttäjänimi
+    <br>
+    <input type="text" name="username" minlength="6" maxlength="50">
+    <br>
+    <br>
+  
+  Salasana
+    <br>
+    <input type="password" name="password" minlength="6" maxlength="50">
+    <br>
+    <br>
+
+    <input type="submit" value="Kirjaudu">
+    <br>
+    <br>
+
+</form>
+
+Ei tunnuksia?
+<br>
+<a href="/register">Rekisteröidy tästä</a>
+
+<br>
+<br>
 
 <a href="/">Etusivulle</a>
+</center>
 
 {% endblock %}
