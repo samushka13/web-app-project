@@ -2,6 +2,7 @@ from flask import flash, render_template, redirect, request
 from app import app
 from decorators import login_required, admin_required
 import users
+import session
 
 @app.route("/")
 def index():
@@ -71,6 +72,16 @@ def logout():
     users.logout()
     return redirect("/")
 
+@app.route("/delete_user")
+@login_required
+def delete_user():
+    if users.delete_user():
+        users.logout()
+        return redirect("/")
+
+    flash("Tilin poistaminen ei onnistunut", "error")
+    return render_template("profile.html")
+
 @app.route("/news")
 @login_required
 def news():
@@ -111,17 +122,18 @@ def add_news():
 def add_poll():
     return render_template("add_poll.html")
 
-@app.route("/manage_users")
+@app.route("/manage_users", methods=["GET", "POST"])
 @admin_required
 def manage_users():
-    return render_template("manage_users.html")
+    if request.method == "GET":
+        user_list = users.get_users()
+        return render_template("manage_users.html", users=user_list)
 
-@app.route("/delete_user")
-@admin_required
-def delete_user():
-    if users.delete_user():
-        users.logout()
-        return redirect("/")
+    if request.method == "POST":
+        if session.is_csrf_token_valid() and "user_id" in request.form:
+            user_id = request.form["user_id"]
+            if not users.disable_user(user_id):
+                flash("Tilin poistaminen käytöstä ei onnistunut", "error")
 
-    flash("Tilin poistaminen ei onnistunut", "error")
-    return render_template("profile.html")
+            updated_user_list = users.get_users()
+            return render_template("manage_users.html", users=updated_user_list)
