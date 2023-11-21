@@ -12,7 +12,6 @@ def register():
         return render_template("register.html")
 
     if request.method == "POST":
-        print(request.form)
         username = request.form["username"]
 
         if len(username) < 6:
@@ -29,9 +28,7 @@ def register():
             flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
             return render_template("register.html")
 
-        if "gender" in request.form:
-            gender = request.form["gender"]
-        else:
+        if "gender" not in request.form:
             gender = None
 
         date_of_birth = request.form["date_of_birth"]
@@ -44,9 +41,7 @@ def register():
         if zip_code == "":
             zip_code = None
 
-        if "is_admin" in request.form:
-            is_admin = request.form["is_admin"]
-        else:
+        if "is_admin" not in request.form:
             is_admin = False
 
         if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
