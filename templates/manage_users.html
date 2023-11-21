@@ -1,6 +1,6 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
@@ -34,16 +34,6 @@
 {% endfor %}
 
 </form>
-
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul class="flashes">
-    {% for message in messages %}
-        <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-{% endwith %}
 
 {% endif %}
 

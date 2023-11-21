@@ -1,6 +1,6 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
@@ -8,12 +8,12 @@
 
 <!--
     TODO:
-    - for all users only
     - allow editing:
-        - date of birth (optional, date)
-        - gender (optional, string)
-        - zip code (optional, number)
-    - list of created notices
+        - date of birth
+        - gender
+        - zip code
+        - admin status?
+    - show list of created notices
 -->
 
 <a href="/logout">Kirjaudu ulos</a>
@@ -27,15 +27,5 @@
 <br>
 
 <a href="/">Etusivulle</a>
-
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul class="flashes">
-    {% for message in messages %}
-        <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-{% endwith %}
 
 {% endblock %}
