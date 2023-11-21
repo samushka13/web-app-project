@@ -16,7 +16,7 @@ CREATE TYPE status AS ENUM ('read', 'wip', 'completed');
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE,
-    password VARCHAR(50),
+    password TEXT,
     date_of_birth DATE,
     gender GENDER,
     zip_code CHAR(5),
@@ -48,9 +48,7 @@ CREATE TABLE notices (
     street_address VARCHAR(100),
     status STATUS,
     created_at TIMESTAMP,
-    created_by INTEGER REFERENCES users,
-    viewed_by INTEGER REFERENCES users,
-    supported_by INTEGER REFERENCES users
+    created_by INTEGER REFERENCES users
 );
 
 CREATE TABLE notice_views (
