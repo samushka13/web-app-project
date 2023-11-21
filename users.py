@@ -29,19 +29,24 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
     return True
 
 def login(name: str, password: str):
-    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin
+    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled
              FROM users WHERE name=:name"""
 
     result = db.session.execute(text(sql), { "name": name })
     user = result.fetchone()
 
     if not user:
-        return False
+        return "credential-error"
 
     password_match = check_password_hash(user[1], password)
 
     if not password_match:
-        return False
+        return "credential-error"
+
+    disabled = user[6]
+
+    if disabled:
+        return "account-disabled"
 
     session["username"] = name
     session["user_id"] = user[0]
