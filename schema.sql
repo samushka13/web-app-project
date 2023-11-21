@@ -20,7 +20,8 @@ CREATE TABLE users (
     date_of_birth DATE,
     gender GENDER,
     zip_code CHAR(5),
-    admin BOOLEAN
+    admin BOOLEAN,
+    disabled BOOLEAN
 );
 
 CREATE TABLE news (
