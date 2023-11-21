@@ -1,5 +1,6 @@
 from flask import flash, render_template, redirect, request
 from app import app
+from decorators import login_required
 import users
 
 @app.route("/")
@@ -66,6 +67,7 @@ def login():
         return redirect("/")
 
 @app.route("/logout")
+@login_required
 def logout():
     users.logout()
     return redirect("/")
@@ -80,22 +82,27 @@ def delete_user():
     return render_template("profile.html")
 
 @app.route("/news")
+@login_required
 def news():
     return render_template("news.html")
 
 @app.route("/notices")
+@login_required
 def notices():
     return render_template("notices.html")
 
 @app.route("/polls")
+@login_required
 def polls():
     return render_template("polls.html")
 
 @app.route("/profile")
+@login_required
 def profile():
     return render_template("profile.html")
 
 @app.route("/feedback")
+@login_required
 def feedback():
     return render_template("feedback.html")
 
@@ -104,6 +111,7 @@ def add_news():
     return render_template("add_news.html")
 
 @app.route("/add_notice")
+@login_required
 def add_notice():
     return render_template("add_notice.html")
 
