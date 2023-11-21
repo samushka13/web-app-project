@@ -1,5 +1,7 @@
+import os
+from flask import session
 from sqlalchemy.sql import text
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
 
 def register(name, password, date_of_birth, gender, zip_code, admin):
@@ -23,5 +25,32 @@ def register(name, password, date_of_birth, gender, zip_code, admin):
 
     except Exception:
         return False
+
+    return True
+
+def login(name: str, password: str):
+    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin
+             FROM users WHERE name=:name"""
+
+    result = db.session.execute(text(sql), { "name": name })
+    user = result.fetchone()
+
+    if not user:
+        return False
+
+    password_match = check_password_hash(user[1], password)
+
+    if not password_match:
+        return False
+
+    session["username"] = name
+    session["user_id"] = user[0]
+    session["date_of_birth"] = user[2]
+    session["gender"] = user[3]
+    session["zip_code"] = user[4]
+    session["is_admin"] = user[5]
+
+    csrf_token = os.urandom(16).hex()
+    session["csrf_token"] = csrf_token
 
     return True

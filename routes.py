@@ -55,9 +55,20 @@ def register():
 
         return redirect("/")
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if not users.login(username, password):
+            flash("Kirjautuminen ei onnistunut (väärä käyttäjänimi tai salasana)", "error")
+            return render_template("login.html")
+
+        return redirect("/")
 
 @app.route("/news")
 def news():
