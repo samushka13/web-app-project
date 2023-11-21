@@ -65,6 +65,11 @@ def login():
 
         return redirect("/")
 
+@app.route("/logout")
+def logout():
+    users.logout()
+    return redirect("/")
+
 @app.route("/news")
 def news():
     return render_template("news.html")

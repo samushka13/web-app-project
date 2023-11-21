@@ -54,3 +54,7 @@ def login(name: str, password: str):
     session["csrf_token"] = csrf_token
 
     return True
+
+def logout():
+    for key in list(session.keys()):
+        session.pop(key)
