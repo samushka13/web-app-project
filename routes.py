@@ -111,10 +111,10 @@ def add_news():
 def add_poll():
     return render_template("add_poll.html")
 
-@app.route("/registered_users")
+@app.route("/manage_users")
 @admin_required
-def registered_users():
-    return render_template("registered_users.html")
+def manage_users():
+    return render_template("manage_users.html")
 
 @app.route("/delete_user")
 @admin_required

@@ -1,0 +1,43 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!--
+    TODO:
+    - disable button if user's own account
+-->
+
+<h1>Hallinnoi käyttäjätilejä</h1>
+
+{% if session.is_admin %}
+
+<form action="/manage_users" method="post">
+
+{% for user in users %}
+
+{{ user.name }}
+<button name="user_id" value="{{ user.id }}" type="submit">Poista käytöstä</button>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<br>
+
+{% endfor %}
+
+</form>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+
+{% endif %}
+
+<a href="/">Etusivulle</a>
+
+{% endblock %}
