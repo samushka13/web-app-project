@@ -1,6 +1,6 @@
 from flask import flash, render_template, redirect, request
 from app import app
-from decorators import login_required
+from decorators import login_required, admin_required
 import users
 
 @app.route("/")
@@ -72,15 +72,6 @@ def logout():
     users.logout()
     return redirect("/")
 
-@app.route("/delete_user")
-def delete_user():
-    if users.delete_user():
-        users.logout()
-        return redirect("/")
-
-    flash("Tilin poistaminen ei onnistunut", "error")
-    return render_template("profile.html")
-
 @app.route("/news")
 @login_required
 def news():
@@ -106,19 +97,32 @@ def profile():
 def feedback():
     return render_template("feedback.html")
 
-@app.route("/add_news")
-def add_news():
-    return render_template("add_news.html")
-
 @app.route("/add_notice")
 @login_required
 def add_notice():
     return render_template("add_notice.html")
 
+@app.route("/add_news")
+@admin_required
+def add_news():
+    return render_template("add_news.html")
+
 @app.route("/add_poll")
+@admin_required
 def add_poll():
     return render_template("add_poll.html")
 
 @app.route("/registered_users")
+@admin_required
 def registered_users():
     return render_template("registered_users.html")
+
+@app.route("/delete_user")
+@admin_required
+def delete_user():
+    if users.delete_user():
+        users.logout()
+        return redirect("/")
+
+    flash("Tilin poistaminen ei onnistunut", "error")
+    return render_template("profile.html")
