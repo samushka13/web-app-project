@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<center>
+
 <h1>Etusivu</h1>
 
 <!--
@@ -16,20 +18,42 @@
         - Recent notices, plus button to see more
 -->
 
-<a href="/login">Kirjaudu sisään</a>
-<a href="/register">Rekisteröidy</a>
+{% if session.user_id %}
 
 <a href="/news">Uutiset</a>
+<br>
 <a href="/notices">Ilmoitukset</a>
+<br>
 <a href="/polls">Kyselyt</a>
-
+<br>
+<br>
 <a href="/profile">Käyttäjäprofiili</a>
+<br>
 <a href="/feedback">Palaute</a>
 
-<a href="/add_news">Luo uutinen</a>
-<a href="/add_notice">Luo ilmoitus</a>
-<a href="/add_poll">Luo kysely</a>
+    {% if session.is_admin %}
 
-<a href="/registered_users">Käyttäjät</a>
+    <br>
+    <br>
+    <a href="/add_news">Luo uutinen</a>
+    <br>
+    <a href="/add_notice">Luo ilmoitus</a>
+    <br>
+    <a href="/add_poll">Luo kysely</a>
+    <br>
+    <br>
+    <a href="/registered_users">Käyttäjät</a>
+
+    {% endif %}
+
+{% else %}
+
+<a href="/login">Kirjaudu sisään</a>
+<br>
+<a href="/register">Rekisteröidy</a>
+
+{% endif %}
+
+</center>
 
 {% endblock %}
