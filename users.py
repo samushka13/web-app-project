@@ -74,7 +74,7 @@ def delete_user():
     return True
 
 def get_users():
-    sql = """SELECT id, name, admin FROM users"""
+    sql = """SELECT id, name, admin, disabled FROM users"""
 
     result = db.session.execute(text(sql))
     users = result.fetchall()
@@ -83,9 +83,9 @@ def get_users():
 
 def disable_user(user_id: int):
     try:
-        sql = """UPDATE users SET disabled=True WHERE id=:user_id"""
+        sql = f"UPDATE users SET disabled={True} WHERE id=:id"
 
-        db.session.execute(sql, { "id": user_id })
+        db.session.execute(text(sql), { "id": user_id })
         db.session.commit()
 
     except Exception:

@@ -135,5 +135,5 @@ def manage_users():
             if not users.disable_user(user_id):
                 flash("Tilin poistaminen käytöstä ei onnistunut", "error")
 
-            updated_user_list = users.get_users()
-            return render_template("manage_users.html", users=updated_user_list)
+        updated_user_list = users.get_users()
+        return render_template("manage_users.html", users=updated_user_list)
