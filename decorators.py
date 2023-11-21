@@ -9,3 +9,12 @@ def login_required(fn):
         return fn(*args, **kwargs)
 
     return is_a_user_logged_in
+
+def admin_required(fn):
+    @wraps(fn)
+    def is_admin_user(*args, **kwargs):
+        if "is_admin" not in session or session["is_admin"] is False:
+            return redirect(url_for("index"))
+        return fn(*args, **kwargs)
+
+    return is_admin_user
