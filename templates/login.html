@@ -23,8 +23,17 @@
     <input type="submit" value="Kirjaudu">
     <br>
     <br>
-
 </form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
 Ei tunnuksia?
 <br>
