@@ -58,3 +58,17 @@ def login(name: str, password: str):
 def logout():
     for key in list(session.keys()):
         session.pop(key)
+
+def delete_user():
+    try:
+        user_id = session["user_id"]
+
+        sql = f"DELETE FROM users WHERE id='{user_id}'"
+
+        db.session.execute(text(sql))
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True

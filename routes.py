@@ -70,6 +70,15 @@ def logout():
     users.logout()
     return redirect("/")
 
+@app.route("/delete_user")
+def delete_user():
+    if users.delete_user():
+        users.logout()
+        return redirect("/")
+
+    flash("Tilin poistaminen ei onnistunut", "error")
+    return render_template("profile.html")
+
 @app.route("/news")
 def news():
     return render_template("news.html")
