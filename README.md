@@ -9,9 +9,10 @@ My City allows people to easily know what's going on in their city, inform about
 Users are required to register with the following information:
 - username (unique),
 - password,
-- birthday (optional),
+- date of birth (optional),
 - gender (optional),
-- zip code (optional).
+- zip code (optional),
+- admin status (optional).
 
 All users can:
 - sign in and sign out,
