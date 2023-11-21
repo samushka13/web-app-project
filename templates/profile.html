@@ -13,7 +13,6 @@
         - date of birth (optional, date)
         - gender (optional, string)
         - zip code (optional, number)
-    - delete profile
     - list of created notices
 -->
 
@@ -22,6 +21,21 @@
 <br>
 <br>
 
+<a href="/delete_user">Poista käyttäjätili</a>
+
+<br>
+<br>
+
 <a href="/">Etusivulle</a>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
 
 {% endblock %}
