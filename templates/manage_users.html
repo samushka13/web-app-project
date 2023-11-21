@@ -4,11 +4,6 @@
 
 {% block content %}
 
-<!--
-    TODO:
-    - disable button if user's own account
--->
-
 <h1>Hallinnoi käyttäjätilejä</h1>
 
 {% if session.is_admin %}
@@ -18,8 +13,22 @@
 {% for user in users %}
 
 {{ user.name }}
-<button name="user_id" value="{{ user.id }}" type="submit">Poista käytöstä</button>
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+{% if user.disabled %}
+
+(poistettu käytöstä)
+
+{% else %}
+
+    {% if user.id != session.user_id %}
+
+    <button name="user_id" value="{{ user.id }}" type="submit">Poista käytöstä</button>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    {% endif %}
+
+{% endif %}
+
 <br>
 
 {% endfor %}
