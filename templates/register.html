@@ -4,27 +4,74 @@
 
 {% block content %}
 
-<h1>Rekisteröidy</h1>
+<center>
+<h2>Rekisteröidy</h2>
 
-<!--
-    TODO:
-    - for basic users only (admins should perhaps be hard-coded)
-    - inputs:
-        - unique username (required, string)
-        - password (required, string)
-        - birthday (optional, date)
-        - gender (optional, string)
-        - zip code (optional, number)
-    - allow filtering
-        - time
-        - zip code
-    - responding only with thumb up / down
-    - show respondent analytics of individual polls
-        - age
-        - gender
-        - zip code
--->
+<p>Pakolliset kentät on merkitty asteriskilla (*)</p>
+
+<form action="/register" method="post">
+  Käyttäjänimi *
+  <br>
+  (6-50 merkkiä)
+    <br>
+    <input type="text" name="username" minlength="6" maxlength="50">
+    <br>
+    <br>
+
+  Salasana *
+  <br>
+  (vähintään 6 merkkiä)
+    <br>
+    <input type="password" name="password" minlength="6" maxlength="50">
+    <br>
+    <br>
+
+  Syntymäaika
+    <br>
+    <input type="date" name="date_of_birth">
+    <br>
+    <br>
+
+  Sukupuoli
+    <br>
+    <input type="radio" id="nainen" name="gender" value="nainen">
+    <label for="nainen">nainen</label><br>
+    <input type="radio" id="mies" name="gender" value="mies">
+    <label for="mies">mies</label><br>
+    <input type="radio" id="muu" name="gender" value="muu">
+    <label for="muu">muu</label><br>
+    <br>
+    <br>
+
+  Postinumero
+    <br>
+    <input type="text" name="zip_code" maxlength="5">
+    <br>
+    <br>
+
+  Ylläpitäjä
+    <br>
+    <input type="checkbox" name="is_admin">
+    <br>
+    <br>
+
+    <br>
+    <input type="submit" value="Rekisteröidy">
+    <br>
+    <br>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</form>
 
 <a href="/">Etusivulle</a>
+</center>
 
 {% endblock %}
