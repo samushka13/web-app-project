@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1>Käyttäjäprofiili</h1>
+<h2>Käyttäjäprofiili</h2>
 
 <!--
     TODO:
@@ -14,70 +14,70 @@
 {% if session.user_id %}
 
 <form action="/update_profile" method="post">
-    Voit päivittää vain ne tiedot, jotka haluat muuttaa. Loput säilyvät ennallaan.
+    Voit täyttää vain ne tiedot, jotka haluat muuttaa.
+    <br>
+    Tyhjäksi jätetyt kentät säilyvät ennallaan (paitsi ylläpitäjän rooli).
+    <br>
+    <br>
+    
+    <label for="date_of_birth">Syntymäaika: {{ session.date_of_birth }}</label>
+    <br>
+    <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
     <br>
     <br>
 
-    Syntymäaika: {{ session.date_of_birth }}
-      <br>
-      <input type="date" name="date_of_birth">
-      <br>
-      <br>
-  
-    Sukupuoli: {{ session.gender }}
-      <br>
-      <input type="radio" id="female" name="gender" value="female">
-      <label for="female">nainen</label><br>
-      <input type="radio" id="male" name="gender" value="male">
-      <label for="male">mies</label><br>
-      <input type="radio" id="other" name="gender" value="other">
-      <label for="other">muu</label><br>
-      <br>
-      <br>
-  
-    Postinumero: {{ session.zip_code }}
-      <br>
-      <input type="text" name="zip_code" maxlength="5">
-      <br>
-      <br>
-  
-    Ylläpitäjä: {{ session.is_admin }}
-      <br>
-      <input type="checkbox" name="is_admin">
-      <br>
-      <br>
-  
-      <br>
-      <input type="submit" value="Päivitä tiedot">
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-      <br>
-      <br>
+    <label for="gender">Sukupuoli: {{ session.gender }}</label>
+    <div class="radio-button-group">
+        <div class="radio-button">
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">nainen</label>
+        </div>
+        <br>
+        <div class="radio-button">
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">mies</label>
+        </div>
+        <br>
+        <div class="radio-button">
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">muu</label>
+        </div>
+    </div>
+    <br>
+
+    <label for="zip_code">Postinumero: {{ session.zip_code }}</label>
+    <br>
+    <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
+    <br>
+    <br>
+
+    <label for="is_admin">Ylläpitäjä: {{ session.is_admin }}</label>
+    <br>
+    <input class="input" type="checkbox" id="is_admin" name="is_admin">
+    <br>
+
+    <input class="input" type="submit" value="Päivitä tiedot">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 <br>
 
 <form action="/delete_current_user" method="post">
 
-<button name="user_id" value="{{ session.user_id }}" type="submit">Poista käyttäjätili</button>
+<button class="input" name="user_id" value="{{ session.user_id }}" type="submit">Poista käyttäjätili</button>
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
 </form>
-
-<br>
-<br>
 
 {% endif %}
 
 
 <form action="/logout">
-    <input type="submit" value="Kirjaudu ulos" />
+    <input class="input" type="submit" value="Kirjaudu ulos" />
 </form>
 
-<br>
-<br>
-
 <form action="/">
-    <input type="submit" value="Etusivulle" />
+    <input class="input" type="submit" value="Takaisin" />
 </form>
 
 {% endblock %}
