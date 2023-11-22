@@ -64,6 +64,33 @@ def logout():
     for key in list(session.keys()):
         session.pop(key)
 
+def update_profile(user_id: int, date_of_birth: str, gender: str, zip_code: str, admin: bool):
+    try:
+        sql = """UPDATE users
+                 SET date_of_birth=:date_of_birth, gender=:gender, zip_code=:zip_code, admin=:admin
+                 WHERE id=:id"""
+
+        values = {
+            "date_of_birth": date_of_birth,
+            "gender": gender,
+            "zip_code": zip_code,
+            "admin": admin,
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    session["date_of_birth"] = date_of_birth
+    session["gender"] = gender
+    session["zip_code"] = zip_code
+    session["is_admin"] = admin
+
+    return True
+
 def delete_user(user_id: int):
     try:
         sql = f"DELETE FROM users WHERE id='{user_id}'"
@@ -86,9 +113,9 @@ def get_users():
 
 def disable_user(user_id: int):
     try:
-        sql = f"UPDATE users SET disabled={True} WHERE id=:id"
+        sql = """UPDATE users SET disabled=:disabled WHERE id=:id"""
 
-        db.session.execute(text(sql), { "id": user_id })
+        db.session.execute(text(sql), { "disabled": True, "id": user_id })
         db.session.commit()
 
     except Exception:

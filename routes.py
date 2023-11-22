@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, request, session
+from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
 import users
@@ -77,6 +77,38 @@ def logout():
     users.logout()
     return redirect("/")
 
+@app.route("/update_profile", methods=["POST"])
+@login_required
+def update_profile():
+    if "gender" not in request.form:
+        gender = session["gender"]
+    else:
+        gender = request.form["gender"]
+
+    date_of_birth = request.form["date_of_birth"]
+
+    if date_of_birth == "":
+        date_of_birth = session["date_of_birth"]
+
+    zip_code = request.form["zip_code"]
+
+    if zip_code == "":
+        zip_code = session["zip_code"]
+
+    if "is_admin" not in request.form:
+        is_admin = session["is_admin"]
+    else:
+        is_admin = request.form["is_admin"]
+
+    user_id = session["user_id"]
+    valid_token = users.is_csrf_token_valid()
+    data_updated = users.update_profile(user_id, date_of_birth, gender, zip_code, is_admin)
+
+    if not (user_id and valid_token and data_updated):
+        flash("Tietojen päivitys ei onnistunut", "error")
+
+    return redirect(url_for("profile"))
+
 @app.route("/delete_current_user", methods=["POST"])
 @login_required
 def delete_current_user():
@@ -138,10 +170,9 @@ def manage_users():
         return render_template("manage_users.html", users=user_list)
 
     if request.method == "POST":
-        if session.is_csrf_token_valid() and "user_id" in request.form:
+        if users.is_csrf_token_valid() and "user_id" in request.form:
             user_id = request.form["user_id"]
             if not users.disable_user(user_id):
                 flash("Tilin poistaminen käytöstä ei onnistunut", "error")
 
-        updated_user_list = users.get_users()
-        return render_template("manage_users.html", users=updated_user_list)
+        return redirect(url_for("manage_users"))
