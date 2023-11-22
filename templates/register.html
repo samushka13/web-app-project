@@ -4,64 +4,66 @@
 
 {% block content %}
 
-<center>
 <h2>Rekisteröidy</h2>
 
 <p>Pakolliset kentät on merkitty asteriskilla (*)</p>
 
 <form action="/register" method="post">
-  Käyttäjänimi *
-  <br>
-  (6-50 merkkiä)
+    <label for="username">Käyttäjänimi *<br>(6-50 merkkiä)</label>
     <br>
-    <input type="text" name="username" minlength="6" maxlength="50">
+    <input class="input text-medium" type="text" id="username" name="username" minlength="6" maxlength="50">
     <br>
     <br>
 
-  Salasana *
-  <br>
-  (vähintään 6 merkkiä)
+    <label for="password">Salasana *<br>(väh. 6 merkkiä)</label>
     <br>
-    <input type="password" name="password" minlength="6" maxlength="50">
+    <input class="input text-medium" type="password" id="password" name="password" minlength="6" maxlength="50">
     <br>
     <br>
 
-  Syntymäaika
+    <label for="date_of_birth">Syntymäaika</label>
     <br>
-    <input type="date" name="date_of_birth">
-    <br>
-    <br>
-
-  Sukupuoli
-    <br>
-    <input type="radio" id="nainen" name="gender" value="nainen">
-    <label for="nainen">nainen</label><br>
-    <input type="radio" id="mies" name="gender" value="mies">
-    <label for="mies">mies</label><br>
-    <input type="radio" id="muu" name="gender" value="muu">
-    <label for="muu">muu</label><br>
+    <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
     <br>
     <br>
 
-  Postinumero
+    <label for="gender">Sukupuoli</label>
+    <div class="radio-button-group">
+        <div class="radio-button">
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">nainen</label>
+        </div>
+        <br>
+        <div class="radio-button">
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">mies</label>
+        </div>
+        <br>
+        <div class="radio-button">
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">muu</label>
+        </div>
+    </div>
+
+    <label for="zip_code">Postinumero</label>
     <br>
-    <input type="text" name="zip_code" maxlength="5">
+    <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
     <br>
     <br>
 
-  Ylläpitäjä
+    <label for="is_admin">Ylläpitäjä</label>
     <br>
-    <input type="checkbox" name="is_admin">
+    <input class="input" type="checkbox" id="is_admin" name="is_admin">
     <br>
     <br>
 
-    <br>
     <input type="submit" value="Rekisteröidy">
     <br>
     <br>
 </form>
 
-<a href="/">Etusivulle</a>
-</center>
+<form action="/">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
 
 {% endblock %}
