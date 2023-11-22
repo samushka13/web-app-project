@@ -1,8 +1,7 @@
-from flask import flash, render_template, redirect, request
+from flask import flash, render_template, redirect, request, session
 from app import app
 from decorators import login_required, admin_required
 import users
-import session
 
 @app.route("/")
 def index():
@@ -78,12 +77,15 @@ def logout():
     users.logout()
     return redirect("/")
 
-@app.route("/delete_user")
+@app.route("/delete_current_user", methods=["POST"])
 @login_required
-def delete_user():
-    if users.delete_user():
-        users.logout()
-        return redirect("/")
+def delete_current_user():
+    if "user_id" in session:
+        user_id = session["user_id"]
+
+        if users.is_csrf_token_valid() and users.delete_user(user_id):
+            users.logout()
+            return redirect("/")
 
     flash("Tilin poistaminen ei onnistunut", "error")
     return render_template("profile.html")

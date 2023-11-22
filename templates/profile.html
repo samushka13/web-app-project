@@ -21,10 +21,19 @@
 <br>
 <br>
 
-<a href="/delete_user">Poista käyttäjätili</a>
+{% if session.user_id %}
+
+<form action="/delete_current_user" method="post">
+
+<button name="user_id" value="{{ session.user_id }}" type="submit">Poista käyttäjätili</button>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+</form>
 
 <br>
 <br>
+
+{% endif %}
 
 <a href="/">Etusivulle</a>
 

@@ -1,5 +1,5 @@
 import os
-from flask import session
+from flask import request, session
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
@@ -64,10 +64,8 @@ def logout():
     for key in list(session.keys()):
         session.pop(key)
 
-def delete_user():
+def delete_user(user_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = f"DELETE FROM users WHERE id='{user_id}'"
 
         db.session.execute(text(sql))
@@ -97,3 +95,6 @@ def disable_user(user_id: int):
         return False
 
     return True
+
+def is_csrf_token_valid():
+    return session["csrf_token"] == request.form["csrf_token"]
