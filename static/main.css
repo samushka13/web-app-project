@@ -17,3 +17,23 @@ body {
     padding-left: 30px;
     padding-right: 30px;
 }
+.input {
+    margin: 10px;
+}
+.input.text-medium {
+    width: 200px;
+}
+.input.text-small {
+    width: 150px;
+}
+.radio-button-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.radio-button {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
