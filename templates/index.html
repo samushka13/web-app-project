@@ -1,17 +1,17 @@
 <!doctype html>
 
+{% if session.user_id %}
 {% extends "layout.html" %}
+{% else %}
+{% extends "layout_with_flashes.html" %}
+{% endif %}
 
 {% block content %}
 
 <center>
 
-<h1>Etusivu</h1>
-
 <!--
     TODO:
-    - If not logged in:
-        - force login
     - If logged in:
         - Newest news, plus button to see more
         - Newest poll, plus button to see more
@@ -48,9 +48,30 @@
 
 {% else %}
 
-<a href="/login">Kirjaudu sisään</a>
+<h2>Kirjaudu sisään</h2>
+
+<form action="/login" method="post">
+    <label for="username">Käyttäjänimi</label>
+    <br>
+    <input class="input text-small" type="text" id="username" name="username" minlength="6" maxlength="50">
+    <br>
+
+    <br>
+    <label for="username">Salasana</label>
+    <br>
+    <input class="input text-small" type="password" id="password" name="password" minlength="6" maxlength="50">
+    <br>
+
+    <input class="input" type="submit" value="Kirjaudu">
+    <br>
+</form>
+
 <br>
-<a href="/register">Rekisteröidy</a>
+Ei tunnuksia?
+<br>
+<form action="/register">
+    <input class="input" type="submit" value="Rekisteröidy" />
+</form>
 
 {% endif %}
 

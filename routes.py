@@ -52,9 +52,6 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "GET":
-        return render_template("login.html")
-
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -63,13 +60,11 @@ def login():
 
         if login_response == "credential-error":
             flash("Kirjautuminen ei onnistunut (väärä käyttäjänimi tai salasana)", "error")
-            return render_template("login.html")
 
         if login_response == "account-disabled":
             flash("Tili on poistettu käytöstä.", "error")
-            return render_template("login.html")
 
-        return redirect("/")
+    return redirect("/")
 
 @app.route("/logout")
 @login_required
