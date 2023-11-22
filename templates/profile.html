@@ -8,20 +8,53 @@
 
 <!--
     TODO:
-    - allow editing:
-        - date of birth
-        - gender
-        - zip code
-        - admin status?
     - show list of created notices
 -->
 
-<a href="/logout">Kirjaudu ulos</a>
-
-<br>
-<br>
-
 {% if session.user_id %}
+
+<form action="/update_profile" method="post">
+    Voit päivittää vain ne tiedot, jotka haluat muuttaa. Loput säilyvät ennallaan.
+    <br>
+    <br>
+
+    Syntymäaika: {{ session.date_of_birth }}
+      <br>
+      <input type="date" name="date_of_birth">
+      <br>
+      <br>
+  
+    Sukupuoli: {{ session.gender }}
+      <br>
+      <input type="radio" id="female" name="gender" value="female">
+      <label for="female">nainen</label><br>
+      <input type="radio" id="male" name="gender" value="male">
+      <label for="male">mies</label><br>
+      <input type="radio" id="other" name="gender" value="other">
+      <label for="other">muu</label><br>
+      <br>
+      <br>
+  
+    Postinumero: {{ session.zip_code }}
+      <br>
+      <input type="text" name="zip_code" maxlength="5">
+      <br>
+      <br>
+  
+    Ylläpitäjä: {{ session.is_admin }}
+      <br>
+      <input type="checkbox" name="is_admin">
+      <br>
+      <br>
+  
+      <br>
+      <input type="submit" value="Päivitä tiedot">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+      <br>
+      <br>
+</form>
+
+<br>
 
 <form action="/delete_current_user" method="post">
 
@@ -35,6 +68,16 @@
 
 {% endif %}
 
-<a href="/">Etusivulle</a>
+
+<form action="/logout">
+    <input type="submit" value="Kirjaudu ulos" />
+</form>
+
+<br>
+<br>
+
+<form action="/">
+    <input type="submit" value="Etusivulle" />
+</form>
 
 {% endblock %}
