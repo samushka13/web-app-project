@@ -7,27 +7,71 @@
 <title>Oma Kaupunki</title>
 
 <center>
-    
+
+<div class="header">
+
 <h1>Oma Kaupunki</h1>
 
 {% if session.user_id %}
 
 <ul class="nav-bar">
-    <li class="nav-bar-button"><a href="/browse_news">Uutiset</a></li>
-    <li class="nav-bar-button"><a href="/notices">Ilmoitukset</a></li>
-    <li class="nav-bar-button"><a href="/polls">Kyselyt</a></li>
-    <li class="nav-bar-button"><a href="/profile">Profiilini</a></li>
-    <li class="nav-bar-button"><a href="/give_feedback">Anna palautetta</a></li>
+    <li class="nav-bar-button">
+        {% if request.path == "/browse_news" %}
+        <a class="nav-bar-button-active" href="/browse_news">Uutiset</a>
+        {% else %}
+        <a href="/browse_news">Uutiset</a>
+        {% endif %}
+    </li>
+
+    <li class="nav-bar-button">
+        {% if request.path == "/browse_notices" or request.path == "/add_notice" %}
+        <a class="nav-bar-button-active" href="/browse_notices">Ilmoitukset</a>
+        {% else %}
+        <a href="/browse_notices">Ilmoitukset</a>
+        {% endif %}
+    </li>
+
+    <li class="nav-bar-button">
+        {% if request.path == "/polls" %}
+        <a class="nav-bar-button-active" href="/polls">Kyselyt</a>
+        {% else %}
+        <a href="/polls">Kyselyt</a>
+        {% endif %}
+    </li>
+
+    <li class="nav-bar-button">
+        {% if request.path == "/profile" %}
+        <a class="nav-bar-button-active" href="/profile">Profiilini</a>
+        {% else %}
+        <a href="/profile">Profiilini</a>
+        {% endif %}
+    </li>
+
+    <li class="nav-bar-button">
+        {% if request.path == "/give_feedback" %}
+        <a class="nav-bar-button-active" href="/give_feedback">Anna palautetta</a>
+        {% else %}
+        <a href="/give_feedback">Anna palautetta</a>
+        {% endif %}
+    </li>
 
     {% if session.is_admin %}
 
-    <li class="nav-bar-button"><a href="/">Ylläpito</a></li>
+    <li class="nav-bar-button">
+        {% if request.path == "/" %}
+        <a class="nav-bar-button-active" href="/">Ylläpito</a>
+        {% else %}
+        <a href="/">Ylläpito</a>
+        {% endif %}
+    </li>
 
     {% endif %}
 
 </ul>
 
 {% endif %}
+
+</div>
 
 {% block content %}{% endblock %}
 
