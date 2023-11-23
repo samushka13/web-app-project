@@ -32,6 +32,8 @@ def register():
 
         if "gender" not in request.form:
             gender = None
+        else:
+            gender = request.form["gender"]
 
         date_of_birth = request.form["date_of_birth"]
 
