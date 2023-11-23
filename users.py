@@ -11,7 +11,7 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
         sql = """INSERT INTO users (name, password, date_of_birth, gender, zip_code, admin)
                  VALUES (:name, :password, :date_of_birth, :gender, :zip_code, :admin)"""
 
-        new_user = {
+        values = {
             "name": name,
             "password": hash_value,
             "date_of_birth": date_of_birth,
@@ -20,7 +20,7 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
             "admin": admin
         }
 
-        db.session.execute(text(sql), new_user)
+        db.session.execute(text(sql), values)
         db.session.commit()
 
     except Exception:
@@ -32,8 +32,14 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
 
 def login(name: str, password: str):
     try:
-        sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled_at
-             FROM users WHERE name=:name"""
+        sql = """SELECT
+                    id, password,
+                    to_char(DATE(date_of_birth)::date, 'DD.MM.YYYY'),
+                    gender,
+                    zip_code,
+                    admin,
+                    disabled_at
+                 FROM users WHERE name=:name"""
 
         result = db.session.execute(text(sql), { "name": name })
         user = result.fetchone()
@@ -53,7 +59,7 @@ def login(name: str, password: str):
 
         session["username"] = name
         session["user_id"] = user[0]
-        session["date_of_birth"] = user[2]
+        session["date_of_birth"] = str(user[2])
         session["gender"] = user[3]
         session["zip_code"] = user[4]
         session["is_admin"] = user[5]
@@ -99,9 +105,13 @@ def update_profile(user_id: int, date_of_birth: str, gender: str, zip_code: str,
 
 def delete_user(user_id: int):
     try:
-        sql = f"DELETE FROM users WHERE id='{user_id}'"
+        sql = """DELETE FROM users WHERE id=:id"""
 
-        db.session.execute(text(sql))
+        values = {
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
         db.session.commit()
 
     except Exception:

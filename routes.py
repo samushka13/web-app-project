@@ -5,6 +5,7 @@ import feedback
 import news
 import notices
 import users
+import datetime
 
 @app.route("/")
 def index():
@@ -145,7 +146,23 @@ def browse_polls():
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html")
+    gender = "-"
+
+    if session["gender"] == "female":
+        gender = "nainen"
+
+    if session["gender"] == "male":
+        gender = "mies"
+
+    if session["gender"] == "other":
+        gender = "muu"
+
+    is_admin = "ei"
+
+    if session["is_admin"] is True:
+        is_admin = "kyllä"
+
+    return render_template("profile.html", gender=gender, is_admin=is_admin)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
