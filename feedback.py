@@ -21,7 +21,9 @@ def send(user_id: int, title: str, body: str):
     return True
 
 def get_all():
-    sql = """SELECT F.id, F.title, F.body, F.sent_at, F.acknowledged, U.id, U.name as "sent_by"
+    sql = """SELECT
+                F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by, F.archived_at, F.archived_by,
+                U.id, U.name as "sent_by"
              FROM feedbacks AS F
              JOIN users AS U
              ON U.id=F.sent_by"""
