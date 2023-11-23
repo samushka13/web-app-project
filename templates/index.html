@@ -51,30 +51,36 @@
 
 {% else %}
 
-<h2>Kirjaudu sisään</h2>
-
-<form action="/login" method="post">
-    <label for="username">Käyttäjänimi</label>
-    <br>
-    <input class="input text-small" type="text" id="username" name="username" minlength="6" maxlength="50">
-    <br>
-
-    <br>
-    <label for="username">Salasana</label>
-    <br>
-    <input class="input text-small" type="password" id="password" name="password" minlength="6" maxlength="50">
-    <br>
-
-    <input class="input" type="submit" value="Kirjaudu">
-    <br>
-</form>
-
 <br>
-Ei tunnuksia?
-<br>
-<form action="/register">
-    <input class="input" type="submit" value="Rekisteröidy" />
-</form>
+<div class="form">
+    <h2>Kirjaudu sisään</h2>
+
+    <form action="/login" method="post">
+        <label for="username">Käyttäjänimi</label>
+        <br>
+        <input class="input text-small" type="text" id="username" name="username" minlength="6" maxlength="50">
+        <br>
+
+        <br>
+        <label for="username">Salasana</label>
+        <br>
+        <input class="input text-small" type="password" id="password" name="password" minlength="6" maxlength="50">
+        <br>
+
+        <input class="input" type="submit" value="Kirjaudu">
+        <br>
+    </form>
+
+    <br>
+    <hr>
+    <br>
+
+    Ei tunnuksia?
+    <br>
+    <form action="/register">
+        <input class="input" type="submit" value="Rekisteröidy" />
+    </form>
+</div>
 
 {% endif %}
 

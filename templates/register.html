@@ -4,66 +4,70 @@
 
 {% block content %}
 
-<h2>Rekisteröidy</h2>
+<div class="form">
+    <h2>Rekisteröidy</h2>
 
-<p>Pakolliset kentät on merkitty asteriskilla (*)</p>
+    <p>Pakolliset kentät on merkitty asteriskilla (*)</p>
 
-<form action="/register" method="post">
-    <label for="username">Käyttäjänimi *<br>(6-50 merkkiä)</label>
-    <br>
-    <input class="input text-medium" type="text" id="username" name="username" minlength="6" maxlength="50">
-    <br>
-    <br>
-
-    <label for="password">Salasana *<br>(väh. 6 merkkiä)</label>
-    <br>
-    <input class="input text-medium" type="password" id="password" name="password" minlength="6" maxlength="50">
-    <br>
-    <br>
-
-    <label for="date_of_birth">Syntymäaika</label>
-    <br>
-    <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
-    <br>
-    <br>
-
-    <label for="gender">Sukupuoli</label>
-    <div class="radio-button-group">
-        <div class="radio-button">
-            <input type="radio" id="female" name="gender" value="female">
-            <label for="female">nainen</label>
-        </div>
+    <form action="/register" method="post">
+        <label for="username">Käyttäjänimi *<br>(6-50 merkkiä)</label>
         <br>
-        <div class="radio-button">
-            <input type="radio" id="male" name="gender" value="male">
-            <label for="male">mies</label>
-        </div>
+        <input class="input text-medium" type="text" id="username" name="username" minlength="6" maxlength="50">
         <br>
-        <div class="radio-button">
-            <input type="radio" id="other" name="gender" value="other">
-            <label for="other">muu</label>
+        <br>
+
+        <label for="password">Salasana *<br>(väh. 6 merkkiä)</label>
+        <br>
+        <input class="input text-medium" type="password" id="password" name="password" minlength="6" maxlength="50">
+        <br>
+        <br>
+
+        <label for="date_of_birth">Syntymäaika</label>
+        <br>
+        <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
+        <br>
+        <br>
+
+        <label for="gender">Sukupuoli</label>
+        <div class="radio-button-group">
+            <div class="radio-button">
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">nainen</label>
+            </div>
+            <br>
+            <div class="radio-button">
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">mies</label>
+            </div>
+            <br>
+            <div class="radio-button">
+                <input type="radio" id="other" name="gender" value="other">
+                <label for="other">muu</label>
+            </div>
         </div>
-    </div>
 
-    <label for="zip_code">Postinumero</label>
-    <br>
-    <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
-    <br>
-    <br>
+        <label for="zip_code">Postinumero</label>
+        <br>
+        <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
+        <br>
+        <br>
 
-    <label for="is_admin">Ylläpitäjä</label>
-    <br>
-    <input class="input" type="checkbox" id="is_admin" name="is_admin">
-    <br>
-    <br>
+        <label for="is_admin">Ylläpitäjä</label>
+        <br>
+        <input class="input" type="checkbox" id="is_admin" name="is_admin">
+        <br>
+        <br>
 
-    <input type="submit" value="Rekisteröidy">
-    <br>
-    <br>
-</form>
+        <input type="submit" value="Rekisteröidy">
+        <br>
+        <br>
+    </form>
 
-<form action="/">
-    <input class="input" type="submit" value="Takaisin" />
-</form>
+    <hr>
+
+    <form action="/">
+        <input class="input" type="submit" value="Takaisin" />
+    </form>
+</div>
 
 {% endblock %}
