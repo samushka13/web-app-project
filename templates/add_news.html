@@ -4,10 +4,17 @@
 
 {% block content %}
 
-<div class="form">
+<h2>Lisää uutinen</h2>
 
-    <h2>Lisää uutinen</h2>
+{% if session.is_admin %}
 
+<form action="/browse_news">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
+
+{% endif %}
+
+<div class="content form">
     <form action="/add_news" method="post">
         <label for="title">Otsikko</label>
         <br>
@@ -36,14 +43,6 @@
         <input type="submit" value="Lähetä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
-
-    <br>
-    <hr>
-
-    <form action="/">
-        <input class="input" type="submit" value="Takaisin" />
-    </form>
-
 </div>
 
 {% endblock %}

@@ -8,6 +8,9 @@ import users
 
 @app.route("/")
 def index():
+    if "user_id" in session:
+        return redirect(url_for("browse_news"))
+
     return render_template("index.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -69,7 +72,7 @@ def login():
         if login_response == "account-disabled":
             flash("Tili on poistettu käytöstä.", "error")
 
-    return redirect("/")
+    return redirect(url_for("browse_news"))
 
 @app.route("/logout")
 @login_required
@@ -134,10 +137,10 @@ def browse_notices():
     notice_list = notices.get_all()
     return render_template("browse_notices.html", notices=notice_list)
 
-@app.route("/polls")
+@app.route("/browse_polls")
 @login_required
-def polls():
-    return render_template("polls.html")
+def browse_polls():
+    return render_template("browse_polls.html")
 
 @app.route("/profile")
 @login_required
@@ -222,6 +225,12 @@ def add_notice():
 
         return redirect(url_for("add_notice"))
 
+@app.route("/browse_feedback")
+@login_required
+def browse_feedback():
+    feedbacks = feedback.get_all()
+    return render_template("browse_feedback.html", feedbacks=feedbacks)
+
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required
 def add_news():
@@ -270,12 +279,6 @@ def add_news():
 @admin_required
 def add_poll():
     return render_template("add_poll.html")
-
-@app.route("/browse_feedback")
-@admin_required
-def browse_feedback():
-    feedbacks = feedback.get_all()
-    return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/manage_users", methods=["GET", "POST"])
 @admin_required

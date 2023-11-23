@@ -13,11 +13,9 @@
     - allow filtering by status
 -->
 
-<form action="/">
-    <input class="input" type="submit" value="Takaisin" />
+<form action="/give_feedback">
+    <input class="input" type="submit" value="Anna palautetta" />
 </form>
-
-{% if session.is_admin %}
 
 {% for feedback in feedbacks %}
     <div class="content">
@@ -27,7 +25,5 @@
         <p>Aika: {{ feedback.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
     </div>
 {% endfor %}
-
-{% endif %}
 
 {% endblock %}

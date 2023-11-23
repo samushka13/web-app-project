@@ -11,10 +11,13 @@
         - creator username (required, string)
 -->
 
-<div class="form">
+<h2>Lisää ilmoitus</h2>
 
-    <h2>Lisää ilmoitus</h2>
+<form action="/browse_notices">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
 
+<div class="content form">
     <br>
     Onko kaivonkansi kipittänyt karkuteille tai puistosta pöllitty penkki?
     <br>
@@ -51,16 +54,6 @@
         <input type="submit" value="Lähetä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
-
-    <br>
-    <hr>
-
-    <form action="/browse_notices">
-        <input class="input" type="submit" value="Takaisin" />
-    </form>
-
 </div>
 
 {% endblock %}
-
-

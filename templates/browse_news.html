@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h2>Uutiset</h2>
+<h2>Selaa uutisia</h2>
 
 <!--
     TODO:
@@ -13,6 +13,14 @@
         - zip code
     - admins should be able to archive (save timestamp and user_id)
 -->
+
+{% if session.is_admin %}
+
+<form action="/add_news">
+    <input class="input" type="submit" value="Lisää uutinen" />
+</form>
+
+{% endif %}
 
 {% for item in news %}
     <div class="content">
@@ -24,5 +32,3 @@
 {% endfor %}
 
 {% endblock %}
-
-

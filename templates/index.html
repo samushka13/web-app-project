@@ -12,7 +12,7 @@
 
 {% if not session.user_id %}
 
-<div class="form">
+<div class="content form">
     <h2>Kirjaudu sisään</h2>
 
     <form action="/login" method="post">
@@ -41,30 +41,6 @@
         <input class="input" type="submit" value="Rekisteröidy" />
     </form>
 </div>
-
-{% endif %}
-
-{% if session.is_admin %}
-
-<form action="/add_news">
-    <input class="input" type="submit" value="Lisää uutinen" />
-</form>
-
-<form action="/add_notice">
-    <input class="input" type="submit" value="Lisää ilmoitus" />
-</form>
-
-<form action="/add_poll">
-    <input class="input" type="submit" value="Lisää kysely" />
-</form>
-
-<form action="/browse_feedback">
-    <input class="input" type="submit" value="Selaa palautteita" />
-</form>
-
-<form action="/manage_users">
-    <input class="input" type="submit" value="Hallinnoi käyttäjätilejä" />
-</form>
 
 {% endif %}
 

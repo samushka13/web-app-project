@@ -4,11 +4,10 @@
 
 {% block content %}
 
-<h2>Kyselyt</h2>
+<h2>Selaa kyselyitä</h2>
 
 <!--
     TODO:
-    - for all users
     - list all polls
     - allow filtering
         - time
@@ -20,6 +19,12 @@
         - zip code
 -->
 
+{% if session.is_admin %}
+
+<form action="/add_poll">
+    <input class="input" type="submit" value="Lisää kysely" />
+</form>
+
+{% endif %}
+
 {% endblock %}
-
-
