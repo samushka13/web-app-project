@@ -4,24 +4,54 @@
 
 {% block content %}
 
-<h1>Lisää uutinen</h1>
 
 <!--
     TODO:
-    - only for admins
-    - inputs:
-        - title (required, string)
-        - body text (optional, string)
-        - zip code (optional, number)
-        - publish on (required, date)
-        - unpublish on (optional, date)
     - save also:
         - created at (required, timestamp)
         - creator username (required, string)
 -->
 
-<a href="/">Etusivulle</a>
+<div class="form">
+
+    <h2>Lisää uutinen</h2>
+
+    <form action="/add_news" method="post">
+        <label for="title">Otsikko</label>
+        <br>
+        <textarea class="input" id="title" name="title" rows="4" cols="80" minlength="1" maxlength="100"></textarea>
+        <br>
+
+        <br>
+        <label for="body">Lisätiedot (vapaaehtoinen)</label>
+        <br>
+        <textarea class="input" id="body" name="body" rows="12" cols="80" maxlength="1000"></textarea>
+        <br>
+
+        <br>
+        <label for="zip_code">Mitä postinumeroaluetta uutinen koskee erityisesti? (vapaaehtoinen)</label>
+        <br>
+        <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
+        <br>
+        <br>
+
+        <label for="date_of_birth">Julkaisupäivämäärä</label>
+        <br>
+        <input class="input text-small" type="date" id="publish_on" name="publish_on">
+        <br>
+        <br>
+
+        <input type="submit" value="Lähetä">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+
+    <br>
+    <hr>
+
+    <form action="/">
+        <input class="input" type="submit" value="Takaisin" />
+    </form>
+
+</div>
 
 {% endblock %}
-
-
