@@ -1,0 +1,26 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Selaa palautteita</h2>
+
+<!--
+    TODO:
+    - allow admins to mark feedback as acknowledged (if so, save as timestamp)?
+-->
+
+{% if session.is_admin %}
+
+{% for feedback in feedbacks %}
+    {{ feedback }}
+{% endfor %}
+
+{% endif %}
+
+<form action="/">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
+
+{% endblock %}
