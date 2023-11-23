@@ -10,48 +10,8 @@
 
 <center>
 
-<!--
-    TODO:
-    - If logged in:
-        - Newest news, plus button to see more
-        - Newest poll, plus button to see more
-        - Recent notices, plus button to see more
--->
+{% if not session.user_id %}
 
-{% if session.user_id %}
-
-<a href="/browse_news">Uutiset</a>
-<br>
-<a href="/notices">Ilmoitukset</a>
-<br>
-<a href="/polls">Kyselyt</a>
-<br>
-<br>
-<a href="/profile">Käyttäjäprofiili</a>
-<br>
-<a href="/give_feedback">Anna palautetta</a>
-
-    {% if session.is_admin %}
-
-    <br>
-    <br>
-    <a href="/add_news">Luo uutinen</a>
-    <br>
-    <a href="/add_notice">Luo ilmoitus</a>
-    <br>
-    <a href="/add_poll">Luo kysely</a>
-    <br>
-    <br>
-    <a href="/browse_feedback">Selaa palautteita</a>
-    <br>
-    <br>
-    <a href="/manage_users">Hallinnoi käyttäjätilejä</a>
-
-    {% endif %}
-
-{% else %}
-
-<br>
 <div class="form">
     <h2>Kirjaudu sisään</h2>
 
@@ -81,6 +41,24 @@
         <input class="input" type="submit" value="Rekisteröidy" />
     </form>
 </div>
+
+{% endif %}
+
+{% if session.is_admin %}
+
+<br>
+<br>
+<a href="/add_news">Lisää uutinen</a>
+<br>
+<a href="/add_notice">Lisää ilmoitus</a>
+<br>
+<a href="/add_poll">Lisää kysely</a>
+<br>
+<br>
+<a href="/browse_feedback">Selaa palautteita</a>
+<br>
+<br>
+<a href="/manage_users">Hallinnoi käyttäjätilejä</a>
 
 {% endif %}
 

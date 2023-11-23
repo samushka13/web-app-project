@@ -6,12 +6,31 @@
 
 <title>Oma Kaupunki</title>
 
-<center><h1>Oma Kaupunki</h1></center>
-
-<hr>
-
 <center>
+    
+<h1>Oma Kaupunki</h1>
+
+{% if session.user_id %}
+
+<ul class="nav-bar">
+    <li class="nav-bar-button"><a href="/browse_news">Uutiset</a></li>
+    <li class="nav-bar-button"><a href="/notices">Ilmoitukset</a></li>
+    <li class="nav-bar-button"><a href="/polls">Kyselyt</a></li>
+    <li class="nav-bar-button"><a href="/profile">Profiilini</a></li>
+    <li class="nav-bar-button"><a href="/give_feedback">Anna palautetta</a></li>
+
+    {% if session.is_admin %}
+
+    <li class="nav-bar-button"><a href="/">Ylläpito</a></li>
+
+    {% endif %}
+
+</ul>
+
+{% endif %}
+
 {% block content %}{% endblock %}
 
 {% block flashes %}{% endblock %}
+
 </center>

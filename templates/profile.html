@@ -10,8 +10,9 @@
     - show list of created notices
 -->
 
+<h2>Profiilini</h2>
+
 <div class="form">
-    <h2>Käyttäjäprofiili</h2>
 
     {% if session.user_id %}
 
@@ -77,10 +78,6 @@
     </form>
 
     {% endif %}
-
-    <form action="/">
-        <input class="input" type="submit" value="Takaisin" />
-    </form>
 </div>
 
 {% endblock %}

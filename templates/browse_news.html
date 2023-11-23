@@ -14,10 +14,6 @@
     - admins should be able to archive (save timestamp and user_id)
 -->
 
-<form action="/">
-    <input class="input" type="submit" value="Takaisin" />
-</form>
-
 {% for item in news %}
     <div class="content">
         <h3>{{ item.title }}</h3>
@@ -26,8 +22,6 @@
         <p>Aika: {{ item.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
     </div>
 {% endfor %}
-
-<a href="/">Etusivulle</a>
 
 {% endblock %}
 

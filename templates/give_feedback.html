@@ -6,6 +6,8 @@
 
 <h2>Anna palautetta</h2>
 
+<div class="form">
+
 <form action="/give_feedback" method="post">
     <label for="title">Otsikko:</label>
     <br>
@@ -22,10 +24,6 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
-<br>
-
-<form action="/">
-    <input class="input" type="submit" value="Takaisin" />
-</form>
+</div>
 
 {% endblock %}

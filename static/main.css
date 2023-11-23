@@ -66,6 +66,24 @@ textarea {
 .input.text-small {
     width: 150px;
 }
+.nav-bar {
+    background-color: #333333;
+    list-style-type: none;
+    overflow: hidden;
+    padding: 20px;
+}
+.nav-bar-button {
+    display: inline;
+}
+.nav-bar-button a {
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+}
+.nav-bar-button a:hover {
+    background-color: black;
+}
 .radio-button-group {
     display: flex;
     align-items: center;
