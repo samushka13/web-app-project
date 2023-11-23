@@ -6,6 +6,12 @@
 
 <h2>Hallinnoi käyttäjätilejä</h2>
 
+<form action="/">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
+
+<br>
+
 {% if session.is_admin %}
 
 <form action="/manage_users" method="post">
@@ -36,7 +42,5 @@
 </form>
 
 {% endif %}
-
-<a href="/">Etusivulle</a>
 
 {% endblock %}

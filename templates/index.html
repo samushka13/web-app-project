@@ -46,19 +46,25 @@
 
 {% if session.is_admin %}
 
-<br>
-<br>
-<a href="/add_news">Lisää uutinen</a>
-<br>
-<a href="/add_notice">Lisää ilmoitus</a>
-<br>
-<a href="/add_poll">Lisää kysely</a>
-<br>
-<br>
-<a href="/browse_feedback">Selaa palautteita</a>
-<br>
-<br>
-<a href="/manage_users">Hallinnoi käyttäjätilejä</a>
+<form action="/add_news">
+    <input class="input" type="submit" value="Lisää uutinen" />
+</form>
+
+<form action="/add_notice">
+    <input class="input" type="submit" value="Lisää ilmoitus" />
+</form>
+
+<form action="/add_poll">
+    <input class="input" type="submit" value="Lisää kysely" />
+</form>
+
+<form action="/browse_feedback">
+    <input class="input" type="submit" value="Selaa palautteita" />
+</form>
+
+<form action="/manage_users">
+    <input class="input" type="submit" value="Hallinnoi käyttäjätilejä" />
+</form>
 
 {% endif %}
 
