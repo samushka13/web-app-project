@@ -20,7 +20,7 @@
 {% if session.is_admin %}
 
 {% for feedback in feedbacks %}
-    <div class="feedback">
+    <div class="content">
         <h3>{{ feedback.title }}</h3>
         <p>{{ feedback.body }}</p>
         <p>Lähettäjä: {{ feedback.sent_by }}</p>

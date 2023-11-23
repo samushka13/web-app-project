@@ -12,7 +12,7 @@ textarea {
     min-height: 30px;
     resize: vertical;
 }
-.feedback {
+.content {
     background-color: whitesmoke;
     border: 1px solid gray;
     border-radius: 10px;

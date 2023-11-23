@@ -124,7 +124,8 @@ def delete_current_user():
 @app.route("/browse_news")
 @login_required
 def browse_news():
-    return render_template("browse_news.html")
+    news_list = news.get_all()
+    return render_template("browse_news.html", news=news_list)
 
 @app.route("/notices")
 @login_required
