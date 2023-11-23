@@ -29,7 +29,7 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
     return True
 
 def login(name: str, password: str):
-    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled
+    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled_at
              FROM users WHERE name=:name"""
 
     result = db.session.execute(text(sql), { "name": name })
@@ -104,7 +104,7 @@ def delete_user(user_id: int):
     return True
 
 def get_users():
-    sql = """SELECT id, name, admin, disabled FROM users"""
+    sql = """SELECT id, name, admin, disabled_at FROM users"""
 
     result = db.session.execute(text(sql))
     users = result.fetchall()
@@ -113,9 +113,16 @@ def get_users():
 
 def disable_user(user_id: int):
     try:
-        sql = """UPDATE users SET disabled=:disabled WHERE id=:id"""
+        sql = """UPDATE users
+                 SET disabled_at=NOW(), disabled_by=:disabled_by
+                 WHERE id=:id"""
 
-        db.session.execute(text(sql), { "disabled": True, "id": user_id })
+        values = {
+            "disabled_by": session["user_id"],
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
         db.session.commit()
 
     except Exception:
