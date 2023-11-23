@@ -23,9 +23,17 @@
 
 {% for notice in notices %}
     <div class="content">
-        <h3>{{ notice.title }}</h3>
-        <p>{{ notice.body }}</p>
-        <p>{{ notice.zip_code }}  ||  {{ notice.street_address }}</p>
+        <h3>"{{ notice.title }}"</h3>
+        <p>"{{ notice.body }}"</p>
+
+        {% if notice.street_address %}
+        <p>Katuosoite: {{ notice.street_address }}</p>
+        {% endif %}
+
+        {% if notice.zip_code %}
+        <p>Postinumero: {{ notice.zip_code }}</p>
+        {% endif %}
+
         <p>Lisännyt: {{ notice.created_by }}</p>
         <p>Aika: {{ notice.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
     </div>

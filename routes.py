@@ -178,10 +178,49 @@ def give_feedback():
 
         return redirect(url_for("give_feedback"))
 
-@app.route("/add_notice")
+@app.route("/add_notice", methods=["GET", "POST"])
 @login_required
 def add_notice():
-    return render_template("add_notice.html")
+    if request.method == "GET":
+        return render_template("add_notice.html")
+
+    if request.method == "POST":
+        title = request.form["title"]
+
+        if len(title) < 1:
+            flash("Otsikko ei saa olla tyhjä", "error")
+
+        if len(title) > 100:
+            flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+
+        body = request.form["body"]
+
+        if len(body) > 1000:
+            flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+
+        if body == "":
+            body = None
+
+        zip_code = request.form["zip_code"]
+
+        if zip_code == "":
+            zip_code = None
+
+        street_address = request.form["street_address"]
+
+        if street_address == "":
+            street_address = None
+
+        user_id = session["user_id"]
+        token_valid = users.is_csrf_token_valid()
+        data_updated = notices.add(user_id, title, body, zip_code, street_address)
+
+        if not (user_id and token_valid and data_updated):
+            flash("Ilmoituksen tallennus ei onnistunut", "error")
+        else:
+            flash("Ilmoituksen tallennus onnistui")
+
+        return redirect(url_for("add_notice"))
 
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required
