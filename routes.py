@@ -4,6 +4,7 @@ from decorators import login_required, admin_required
 import feedback
 import news
 import notices
+import polls
 import users
 
 @app.route("/")
@@ -140,7 +141,8 @@ def browse_notices():
 @app.route("/browse_polls")
 @login_required
 def browse_polls():
-    return render_template("browse_polls.html")
+    poll_list = polls.get_all()
+    return render_template("browse_polls.html", polls=poll_list)
 
 @app.route("/profile")
 @login_required

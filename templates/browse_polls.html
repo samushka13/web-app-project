@@ -8,7 +8,6 @@
 
 <!--
     TODO:
-    - list all polls
     - allow filtering
         - time
         - zip code
@@ -26,5 +25,15 @@
 </form>
 
 {% endif %}
+
+{% for poll in polls %}
+    <div class="content">
+        <h3>{{ poll.title }}</h3>
+        <p>{{ poll.zip_code }}</p>
+        <p>Aukeaa: {{ poll.open_on }}</p>
+        <p>Sulkeutuu: {{ poll.close_on }}</p>
+        <p>Lisännyt: {{ poll.created_by }}</p>
+    </div>
+{% endfor %}
 
 {% endblock %}
