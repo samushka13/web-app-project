@@ -5,7 +5,6 @@ import feedback
 import news
 import notices
 import users
-import datetime
 
 @app.route("/")
 def index():
