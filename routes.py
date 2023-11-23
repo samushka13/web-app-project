@@ -1,6 +1,7 @@
 from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
+import feedback
 import users
 
 @app.route("/")
@@ -137,10 +138,39 @@ def polls():
 def profile():
     return render_template("profile.html")
 
-@app.route("/feedback")
+@app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
-def feedback():
-    return render_template("feedback.html")
+def give_feedback():
+    if request.method == "GET":
+        return render_template("give_feedback.html")
+
+    if request.method == "POST":
+        title = request.form["title"]
+
+        if len(title) < 1:
+            flash("Otsikko ei saa olla tyhjä", "error")
+
+        if len(title) > 100:
+            flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+
+        body = request.form["body"]
+
+        if len(body) > 1000:
+            flash("Kuvauksessa voi olla enintään 1000 merkkiä", "error")
+
+        if body == "":
+            body = None
+
+        user_id = session["user_id"]
+        token_valid = users.is_csrf_token_valid()
+        data_updated = feedback.send(user_id, title, body)
+
+        if not (user_id and token_valid and data_updated):
+            flash("Palautteen lähetys ei onnistunut", "error")
+        else:
+            flash("Palautteen lähetys onnistui")
+
+        return redirect(url_for("give_feedback"))
 
 @app.route("/add_notice")
 @login_required
@@ -156,6 +186,11 @@ def add_news():
 @admin_required
 def add_poll():
     return render_template("add_poll.html")
+
+@app.route("/browse_feedback")
+@admin_required
+def browse_feedback():
+    return render_template("browse_feedback.html")
 
 @app.route("/manage_users", methods=["GET", "POST"])
 @admin_required
