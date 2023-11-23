@@ -2,6 +2,11 @@ body {
     margin: auto;
     font-family: 'Helvetica', 'Verdana', sans-serif;
 }
+textarea { 
+    max-height: 300px;
+    min-height: 30px;
+    resize: vertical;
+ }
 .flash {
     background-color: whitesmoke;
     border: 1px solid gray;
