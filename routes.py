@@ -2,6 +2,7 @@ from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
 import feedback
+import news
 import users
 
 @app.route("/")
@@ -120,10 +121,10 @@ def delete_current_user():
     flash("Tilin poistaminen ei onnistunut", "error")
     return render_template("profile.html")
 
-@app.route("/news")
+@app.route("/browse_news")
 @login_required
-def news():
-    return render_template("news.html")
+def browse_news():
+    return render_template("browse_news.html")
 
 @app.route("/notices")
 @login_required
@@ -179,10 +180,49 @@ def give_feedback():
 def add_notice():
     return render_template("add_notice.html")
 
-@app.route("/add_news")
+@app.route("/add_news", methods=["GET", "POST"])
 @admin_required
 def add_news():
-    return render_template("add_news.html")
+    if request.method == "GET":
+        return render_template("add_news.html")
+
+    if request.method == "POST":
+        title = request.form["title"]
+
+        if len(title) < 1:
+            flash("Otsikko ei saa olla tyhjä", "error")
+
+        if len(title) > 100:
+            flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+
+        body = request.form["body"]
+
+        if len(body) > 1000:
+            flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+
+        if body == "":
+            body = None
+
+        zip_code = request.form["zip_code"]
+
+        if zip_code == "":
+            zip_code = None
+
+        publish_on = request.form["publish_on"]
+
+        if publish_on == "":
+            publish_on = None
+
+        user_id = session["user_id"]
+        token_valid = users.is_csrf_token_valid()
+        data_updated = news.add(user_id, title, body, zip_code, publish_on)
+
+        if not (user_id and token_valid and data_updated):
+            flash("Uutisen tallennus ei onnistunut", "error")
+        else:
+            flash("Uutisen tallennus onnistui")
+
+        return redirect(url_for("add_news"))
 
 @app.route("/add_poll")
 @admin_required

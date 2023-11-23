@@ -1,16 +1,8 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
-
-
-<!--
-    TODO:
-    - save also:
-        - created at (required, timestamp)
-        - creator username (required, string)
--->
 
 <div class="form">
 
@@ -35,7 +27,7 @@
         <br>
         <br>
 
-        <label for="date_of_birth">Julkaisupäivämäärä</label>
+        <label for="publish_on">Julkaisupäivämäärä</label>
         <br>
         <input class="input text-small" type="date" id="publish_on" name="publish_on">
         <br>
