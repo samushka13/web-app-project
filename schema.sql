@@ -29,15 +29,17 @@ CREATE TABLE news (
     title VARCHAR(100),
     body VARCHAR(1000),
     zip_code CHAR(5),
-    publish_on TIMESTAMP,
-    archive_on TIMESTAMP,
+    publish_on DATE,
     created_at TIMESTAMP,
     created_by INTEGER REFERENCES users
+    archived_at TIMESTAMP,
+    archived_by INTEGER REFERENCES users
 );
 
 CREATE TABLE news_views (
     id SERIAL PRIMARY KEY,
     news_id INTEGER REFERENCES news,
+    viewed_at TIMESTAMP,
     viewed_by INTEGER REFERENCES users
 );
 
