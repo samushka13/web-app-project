@@ -151,11 +151,9 @@ def profile():
 
     if session["gender"] == "female":
         gender = "nainen"
-
-    if session["gender"] == "male":
+    elif session["gender"] == "male":
         gender = "mies"
-
-    if session["gender"] == "other":
+    elif session["gender"] == "other":
         gender = "muu"
 
     is_admin = "ei"
@@ -293,10 +291,46 @@ def add_news():
 
         return redirect(url_for("add_news"))
 
-@app.route("/add_poll")
+@app.route("/add_poll", methods=["GET", "POST"])
 @admin_required
 def add_poll():
-    return render_template("add_poll.html")
+    if request.method == "GET":
+        return render_template("add_poll.html")
+
+    if request.method == "POST":
+        title = request.form["title"]
+
+        if len(title) < 1:
+            flash("Otsikko ei saa olla tyhjä", "error")
+
+        if len(title) > 100:
+            flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+
+        zip_code = request.form["zip_code"]
+
+        if zip_code == "":
+            zip_code = None
+
+        open_on = request.form["open_on"]
+
+        if open_on == "":
+            flash("Alkamispäivämäärä ei saa olla tyhjä", "error")
+
+        close_on = request.form["open_on"]
+
+        if close_on == "":
+            flash("Päättymispäivämäärä ei saa olla tyhjä", "error")
+
+        user_id = session["user_id"]
+        token_valid = users.is_csrf_token_valid()
+        data_updated = polls.add(user_id, title, zip_code, open_on, close_on)
+
+        if not (user_id and token_valid and data_updated):
+            flash("Kyselyn tallennus ei onnistunut", "error")
+        else:
+            flash("Kyselyn tallennus onnistui")
+
+        return redirect(url_for("add_poll"))
 
 @app.route("/manage_users", methods=["GET", "POST"])
 @admin_required
