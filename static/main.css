@@ -2,11 +2,29 @@ body {
     margin: auto;
     font-family: 'Helvetica', 'Verdana', sans-serif;
 }
+p {
+    color: black;
+}
 textarea { 
     max-height: 300px;
     min-height: 30px;
     resize: vertical;
- }
+}
+.feedback {
+    background-color: whitesmoke;
+    border: 1px solid gray;
+    border-radius: 10px;
+    color: black;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-left: 10vw;
+    margin-right: 10vw;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    text-align: left;
+}
 .flash {
     background-color: whitesmoke;
     border: 1px solid gray;
