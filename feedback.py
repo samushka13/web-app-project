@@ -1,18 +1,14 @@
-from datetime import datetime
 from sqlalchemy.sql import text
 from db import db
 
 def send(user_id: int, title: str, body: str):
-    sent_at = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-
     try:
         sql = """INSERT INTO feedbacks (title, body, sent_at, sent_by)
-                 VALUES (:title, :body, :sent_at, :sent_by)"""
+                 VALUES (:title, :body, NOW(), :sent_by)"""
 
         values = {
             "title": title,
             "body": body,
-            "sent_at": sent_at,
             "sent_by": user_id
         }
 
@@ -23,3 +19,14 @@ def send(user_id: int, title: str, body: str):
         return False
 
     return True
+
+def get_all():
+    sql = """SELECT F.id, F.title, F.body, F.sent_at, F.acknowledged, U.id, U.name as "sent_by"
+             FROM feedbacks AS F
+             JOIN users AS U
+             ON U.id=F.sent_by"""
+
+    result = db.session.execute(text(sql))
+    users = result.fetchall()
+
+    return users

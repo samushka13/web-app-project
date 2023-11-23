@@ -8,19 +8,26 @@
 
 <!--
     TODO:
-    - allow admins to mark feedback as acknowledged (if so, save as timestamp)?
+    - allow marking as 'acknowledged' (timestamp + user_id)
+    - allow marking as 'archived' (timestamp + user_id))
+    - allow filtering by status
 -->
-
-{% if session.is_admin %}
-
-{% for feedback in feedbacks %}
-    {{ feedback }}
-{% endfor %}
-
-{% endif %}
 
 <form action="/">
     <input class="input" type="submit" value="Takaisin" />
 </form>
+
+{% if session.is_admin %}
+
+{% for feedback in feedbacks %}
+    <div class="feedback">
+        <h3>{{ feedback.title }}</h3>
+        <p>{{ feedback.body }}</p>
+        <p>Lähettäjä: {{ feedback.sent_by }}</p>
+        <p>Aika: {{ feedback.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+    </div>
+{% endfor %}
+
+{% endif %}
 
 {% endblock %}

@@ -190,7 +190,8 @@ def add_poll():
 @app.route("/browse_feedback")
 @admin_required
 def browse_feedback():
-    return render_template("browse_feedback.html")
+    feedbacks = feedback.get_all()
+    return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/manage_users", methods=["GET", "POST"])
 @admin_required
