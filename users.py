@@ -26,37 +26,43 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
     except Exception:
         return False
 
+    login(name, password)
+
     return True
 
 def login(name: str, password: str):
-    sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled_at
+    try:
+        sql = """SELECT id, password, date_of_birth, gender, zip_code, admin, disabled_at
              FROM users WHERE name=:name"""
 
-    result = db.session.execute(text(sql), { "name": name })
-    user = result.fetchone()
+        result = db.session.execute(text(sql), { "name": name })
+        user = result.fetchone()
 
-    if not user:
-        return "credential-error"
+        if not user:
+            return "credential-error"
 
-    password_match = check_password_hash(user[1], password)
+        password_match = check_password_hash(user[1], password)
 
-    if not password_match:
-        return "credential-error"
+        if not password_match:
+            return "credential-error"
 
-    disabled = user[6]
+        disabled = user[6]
 
-    if disabled:
-        return "account-disabled"
+        if disabled:
+            return "account-disabled"
 
-    session["username"] = name
-    session["user_id"] = user[0]
-    session["date_of_birth"] = user[2]
-    session["gender"] = user[3]
-    session["zip_code"] = user[4]
-    session["is_admin"] = user[5]
+        session["username"] = name
+        session["user_id"] = user[0]
+        session["date_of_birth"] = user[2]
+        session["gender"] = user[3]
+        session["zip_code"] = user[4]
+        session["is_admin"] = user[5]
 
-    csrf_token = os.urandom(16).hex()
-    session["csrf_token"] = csrf_token
+        csrf_token = os.urandom(16).hex()
+        session["csrf_token"] = csrf_token
+
+    except Exception:
+        return False
 
     return True
 
