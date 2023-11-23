@@ -1,25 +1,65 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
-<h2>Lisää ilmoitus</h2>
-
 <!--
     TODO:
-    - for all users
-    - inputs:
-        - title (required, string)
-        - body text (optional, string)
-        - zip code (required, number)
-        - street address (optional, string)
     - save also:
         - created at (required, timestamp)
         - creator username (required, string)
 -->
 
-<a href="/">Etusivulle</a>
+<div class="form">
+
+    <h2>Lisää ilmoitus</h2>
+
+    <br>
+    Onko kaivonkansi kipittänyt karkuteille tai puistosta pöllitty penkki?
+    <br>
+    Kerro epäkohdista meille, niin korjaamme asian pikimmiten!
+    <br>
+    <br>
+    <br>
+
+    <form action="/add_notice" method="post">
+        <label for="title">Otsikko</label>
+        <br>
+        <textarea class="input" id="title" name="title" rows="4" cols="80" minlength="1" maxlength="100"></textarea>
+        <br>
+
+        <br>
+        <label for="body">Lisätiedot (vapaaehtoinen)</label>
+        <br>
+        <textarea class="input" id="body" name="body" rows="12" cols="80" maxlength="1000"></textarea>
+        <br>
+
+        <br>
+        <label for="street_address">Katuosoite (vapaaehtoinen)</label>
+        <br>
+        <input class="input text-medium" type="text" id="street_address" name="street_address" maxlength="5">
+        <br>
+        <br>
+
+        <label for="zip_code">Postinumero (vapaaehtoinen)</label>
+        <br>
+        <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
+        <br>
+        <br>
+
+        <input type="submit" value="Lähetä">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+
+    <br>
+    <hr>
+
+    <form action="/browse_notices">
+        <input class="input" type="submit" value="Takaisin" />
+    </form>
+
+</div>
 
 {% endblock %}
 
