@@ -16,7 +16,7 @@
 
 <ul class="nav-bar">
     <li class="nav-bar-button">
-        {% if request.path == "/browse_news" %}
+        {% if request.path == "/browse_news" or request.path == "/add_news" %}
         <a class="nav-bar-button-active" href="/browse_news">Uutiset</a>
         {% else %}
         <a href="/browse_news">Uutiset</a>
@@ -32,12 +32,32 @@
     </li>
 
     <li class="nav-bar-button">
-        {% if request.path == "/polls" %}
-        <a class="nav-bar-button-active" href="/polls">Kyselyt</a>
+        {% if request.path == "/browse_polls" or request.path == "/add_poll" %}
+        <a class="nav-bar-button-active" href="/browse_polls">Kyselyt</a>
         {% else %}
-        <a href="/polls">Kyselyt</a>
+        <a href="/browse_polls">Kyselyt</a>
         {% endif %}
     </li>
+
+    <li class="nav-bar-button">
+        {% if request.path == "/browse_feedback" or request.path == "/give_feedback" %}
+        <a class="nav-bar-button-active" href="/browse_feedback">Palautteet</a>
+        {% else %}
+        <a href="/browse_feedback">Palautteet</a>
+        {% endif %}
+    </li>
+
+    {% if session.is_admin %}
+
+    <li class="nav-bar-button">
+        {% if request.path == "/manage_users" %}
+        <a class="nav-bar-button-active" href="/manage_users">Käyttäjät</a>
+        {% else %}
+        <a href="/manage_users">Käyttäjät</a>
+        {% endif %}
+    </li>
+
+    {% endif %}
 
     <li class="nav-bar-button">
         {% if request.path == "/profile" %}
@@ -46,26 +66,6 @@
         <a href="/profile">Profiilini</a>
         {% endif %}
     </li>
-
-    <li class="nav-bar-button">
-        {% if request.path == "/give_feedback" %}
-        <a class="nav-bar-button-active" href="/give_feedback">Anna palautetta</a>
-        {% else %}
-        <a href="/give_feedback">Anna palautetta</a>
-        {% endif %}
-    </li>
-
-    {% if session.is_admin %}
-
-    <li class="nav-bar-button">
-        {% if request.path == "/" %}
-        <a class="nav-bar-button-active" href="/">Ylläpito</a>
-        {% else %}
-        <a href="/">Ylläpito</a>
-        {% endif %}
-    </li>
-
-    {% endif %}
 
 </ul>
 
