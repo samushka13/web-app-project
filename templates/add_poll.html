@@ -1,26 +1,48 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
 <h2>Lisää kysely</h2>
 
-<!--
-    TODO:
-    - only for admins
-    - inputs:
-        - question (required, string)
-        - zip code (optional, number)
-        - open on (required, date)
-        - close on (optional, date)
-    - save also:
-        - created at (required, timestamp)
-        - creator username (required, string)
--->
-
 <form action="/browse_polls">
     <input class="input" type="submit" value="Takaisin" />
 </form>
+
+{% if session.is_admin %}
+
+<div class="content form">
+    <form action="/add_poll" method="post">
+        <label for="title">Otsikko</label>
+        <br>
+        <textarea class="input" id="title" name="title" rows="4" cols="80" minlength="1" maxlength="100"></textarea>
+        <br>
+
+        <br>
+        <label for="zip_code">Mitä postinumeroaluetta kysely koskee erityisesti? (vapaaehtoinen)</label>
+        <br>
+        <input class="input text-small" type="text" id="zip_code" name="zip_code" maxlength="5">
+        <br>
+        <br>
+
+        <label for="open_on">Alkamispäivämäärä</label>
+        <br>
+        <input class="input text-small" type="date" id="open_on" name="open_on">
+        <br>
+        <br>
+
+        <label for="close_on">Päättymispäivämäärä</label>
+        <br>
+        <input class="input text-small" type="date" id="close_on" name="close_on">
+        <br>
+        <br>
+
+        <input type="submit" value="Lähetä">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+</div>
+
+{% endif %}
 
 {% endblock %}
