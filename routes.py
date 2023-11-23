@@ -3,6 +3,7 @@ from app import app
 from decorators import login_required, admin_required
 import feedback
 import news
+import notices
 import users
 
 @app.route("/")
@@ -127,10 +128,11 @@ def browse_news():
     news_list = news.get_all()
     return render_template("browse_news.html", news=news_list)
 
-@app.route("/notices")
+@app.route("/browse_notices")
 @login_required
-def notices():
-    return render_template("notices.html")
+def browse_notices():
+    notice_list = notices.get_all()
+    return render_template("browse_notices.html", notices=notice_list)
 
 @app.route("/polls")
 @login_required

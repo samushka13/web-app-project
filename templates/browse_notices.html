@@ -1,0 +1,36 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Ilmoitukset</h2>
+
+<!--
+    TODO:
+    - admins can assign statuses (acknowledged, in progress, completed, archived)
+    - allow filtering:
+        - status
+        - time
+        - zip code
+    - show location on map, if street address included
+    - allow users to support notices
+-->
+
+<form action="/add_notice">
+    <input class="input" type="submit" value="Lisää ilmoitus" />
+</form>
+
+{% for notice in notices %}
+    <div class="content">
+        <h3>{{ notice.title }}</h3>
+        <p>{{ notice.body }}</p>
+        <p>{{ notice.zip_code }}  ||  {{ notice.street_address }}</p>
+        <p>Lisännyt: {{ notice.created_by }}</p>
+        <p>Aika: {{ notice.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+    </div>
+{% endfor %}
+
+{% endblock %}
+
+
