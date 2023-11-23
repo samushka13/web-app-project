@@ -10,8 +10,8 @@ DROP TABLE IF EXISTS polls CASCADE;
 DROP TABLE IF EXISTS votes CASCADE;
 DROP TABLE IF EXISTS feedbacks CASCADE;
 
-CREATE TYPE gender AS ENUM ("female", "male", "other");
-CREATE TYPE status AS ENUM ("read", "wip", "done");
+CREATE TYPE gender AS ENUM ('female', 'male', 'other');
+CREATE TYPE status AS ENUM ('read', 'wip', 'done');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -22,7 +22,7 @@ CREATE TABLE users (
     zip_code CHAR(5),
     admin BOOLEAN,
     disabled_at TIMESTAMP,
-    disabled_by INTEGER REFERENCES users,
+    disabled_by INTEGER REFERENCES users
 );
 
 CREATE TABLE news (
@@ -92,7 +92,7 @@ CREATE TABLE polls (
 CREATE TABLE votes (
     id SERIAL PRIMARY KEY,
     poll_id INTEGER REFERENCES polls,
-    vote: BOOLEAN,
+    vote BOOLEAN,
     voted_at TIMESTAMP,
     voted_by INTEGER REFERENCES users
 );
