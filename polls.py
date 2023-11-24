@@ -32,9 +32,9 @@ def get_all():
                     to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
                     U.id,
                     U.name as "created_by"
-                FROM polls AS P
-                JOIN users AS U
-                ON U.id=P.created_by"""
+                 FROM polls AS P
+                 JOIN users AS U
+                 ON U.id=P.created_by"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()
