@@ -13,13 +13,36 @@
         - status
         - time
         - zip code
-    - show location on map, if street address included
     - allow users to support notices
 -->
 
-<form action="/add_notice">
+<form style="display: inline-block;" action="/browse_notices">
+    {% if request.path == "/browse_notices" %}
+    <input class="input active" type="submit" value="Kaikki" />
+    {% else %}
+    <input class="input" type="submit" value="Kaikki" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_notices/my">
+    {% if request.path == "/browse_notices/my" %}
+    <input class="input active" type="submit" value="Omat" />
+    {% else %}
+    <input class="input" type="submit" value="Omat" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/add_notice">
     <input class="input" type="submit" value="Lisää ilmoitus" />
 </form>
+
+{% if notices|length == 0 %}
+
+<div class="content flash">
+    Ei ilmoituksia
+</div>
+
+{% else %}
 
 {% for notice in notices %}
     <div class="content">
@@ -38,5 +61,7 @@
         <p>Aika: {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
     </div>
 {% endfor %}
+
+{% endif %}
 
 {% endblock %}

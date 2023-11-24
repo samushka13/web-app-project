@@ -34,3 +34,22 @@ def get_all():
     notices = result.fetchall()
 
     return notices
+
+def get_user_notices(user_id: int):
+    sql = """SELECT
+                N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
+                U.id, U.name as "created_by"
+             FROM notices AS N
+             JOIN users AS U
+             ON U.id=N.created_by
+             WHERE :user_id=N.created_by
+             """
+
+    values = {
+        "user_id": user_id
+    }
+
+    result = db.session.execute(text(sql), values)
+    notices = result.fetchall()
+
+    return notices

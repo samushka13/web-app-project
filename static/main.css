@@ -65,6 +65,9 @@ textarea {
 .input {
     margin: 10px;
 }
+.input.active {
+    font-weight: bold;
+}
 .input.text-medium {
     width: 200px;
 }

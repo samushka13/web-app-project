@@ -141,6 +141,17 @@ def browse_notices():
     notice_list = notices.get_all()
     return render_template("browse_notices.html", notices=notice_list)
 
+@app.route("/browse_notices/my")
+@login_required
+def my_notices():
+    notice_list = []
+
+    if "user_id" in session:
+        user_id = session["user_id"]
+        notice_list = notices.get_user_notices(user_id)
+
+    return render_template("browse_notices.html", notices=notice_list)
+
 @app.route("/browse_polls")
 @login_required
 def browse_polls():

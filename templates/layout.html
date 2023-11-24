@@ -24,7 +24,7 @@
     </li>
 
     <li class="nav-bar-button">
-        {% if request.path == "/browse_notices" or request.path == "/add_notice" %}
+        {% if "notice" in request.path %}
         <a class="nav-bar-button-active" href="/browse_notices">Ilmoitukset</a>
         {% else %}
         <a href="/browse_notices">Ilmoitukset</a>
