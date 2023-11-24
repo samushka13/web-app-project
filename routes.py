@@ -50,6 +50,8 @@ def register():
 
         if zip_code == "":
             zip_code = None
+        elif 0 < len(zip_code) < 5:
+            flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         is_admin = "is_admin" in request.form
 
@@ -224,6 +226,8 @@ def add_notice():
 
         if zip_code == "":
             zip_code = None
+        elif 0 < len(zip_code) < 5:
+            flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         street_address = request.form["street_address"]
 
@@ -274,6 +278,8 @@ def add_news():
 
         if zip_code == "":
             zip_code = None
+        elif 0 < len(zip_code) < 5:
+            flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         publish_on = request.form["publish_on"]
 
@@ -310,6 +316,8 @@ def add_poll():
 
         if zip_code == "":
             zip_code = None
+        elif 0 < len(zip_code) < 5:
+            flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         open_on = request.form["open_on"]
 
