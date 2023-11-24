@@ -215,9 +215,9 @@ def give_feedback():
         if not (user_id and token_valid and data_updated):
             flash("Palautteen lähetys ei onnistunut", "error")
         else:
-            flash("Palautteen lähetys onnistui")
+            return redirect(url_for("browse_feedback"))
 
-        return redirect(url_for("give_feedback"))
+        return render_template("give_feedback.html")
 
 @app.route("/add_notice", methods=["GET", "POST"])
 @login_required
@@ -261,9 +261,9 @@ def add_notice():
         if not (user_id and token_valid and data_updated):
             flash("Ilmoituksen tallennus ei onnistunut", "error")
         else:
-            flash("Ilmoituksen tallennus onnistui")
+            return redirect(url_for("browse_notices"))
 
-        return redirect(url_for("add_notice"))
+        return render_template("add_notice.html")
 
 @app.route("/browse_feedback")
 @login_required
@@ -313,10 +313,10 @@ def add_news():
         if not (user_id and token_valid and data_updated):
             flash("Uutisen tallennus ei onnistunut", "error")
         else:
-            flash("Uutisen tallennus onnistui")
+            return redirect(url_for("browse_news"))
 
-        return redirect(url_for("add_news"))
-
+        return render_template("add_news.html")
+    
 @app.route("/add_poll", methods=["GET", "POST"])
 @admin_required
 def add_poll():
@@ -344,7 +344,7 @@ def add_poll():
         if open_on == "":
             flash("Alkamispäivämäärä ei saa olla tyhjä", "error")
 
-        close_on = request.form["open_on"]
+        close_on = request.form["close_on"]
 
         if close_on == "":
             flash("Päättymispäivämäärä ei saa olla tyhjä", "error")
@@ -356,9 +356,9 @@ def add_poll():
         if not (user_id and token_valid and data_updated):
             flash("Kyselyn tallennus ei onnistunut", "error")
         else:
-            flash("Kyselyn tallennus onnistui")
+            return redirect(url_for("browse_polls"))
 
-        return redirect(url_for("add_poll"))
+        return render_template("add_poll.html")
 
 @app.route("/manage_users", methods=["GET", "POST"])
 @admin_required
