@@ -125,12 +125,16 @@ def delete_user(user_id: int):
     return True
 
 def get_users():
-    sql = """SELECT id, name, admin, disabled_at FROM users"""
+    try:
+        sql = """SELECT id, name, admin, disabled_at FROM users"""
 
-    result = db.session.execute(text(sql))
-    users = result.fetchall()
+        result = db.session.execute(text(sql))
+        users = result.fetchall()
 
-    return users
+        return users
+
+    except Exception:
+        return []
 
 def disable_user(user_id: int):
     try:

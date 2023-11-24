@@ -23,19 +23,23 @@ def add(user_id: int, title: str, zip_code: str, open_on: str, close_on: str):
     return True
 
 def get_all():
-    sql = """SELECT
-                P.id,
-                P.title as title,
-                P.zip_code as zip_code,
-                to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
-                to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
-                U.id,
-                U.name as "created_by"
-             FROM polls AS P
-             JOIN users AS U
-             ON U.id=P.created_by"""
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title as title,
+                    P.zip_code as zip_code,
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    U.id,
+                    U.name as "created_by"
+                FROM polls AS P
+                JOIN users AS U
+                ON U.id=P.created_by"""
 
-    result = db.session.execute(text(sql))
-    polls = result.fetchall()
+        result = db.session.execute(text(sql))
+        polls = result.fetchall()
 
-    return polls
+        return polls
+
+    except Exception:
+        return []

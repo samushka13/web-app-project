@@ -23,14 +23,18 @@ def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
     return True
 
 def get_all():
-    sql = """SELECT
-                N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
-                U.id, U.name as "created_by"
-             FROM news AS N
-             JOIN users AS U
-             ON U.id=N.created_by"""
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
+                    U.id, U.name as "created_by"
+                FROM news AS N
+                JOIN users AS U
+                ON U.id=N.created_by"""
 
-    result = db.session.execute(text(sql))
-    news = result.fetchall()
+        result = db.session.execute(text(sql))
+        news = result.fetchall()
 
-    return news
+        return news
+
+    except Exception:
+        return []

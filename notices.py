@@ -23,33 +23,41 @@ def add(user_id: int, title: str, body: str, zip_code: str, street_address: str)
     return True
 
 def get_all():
-    sql = """SELECT
-                N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                U.id, U.name as "created_by"
-             FROM notices AS N
-             JOIN users AS U
-             ON U.id=N.created_by"""
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
+                    U.id, U.name as "created_by"
+                FROM notices AS N
+                JOIN users AS U
+                ON U.id=N.created_by"""
 
-    result = db.session.execute(text(sql))
-    notices = result.fetchall()
+        result = db.session.execute(text(sql))
+        notices = result.fetchall()
 
-    return notices
+        return notices
+
+    except Exception:
+        return []
 
 def get_user_notices(user_id: int):
-    sql = """SELECT
-                N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                U.id, U.name as "created_by"
-             FROM notices AS N
-             JOIN users AS U
-             ON U.id=N.created_by
-             WHERE :user_id=N.created_by
-             """
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
+                    U.id, U.name as "created_by"
+                FROM notices AS N
+                JOIN users AS U
+                ON U.id=N.created_by
+                WHERE :user_id=N.created_by
+                """
 
-    values = {
-        "user_id": user_id
-    }
+        values = {
+            "user_id": user_id
+        }
 
-    result = db.session.execute(text(sql), values)
-    notices = result.fetchall()
+        result = db.session.execute(text(sql), values)
+        notices = result.fetchall()
 
-    return notices
+        return notices
+
+    except Exception:
+        return []
