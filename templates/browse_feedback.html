@@ -22,7 +22,7 @@
         <h3>{{ feedback.title }}</h3>
         <p>{{ feedback.body }}</p>
         <p>Lähettäjä: {{ feedback.sent_by }}</p>
-        <p>Aika: {{ feedback.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+        <p>Aika: {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
     </div>
 {% endfor %}
 

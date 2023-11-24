@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
@@ -94,7 +95,7 @@ def update_profile():
     date_of_birth = request.form["date_of_birth"]
 
     if date_of_birth == "":
-        date_of_birth = session["date_of_birth"]
+        date_of_birth = datetime.strptime(str(session["date_of_birth"]), '%d.%m.%Y')
 
     zip_code = request.form["zip_code"]
 

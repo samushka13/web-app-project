@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import request, session
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -97,7 +98,9 @@ def update_profile(user_id: int, date_of_birth: str, gender: str, zip_code: str,
     except Exception:
         return False
 
-    session["date_of_birth"] = date_of_birth
+    new_date_of_birth = datetime.strptime(str(date_of_birth)[:10], '%Y-%m-%d').strftime('%d.%m.%Y')
+
+    session["date_of_birth"] = new_date_of_birth
     session["gender"] = gender
     session["zip_code"] = zip_code
     session["is_admin"] = admin

@@ -35,7 +35,7 @@
         {% endif %}
 
         <p>Lisännyt: {{ notice.created_by }}</p>
-        <p>Aika: {{ notice.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+        <p>Aika: {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
     </div>
 {% endfor %}
 
