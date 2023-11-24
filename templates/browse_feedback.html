@@ -13,9 +13,47 @@
     - allow filtering by status
 -->
 
-<form action="/give_feedback">
+<form style="display: inline-block;" action="/browse_feedback">
+    {% if request.path == "/browse_feedback" %}
+    <input class="input active" type="submit" value="Kaikki" />
+    {% else %}
+    <input class="input" type="submit" value="Kaikki" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_feedback/acknowledged">
+    {% if request.path == "/browse_feedback/acknowledged" %}
+    <input class="input active" type="submit" value="Huomioidut" />
+    {% else %}
+    <input class="input" type="submit" value="Huomioidut" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_feedback/archived">
+    {% if request.path == "/browse_feedback/archived" %}
+    <input class="input active" type="submit" value="Arkistoidut" />
+    {% else %}
+    <input class="input" type="submit" value="Arkistoidut" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/give_feedback">
     <input class="input" type="submit" value="Anna palautetta" />
 </form>
+
+{% if feedbacks|length == 0 %}
+
+<div class="content flash">
+    {% if request.path == "/browse_feedback/acknowledged" %}
+    Ei huomioituja palautteita
+    {% elif request.path == "/browse_feedback/archived" %}
+    Ei arkistoituja palautteita
+    {% else %}
+    Ei palautteita
+    {% endif %}
+</div>
+
+{% else %}
 
 {% for feedback in feedbacks %}
     <div class="content">
@@ -25,5 +63,7 @@
         <p>Aika: {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
     </div>
 {% endfor %}
+
+{% endif %}
 
 {% endblock %}

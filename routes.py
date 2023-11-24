@@ -151,7 +151,7 @@ def browse_notices():
 
 @app.route("/browse_notices/my")
 @login_required
-def my_notices():
+def browse_my_notices():
     notice_list = []
 
     if "user_id" in session:
@@ -271,6 +271,18 @@ def browse_feedback():
     feedbacks = feedback.get_all()
     return render_template("browse_feedback.html", feedbacks=feedbacks)
 
+@app.route("/browse_feedback/acknowledged")
+@login_required
+def browse_acknowledged_feedback():
+    feedbacks = feedback.get_acknowledged()
+    return render_template("browse_feedback.html", feedbacks=feedbacks)
+
+@app.route("/browse_feedback/archived")
+@login_required
+def browse_archived_feedback():
+    feedbacks = feedback.get_archived()
+    return render_template("browse_feedback.html", feedbacks=feedbacks)
+
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required
 def add_news():
@@ -316,7 +328,7 @@ def add_news():
             return redirect(url_for("browse_news"))
 
         return render_template("add_news.html")
-    
+
 @app.route("/add_poll", methods=["GET", "POST"])
 @admin_required
 def add_poll():
