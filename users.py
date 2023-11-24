@@ -33,7 +33,8 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
 def login(name: str, password: str):
     try:
         sql = """SELECT
-                    id, password,
+                    id,
+                    password,
                     to_char(DATE(date_of_birth)::date, 'DD.MM.YYYY'),
                     gender,
                     zip_code,
@@ -59,7 +60,7 @@ def login(name: str, password: str):
 
         session["username"] = name
         session["user_id"] = user[0]
-        session["date_of_birth"] = str(user[2])
+        session["date_of_birth"] = user[2]
         session["gender"] = user[3]
         session["zip_code"] = user[4]
         session["is_admin"] = user[5]

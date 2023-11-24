@@ -29,6 +29,6 @@ def get_all():
              ON U.id=F.sent_by"""
 
     result = db.session.execute(text(sql))
-    users = result.fetchall()
+    feedbacks = result.fetchall()
 
-    return users
+    return feedbacks

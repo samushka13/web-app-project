@@ -31,6 +31,6 @@ def get_all():
              ON U.id=N.created_by"""
 
     result = db.session.execute(text(sql))
-    users = result.fetchall()
+    news = result.fetchall()
 
-    return users
+    return news
