@@ -10,7 +10,6 @@
     TODO:
     - allow marking as 'acknowledged' (timestamp + user_id)
     - allow marking as 'archived' (timestamp + user_id))
-    - allow filtering by status
 -->
 
 <form style="display: inline-block;" action="/browse_feedback">
@@ -29,6 +28,8 @@
     {% endif %}
 </form>
 
+{% if session.is_admin %}
+
 <form style="display: inline-block;" action="/browse_feedback/archived">
     {% if request.path == "/browse_feedback/archived" %}
     <input class="input active" type="submit" value="Arkistoidut" />
@@ -36,6 +37,8 @@
     <input class="input" type="submit" value="Arkistoidut" />
     {% endif %}
 </form>
+
+{% endif %}
 
 <form style="display: inline-block;" action="/give_feedback">
     <input class="input" type="submit" value="Anna palautetta" />

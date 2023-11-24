@@ -21,13 +21,13 @@ All users can:
 - support notices created by other users,
 - vote in polls with a thumb up or down,
 - see anonymized poll analytics about respondents,
-- give feedback,
+- give and read feedback,
 - edit their profile (except username),
 - view notices they have created.
 
 Only admins can:
 - create news and polls,
-- read user feedback,
+- view archived news, notices, polls, and feedback,
 - disable user accounts.
 
 ## Installation

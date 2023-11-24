@@ -278,7 +278,7 @@ def browse_acknowledged_feedback():
     return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/browse_feedback/archived")
-@login_required
+@admin_required
 def browse_archived_feedback():
     feedbacks = feedback.get_archived()
     return render_template("browse_feedback.html", feedbacks=feedbacks)
