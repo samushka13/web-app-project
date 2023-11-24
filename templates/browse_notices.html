@@ -39,7 +39,11 @@
 {% if notices|length == 0 %}
 
 <div class="content flash">
+    {% if request.path == "/browse_notices/my" %}
+    Ei omia ilmoituksia
+    {% else %}
     Ei ilmoituksia
+    {% endif %}
 </div>
 
 {% else %}
