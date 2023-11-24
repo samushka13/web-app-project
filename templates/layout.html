@@ -16,7 +16,7 @@
 
 <ul class="nav-bar">
     <li class="nav-bar-button">
-        {% if request.path == "/browse_news" or request.path == "/add_news" %}
+        {% if "news" in request.path %}
         <a class="nav-bar-button-active" href="/browse_news">Uutiset</a>
         {% else %}
         <a href="/browse_news">Uutiset</a>
@@ -32,7 +32,7 @@
     </li>
 
     <li class="nav-bar-button">
-        {% if request.path == "/browse_polls" or request.path == "/add_poll" %}
+        {% if "poll" in request.path %}
         <a class="nav-bar-button-active" href="/browse_polls">Kyselyt</a>
         {% else %}
         <a href="/browse_polls">Kyselyt</a>
@@ -40,7 +40,7 @@
     </li>
 
     <li class="nav-bar-button">
-        {% if request.path == "/browse_feedback" or request.path == "/give_feedback" %}
+        {% if "feedback" in request.path %}
         <a class="nav-bar-button-active" href="/browse_feedback">Palautteet</a>
         {% else %}
         <a href="/browse_feedback">Palautteet</a>
