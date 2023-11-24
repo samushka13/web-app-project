@@ -54,7 +54,10 @@ def register():
         elif 0 < len(zip_code) < 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
-        is_admin = "is_admin" in request.form
+        if "is_admin" not in request.form:
+            is_admin = False
+        else:
+            is_admin = request.form["is_admin"] == "yes"
 
         if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
             flash("Rekisteröityminen ei onnistunut", "error")
@@ -95,17 +98,22 @@ def update_profile():
     date_of_birth = request.form["date_of_birth"]
 
     if date_of_birth == "":
-        date_of_birth = datetime.strptime(str(session["date_of_birth"]), '%d.%m.%Y')
+        if session["date_of_birth"]:
+            date_of_birth = datetime.strptime(str(session["date_of_birth"]), '%d.%m.%Y')
+        else:
+            date_of_birth = None
 
     zip_code = request.form["zip_code"]
 
     if zip_code == "":
         zip_code = session["zip_code"]
+    elif 0 < len(zip_code) < 5:
+        flash("Postinumerossa tulee olla 5 numeroa", "error")
 
     if "is_admin" not in request.form:
         is_admin = session["is_admin"]
     else:
-        is_admin = request.form["is_admin"]
+        is_admin = request.form["is_admin"] == "yes"
 
     user_id = session["user_id"]
     valid_token = users.is_csrf_token_valid()

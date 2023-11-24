@@ -14,17 +14,17 @@
         <p>
             Voit täyttää vain ne tiedot, jotka haluat muuttaa.
             <br>
-            Tyhjäksi jätetyt kentät säilyvät ennallaan (paitsi ylläpitäjän rooli).
+            Tyhjäksi jätetyt kentät säilyvät ennallaan.
         </p>
         <br>
         
-        <label for="date_of_birth">Syntymäaika: {{ session.date_of_birth }}</label>
+        <label for="date_of_birth">Syntymäaika: {{ session.date_of_birth if session.date_of_birth else "-" }}</label>
         <br>
         <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
         <br>
         <br>
 
-        <label for="gender">Sukupuoli: {{ gender }}</label>
+        <label for="gender">Sukupuoli: {{ gender if gender else "-" }}</label>
         <div class="radio-button-group">
             <div class="radio-button">
                 <input type="radio" id="female" name="gender" value="female">
@@ -43,16 +43,24 @@
         </div>
         <br>
 
-        <label for="zip_code">Postinumero: {{ session.zip_code }}</label>
+        <label for="zip_code">Postinumero: {{ session.zip_code if session.zip_code else "-" }}</label>
         <br>
         <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5">
         <br>
         <br>
 
         <label for="is_admin">Ylläpitäjä: {{ is_admin }}</label>
-        <br>
-        <input class="input" type="checkbox" id="is_admin" name="is_admin">
-        <br>
+        <div class="radio-button-group">
+            <div class="radio-button">
+                <input type="radio" id="yes" name="is_admin" value="yes">
+                <label for="yes">kyllä</label>
+            </div>
+            <br>
+            <div class="radio-button">
+                <input type="radio" id="no" name="is_admin" value="no">
+                <label for="no">ei</label>
+            </div>
+        </div>
 
         <input class="input" type="submit" value="Päivitä tiedot">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

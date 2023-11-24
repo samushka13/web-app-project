@@ -52,11 +52,18 @@
         <br>
         <br>
 
-        <label for="is_admin">Ylläpitäjä</label>
-        <br>
-        <input class="input" type="checkbox" id="is_admin" name="is_admin">
-        <br>
-        <br>
+        <label for="is_admin">Ylläpitäjä: {{ is_admin }}</label>
+        <div class="radio-button-group">
+            <div class="radio-button">
+                <input type="radio" id="yes" name="is_admin" value="yes">
+                <label for="yes">kyllä</label>
+            </div>
+            <br>
+            <div class="radio-button">
+                <input type="radio" id="no" name="is_admin" value="no">
+                <label for="no">ei</label>
+            </div>
+        </div>
 
         <input type="submit" value="Rekisteröidy">
         <br>
