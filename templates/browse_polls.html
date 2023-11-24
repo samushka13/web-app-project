@@ -29,10 +29,14 @@
 {% for poll in polls %}
     <div class="content">
         <h3>{{ poll.title }}</h3>
-        <p>{{ poll.zip_code }}</p>
-        <p>Aukeaa: {{ poll.open_on }}</p>
-        <p>Sulkeutuu: {{ poll.close_on }}</p>
-        <p>Lisännyt: {{ poll.created_by }}</p>
+        <p>{{ poll.zip_code if poll.zip_code else "" }}</p>
+        <hr>
+        <p>Äänestysaika: {{ poll.open_on }} – {{ poll.close_on }}</p>
+
+        {% if session.is_admin %}
+        <hr>
+        <p>{{ poll.created_by }} @ {{ poll.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+        {% endif %}
     </div>
 {% endfor %}
 

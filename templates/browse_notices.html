@@ -61,8 +61,8 @@
         <p>Postinumero: {{ notice.zip_code }}</p>
         {% endif %}
 
-        <p>Lisännyt: {{ notice.created_by }}</p>
-        <p>Aika: {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+        <hr>
+        <p>{{ notice.created_by }} @ {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
     </div>
 {% endfor %}
 

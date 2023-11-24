@@ -30,10 +30,10 @@ textarea {
     text-align: left;
 }
 .content.user {
-    margin-left: 20vw;
-    margin-right: 20vw;
     display: flex;
     justify-content: space-between;
+    margin-left: 25vw;
+    margin-right: 25vw;
 }
 .content.flash {
     margin-top: 15px;

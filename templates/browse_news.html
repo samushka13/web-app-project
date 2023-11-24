@@ -64,18 +64,18 @@
     <div class="content">
         <h3>{{ item.title }}</h3>
         <p>{{ item.body }}</p>
-
         <hr>
-
-        <p>{{ item.publish_on.strftime("%d.%m.%Y") }} – {{ item.created_by }}</p>
+        <p>
+            {{ (item.created_by + " @ ") if session.is_admin else "" }}
+            {{ item.publish_on.strftime("%d.%m.%Y") }}
+        </p>
 
         {% if request.path == "/browse_news/archived" %}
         <p>
-            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} – 
-            Aika: {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
+            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
+            {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
         </p>
         {% endif %}
-
     </div>
 {% endfor %}
 
