@@ -29,7 +29,44 @@ def get_all():
                     U.id, U.name as "created_by"
                  FROM news AS N
                  JOIN users AS U
-                 ON U.id=N.created_by"""
+                 ON U.id=N.created_by
+                 WHERE N.archived_at IS NULL"""
+
+        result = db.session.execute(text(sql))
+        news = result.fetchall()
+
+        return news
+
+    except Exception:
+        return []
+
+def get_archived():
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at, N.archived_at,
+                    U.id, U.name as "created_by", U.name as "archived_by"
+                 FROM news AS N
+                 JOIN users AS U
+                 ON U.id=N.created_by OR U.id=N.archived_by
+                 WHERE N.archived_at IS NOT NULL"""
+
+        result = db.session.execute(text(sql))
+        news = result.fetchall()
+
+        return news
+
+    except Exception:
+        return []
+
+def get_upcoming():
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
+                    U.id, U.name as "created_by", N.publish_on > CURRENT_DATE
+                 FROM news AS N
+                 JOIN users AS U
+                 ON U.id=N.created_by
+                 WHERE N.publish_on > CURRENT_DATE AND N.archived_at IS NULL"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()

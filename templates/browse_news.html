@@ -16,19 +16,69 @@
 
 {% if session.is_admin %}
 
-<form action="/add_news">
+<form style="display: inline-block;" action="/browse_news">
+    {% if request.path == "/browse_news" %}
+    <input class="input active" type="submit" value="Kaikki" />
+    {% else %}
+    <input class="input" type="submit" value="Kaikki" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_news/archived">
+    {% if request.path == "/browse_news/archived" %}
+    <input class="input active" type="submit" value="Arkistoidut" />
+    {% else %}
+    <input class="input" type="submit" value="Arkistoidut" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_news/upcoming">
+    {% if request.path == "/browse_news/upcoming" %}
+    <input class="input active" type="submit" value="Tulossa olevat" />
+    {% else %}
+    <input class="input" type="submit" value="Tulossa olevat" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/add_news">
     <input class="input" type="submit" value="Lisää uutinen" />
 </form>
 
 {% endif %}
 
+{% if news|length == 0 %}
+
+<div class="content flash">
+    {% if request.path == "/browse_news/archived" %}
+    Ei arkistoituja uutisia
+    {% elif request.path == "/browse_news/upcoming" %}
+    Ei tulossa olevia uutisia
+    {% else %}
+    Ei uutisia
+    {% endif %}
+</div>
+
+{% else %}
+
 {% for item in news %}
     <div class="content">
         <h3>{{ item.title }}</h3>
         <p>{{ item.body }}</p>
-        <p>Lisännyt: {{ item.created_by }}</p>
-        <p>Aika: {{ item.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+
+        <hr>
+
+        <p>{{ item.publish_on.strftime("%d.%m.%Y") }} – {{ item.created_by }}</p>
+
+        {% if request.path == "/browse_news/archived" %}
+        <p>
+            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} – 
+            Aika: {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
+        </p>
+        {% endif %}
+
     </div>
 {% endfor %}
+
+{% endif %}
 
 {% endblock %}

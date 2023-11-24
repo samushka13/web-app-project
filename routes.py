@@ -143,6 +143,18 @@ def browse_news():
     news_list = news.get_all()
     return render_template("browse_news.html", news=news_list)
 
+@app.route("/browse_news/archived")
+@admin_required
+def browse_archived_news():
+    news_list = news.get_archived()
+    return render_template("browse_news.html", news=news_list)
+
+@app.route("/browse_news/upcoming")
+@admin_required
+def browse_upcoming_news():
+    news_list = news.get_upcoming()
+    return render_template("browse_news.html", news=news_list)
+
 @app.route("/browse_notices")
 @login_required
 def browse_notices():
