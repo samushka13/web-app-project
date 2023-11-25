@@ -8,8 +8,6 @@
 
 {% if session.is_admin %}
 
-<form action="/manage_users" method="post">
-
 {% for user in users %}
 
     <div class="content user">
@@ -18,13 +16,18 @@
 
         {% if user.disabled_at %}
 
-        (poistettu käytöstä)
+        <div>
+            (poistettu käytöstä)
+        </div>
 
         {% else %}
 
             {% if user.id != session.user_id %}
 
-                <button name="user_id" value="{{ user.id }}" type="submit">Poista käytöstä</button>
+            <form action="/disable_user/{{ user.id }}" method="post">
+                <input type="submit" value="Poista käytöstä" >
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
 
             {% endif %}
 
@@ -34,9 +37,7 @@
 
 {% endfor %}
 
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
-</form>
 
 {% endif %}
 

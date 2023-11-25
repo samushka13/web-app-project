@@ -432,17 +432,16 @@ def add_poll():
 
         return render_template("add_poll.html")
 
-@app.route("/manage_users", methods=["GET", "POST"])
+@app.route("/manage_users")
 @admin_required
 def manage_users():
-    if request.method == "GET":
-        user_list = users.get_users()
-        return render_template("manage_users.html", users=user_list)
+    user_list = users.get_users()
+    return render_template("manage_users.html", users=user_list)
 
-    if request.method == "POST":
-        if users.is_csrf_token_valid() and "user_id" in request.form:
-            user_id = request.form["user_id"]
-            if not users.disable_user(user_id):
-                flash("Tilin poistaminen käytöstä ei onnistunut", "error")
+@app.route("/disable_user/<int:user_id>", methods=["POST"])
+@admin_required
+def disable_user(user_id):
+    if not (users.is_csrf_token_valid() and users.disable_user(user_id)):
+        flash("Tilin poistaminen käytöstä ei onnistunut", "error")
 
-        return redirect(url_for("manage_users"))
+    return redirect(url_for("manage_users"))
