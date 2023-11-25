@@ -155,5 +155,23 @@ def disable_user(user_id: int):
 
     return True
 
+def enable_user(user_id: int):
+    try:
+        sql = """UPDATE users
+                 SET disabled_at=NULL, disabled_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
 def is_csrf_token_valid():
     return session["csrf_token"] == request.form["csrf_token"]

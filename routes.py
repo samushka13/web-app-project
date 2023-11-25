@@ -445,3 +445,11 @@ def disable_user(user_id):
         flash("Tilin poistaminen käytöstä ei onnistunut", "error")
 
     return redirect(url_for("manage_users"))
+
+@app.route("/enable_user/<int:user_id>", methods=["POST"])
+@admin_required
+def enable_user(user_id):
+    if not (users.is_csrf_token_valid() and users.enable_user(user_id)):
+        flash("Tilin ottaminen käyttöön ei onnistunut", "error")
+
+    return redirect(url_for("manage_users"))

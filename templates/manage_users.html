@@ -16,9 +16,14 @@
 
         {% if user.disabled_at %}
 
-        <div>
-            (poistettu käytöstä)
-        </div>
+            {% if user.id != session.user_id %}
+
+            <form action="/enable_user/{{ user.id }}" method="post">
+                <input type="submit" value="Ota käyttöön" >
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+
+            {% endif %}
 
         {% else %}
 
