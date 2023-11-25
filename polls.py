@@ -31,7 +31,7 @@ def get_all():
                     to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
                     to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
                     P.created_at,
-                    U.id,
+                    U.id as "user_id",
                     U.name as "created_by"
                  FROM polls AS P
                  JOIN users AS U

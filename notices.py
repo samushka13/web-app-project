@@ -26,7 +26,7 @@ def get_all():
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                    U.id, U.name as "created_by"
+                    U.id as "user_id", U.name as "created_by"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by"""
@@ -43,7 +43,7 @@ def get_user_notices(user_id: int):
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                    U.id, U.name as "created_by"
+                    U.id as "user_id", U.name as "created_by"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by

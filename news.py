@@ -26,7 +26,7 @@ def get_all():
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
-                    U.id, U.name as "created_by"
+                    U.id as "user_id", U.name as "created_by"
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
@@ -44,7 +44,7 @@ def get_archived():
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at, N.archived_at,
-                    U.id, U.name as "created_by", U.name as "archived_by"
+                    U.id as "user_id", U.name as "created_by", U.name as "archived_by"
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by OR U.id=N.archived_by
@@ -62,7 +62,7 @@ def get_upcoming():
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
-                    U.id, U.name as "created_by", N.publish_on > CURRENT_DATE
+                    U.id as "user_id", U.name as "created_by", N.publish_on > CURRENT_DATE
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
