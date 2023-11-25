@@ -280,7 +280,7 @@ def add_notice():
 @app.route("/browse_feedback")
 @login_required
 def browse_feedback():
-    feedbacks = feedback.get_all()
+    feedbacks = feedback.get_new()
     return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/browse_feedback/acknowledged")
@@ -294,6 +294,54 @@ def browse_acknowledged_feedback():
 def browse_archived_feedback():
     feedbacks = feedback.get_archived()
     return render_template("browse_feedback.html", feedbacks=feedbacks)
+
+@app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])
+@admin_required
+def acknowledge_feedback(feedback_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = feedback.acknowledge(user_id, feedback_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Huomioiduksi merkitseminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_feedback"))
+
+@app.route("/unacknowledge_feedback/<int:feedback_id>", methods=["POST"])
+@admin_required
+def unacknowledge_feedback(feedback_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = feedback.unacknowledge(user_id, feedback_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Huomioinnin peruminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_feedback"))
+
+@app.route("/archive_feedback/<int:feedback_id>", methods=["POST"])
+@admin_required
+def archive_feedback(feedback_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = feedback.archive(user_id, feedback_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistointi ei onnistunut", "error")
+
+    return redirect(url_for("browse_feedback"))
+
+@app.route("/unarchive_feedback/<int:feedback_id>", methods=["POST"])
+@admin_required
+def unarchive_feedback(feedback_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = feedback.unarchive(user_id, feedback_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistoinnin peruminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_feedback"))
 
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required

@@ -1,22 +1,16 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
 <h2>Selaa palautteita</h2>
 
-<!--
-    TODO:
-    - allow marking as 'acknowledged' (timestamp + user_id)
-    - allow marking as 'archived' (timestamp + user_id))
--->
-
 <form style="display: inline-block;" action="/browse_feedback">
     {% if request.path == "/browse_feedback" %}
-    <input class="input active" type="submit" value="Kaikki" />
+    <input class="input active" type="submit" value="Uudet" />
     {% else %}
-    <input class="input" type="submit" value="Kaikki" />
+    <input class="input" type="submit" value="Uudet" />
     {% endif %}
 </form>
 
@@ -64,6 +58,37 @@
         <p>{{ feedback.body }}</p>
         <hr>
         <p>{{ feedback.sent_by }} @ {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+
+        {% if session.is_admin %}
+        <hr>
+
+        <form
+            style="display: inline-block;"
+            action="/{{ 'unacknowledge_feedback' if feedback.acknowledged_at else 'acknowledge_feedback' }}/{{ feedback.id }}"
+            method="post"
+        >
+            <input
+                class="input"
+                type="submit"
+                value="{{ 'Peru huomiointi' if feedback.acknowledged_at else 'Merkitse huomioiduksi' }}"
+            />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+
+        <form
+            style="display: inline-block;"
+            action="/{{ 'unarchive_feedback' if feedback.archived_at else 'archive_feedback' }}/{{ feedback.id }}"
+            method="post"
+        >
+            <input
+                class="input"
+                type="submit"
+                value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
+            />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+
+        {% endif %}
     </div>
 {% endfor %}
 

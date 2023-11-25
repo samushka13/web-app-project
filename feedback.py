@@ -20,14 +20,15 @@ def send(user_id: int, title: str, body: str):
 
     return True
 
-def get_all():
+def get_new():
     try:
         sql = """SELECT
-                    F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by, F.archived_at, F.archived_by,
-                    U.id, U.name as "sent_by"
+                    F.id, F.title, F.body, F.sent_at,
+                    U.id as "user_id", U.name as "sent_by"
                  FROM feedbacks AS F
                  JOIN users AS U
-                 ON U.id=F.sent_by"""
+                 ON U.id=F.sent_by
+                 WHERE (F.acknowledged_at IS NULL and F.archived_at IS NULL)"""
 
         result = db.session.execute(text(sql))
         feedbacks = result.fetchall()
@@ -40,8 +41,8 @@ def get_all():
 def get_acknowledged():
     try:
         sql = """SELECT
-                    F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by, F.archived_at, F.archived_by,
-                    U.id, U.name as "sent_by"
+                    F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by,
+                    U.id as "user_id", U.name as "sent_by"
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
@@ -59,7 +60,7 @@ def get_archived():
     try:
         sql = """SELECT
                     F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by, F.archived_at, F.archived_by,
-                    U.id, U.name as "sent_by"
+                    U.id as "user_id", U.name as "sent_by"
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
@@ -72,3 +73,79 @@ def get_archived():
 
     except Exception:
         return []
+
+def acknowledge(user_id: int, feedback_id: int):
+    try:
+        sql = """UPDATE feedbacks
+                 SET acknowledged_at=NOW(), acknowledged_by=:acknowledged_by
+                 WHERE id=:id"""
+
+        values = {
+            "acknowledged_by": user_id,
+            "id": feedback_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def unacknowledge(user_id: int, feedback_id: int):
+    try:
+        sql = """UPDATE feedbacks
+                 SET acknowledged_at=NULL, acknowledged_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "acknowledged_by": user_id,
+            "id": feedback_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def archive(user_id: int, feedback_id: int):
+    try:
+        sql = """UPDATE feedbacks
+                 SET archived_at=NOW(), archived_by=:archived_by
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": feedback_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def unarchive(user_id: int, feedback_id: int):
+    try:
+        sql = """UPDATE feedbacks
+                 SET archived_at=NULL, archived_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": feedback_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
