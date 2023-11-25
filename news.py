@@ -22,7 +22,7 @@ def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
 
     return True
 
-def get_all():
+def get_new():
     try:
         sql = """SELECT
                     N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
@@ -75,3 +75,41 @@ def get_upcoming():
 
     except Exception:
         return []
+
+def archive(user_id: int, news_id: int):
+    try:
+        sql = """UPDATE news
+                 SET archived_at=NOW(), archived_by=:archived_by
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": news_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def unarchive(user_id: int, news_id: int):
+    try:
+        sql = """UPDATE news
+                 SET archived_at=NULL, archived_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": news_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True

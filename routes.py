@@ -140,7 +140,7 @@ def delete_current_user():
 @app.route("/browse_news")
 @login_required
 def browse_news():
-    news_list = news.get_all()
+    news_list = news.get_new()
     return render_template("browse_news.html", news=news_list)
 
 @app.route("/browse_news/archived")
@@ -388,6 +388,30 @@ def add_news():
             return redirect(url_for("browse_news"))
 
         return render_template("add_news.html")
+
+@app.route("/archive_news/<int:news_id>", methods=["POST"])
+@admin_required
+def archive_news(news_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = news.archive(user_id, news_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistointi ei onnistunut", "error")
+
+    return redirect(url_for("browse_news"))
+
+@app.route("/unarchive_news/<int:news_id>", methods=["POST"])
+@admin_required
+def unarchive_news(news_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = news.unarchive(user_id, news_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistoinnin peruminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_news"))
 
 @app.route("/add_poll", methods=["GET", "POST"])
 @admin_required

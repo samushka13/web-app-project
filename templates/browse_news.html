@@ -11,7 +11,6 @@
     - allow filtering:
         - time
         - zip code
-    - admins should be able to archive (save timestamp and user_id)
 -->
 
 {% if session.is_admin %}
@@ -70,11 +69,28 @@
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </p>
 
+        {% if session.is_admin %}
+        <hr>
+
         {% if request.path == "/browse_news/archived" %}
-        <p>
+        <p style="display: inline-block;">
             Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
             {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
         </p>
+        {% endif %}
+
+        <form
+            style="display: inline-block;"
+            action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
+            method="post"
+        >
+            <input
+                class="input"
+                type="submit"
+                value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
+            />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
         {% endif %}
     </div>
 {% endfor %}
