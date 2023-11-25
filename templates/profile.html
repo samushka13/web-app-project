@@ -68,14 +68,12 @@
 
     <hr>
 
-    <form action="/delete_current_user" method="post">
-
-    <button class="input" name="user_id" value="{{ session.user_id }}" type="submit">Poista käyttäjätili</button>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-
+    <form style="display: inline-block;" action="/delete_current_user" method="post">
+        <button class="input" name="user_id" value="{{ session.user_id }}" type="submit">Poista käyttäjätili</button>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 
-    <form action="/logout">
+    <form style="display: inline-block;" action="/logout">
         <input class="input" type="submit" value="Kirjaudu ulos" />
     </form>
 
