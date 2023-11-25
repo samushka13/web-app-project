@@ -17,17 +17,9 @@
 
 <form style="display: inline-block;" action="/browse_news">
     {% if request.path == "/browse_news" %}
-    <input class="input active" type="submit" value="Kaikki" />
+    <input class="input active" type="submit" value="Näkyvät" />
     {% else %}
-    <input class="input" type="submit" value="Kaikki" />
-    {% endif %}
-</form>
-
-<form style="display: inline-block;" action="/browse_news/archived">
-    {% if request.path == "/browse_news/archived" %}
-    <input class="input active" type="submit" value="Arkistoidut" />
-    {% else %}
-    <input class="input" type="submit" value="Arkistoidut" />
+    <input class="input" type="submit" value="Näkyvät" />
     {% endif %}
 </form>
 
@@ -36,6 +28,14 @@
     <input class="input active" type="submit" value="Tulossa olevat" />
     {% else %}
     <input class="input" type="submit" value="Tulossa olevat" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_news/archived">
+    {% if request.path == "/browse_news/archived" %}
+    <input class="input active" type="submit" value="Arkistoidut" />
+    {% else %}
+    <input class="input" type="submit" value="Arkistoidut" />
     {% endif %}
 </form>
 
