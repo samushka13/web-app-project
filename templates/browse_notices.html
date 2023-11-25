@@ -6,16 +6,6 @@
 
 <h2>Selaa ilmoituksia</h2>
 
-<!--
-    TODO:
-    - admins can assign statuses (acknowledged, in progress, completed, archived)
-    - allow filtering:
-        - status
-        - time
-        - zip code
-    - allow users to support notices
--->
-
 <form style="display: inline-block;" action="/browse_notices">
     {% if request.path == "/browse_notices" %}
     <input class="input active" type="submit" value="Kaikki" />
