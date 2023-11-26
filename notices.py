@@ -29,7 +29,8 @@ def get_all():
                     U.id as "user_id", U.name as "created_by"
                  FROM notices AS N
                  JOIN users AS U
-                 ON U.id=N.created_by"""
+                 ON U.id=N.created_by
+                 ORDER BY N.created_at DESC"""
 
         result = db.session.execute(text(sql))
         notices = result.fetchall()
@@ -47,7 +48,8 @@ def get_user_notices(user_id: int):
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by
-                 WHERE :user_id=N.created_by"""
+                 WHERE :user_id=N.created_by
+                 ORDER BY N.created_at DESC"""
 
         values = {
             "user_id": user_id

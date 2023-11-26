@@ -35,7 +35,8 @@ def get_all():
                     U.name as "created_by"
                  FROM polls AS P
                  JOIN users AS U
-                 ON U.id=P.created_by"""
+                 ON U.id=P.created_by
+                 ORDER BY P.created_at DESC"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()

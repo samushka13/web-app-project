@@ -30,7 +30,8 @@ def get_new():
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
-                 WHERE N.publish_on <= CURRENT_DATE AND N.archived_at IS NULL"""
+                 WHERE N.publish_on <= CURRENT_DATE AND N.archived_at IS NULL
+                 ORDER BY N.created_at DESC"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()
@@ -48,7 +49,8 @@ def get_upcoming():
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
-                 WHERE N.publish_on > CURRENT_DATE AND N.archived_at IS NULL"""
+                 WHERE N.publish_on > CURRENT_DATE AND N.archived_at IS NULL
+                 ORDER BY N.publish_on ASC"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()
@@ -66,7 +68,8 @@ def get_archived():
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by OR U.id=N.archived_by
-                 WHERE N.archived_at IS NOT NULL"""
+                 WHERE N.archived_at IS NOT NULL
+                 ORDER BY N.created_at DESC"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()

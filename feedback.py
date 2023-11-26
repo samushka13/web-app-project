@@ -28,7 +28,8 @@ def get_new():
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
-                 WHERE (F.acknowledged_at IS NULL and F.archived_at IS NULL)"""
+                 WHERE (F.acknowledged_at IS NULL and F.archived_at IS NULL)
+                 ORDER BY F.sent_at DESC"""
 
         result = db.session.execute(text(sql))
         feedbacks = result.fetchall()
@@ -46,7 +47,8 @@ def get_acknowledged():
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
-                 WHERE (F.acknowledged_at IS NOT NULL and F.archived_at IS NULL)"""
+                 WHERE (F.acknowledged_at IS NOT NULL and F.archived_at IS NULL)
+                 ORDER BY F.sent_at DESC"""
 
         result = db.session.execute(text(sql))
         feedbacks = result.fetchall()
@@ -64,7 +66,8 @@ def get_archived():
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
-                 WHERE F.archived_at IS NOT NULL"""
+                 WHERE F.archived_at IS NOT NULL
+                 ORDER BY F.sent_at DESC"""
 
         result = db.session.execute(text(sql))
         feedbacks = result.fetchall()
