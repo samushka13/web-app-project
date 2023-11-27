@@ -19,12 +19,12 @@ textarea {
     border: 1px solid gray;
     border-radius: 10px;
     color: black;
-    margin-bottom: 10px;
     margin-top: 10px;
+    margin-bottom: 10px;
     margin-left: 10vw;
     margin-right: 10vw;
-    padding-bottom: 10px;
     padding-top: 10px;
+    padding-bottom: 10px;
     padding-left: 30px;
     padding-right: 30px;
     text-align: left;
@@ -32,6 +32,8 @@ textarea {
 .content.user {
     display: flex;
     justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 5px;
     margin-left: 25vw;
     margin-right: 25vw;
 }
