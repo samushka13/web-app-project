@@ -113,7 +113,7 @@ def get_archived():
                     P.archived_at,
                     U.id as "user_id",
                     U.name as "created_by",
-                    U.name as "archived_by",
+                    U.name as "archived_by"
                  FROM polls AS P
                  JOIN users AS U
                  ON U.id=P.created_by OR U.id=P.archived_by
@@ -127,3 +127,41 @@ def get_archived():
 
     except Exception:
         return []
+
+def archive(user_id: int, poll_id: int):
+    try:
+        sql = """UPDATE polls
+                 SET archived_at=NOW(), archived_by=:archived_by
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": poll_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def unarchive(user_id: int, poll_id: int):
+    try:
+        sql = """UPDATE polls
+                 SET archived_at=NULL, archived_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": poll_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True

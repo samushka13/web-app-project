@@ -74,6 +74,27 @@
         {% if session.is_admin %}
         <hr>
         <p>{{ poll.created_by }} @ {{ poll.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+        <hr>
+
+        {% if request.path == "/browse_polls/archived" %}
+        <p style="display: inline-block;">
+            Arkistoinut: {{ poll.archived_by if poll.archived_by else "-" }} @ 
+            {{ poll.archived_at.strftime("%d.%m.%Y %H:%M:%S") if poll.archived_at else "-" }}
+        </p>
+        {% endif %}
+
+        <form
+            style="display: inline-block;"
+            action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
+            method="post"
+        >
+            <input
+                class="input"
+                type="submit"
+                value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
+            />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
         {% endif %}
     </div>
 {% endfor %}

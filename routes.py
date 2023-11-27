@@ -191,7 +191,7 @@ def browse_past_polls():
     return render_template("browse_polls.html", polls=poll_list)
 
 @app.route("/browse_polls/archived")
-@login_required
+@admin_required
 def browse_archived_polls():
     poll_list = polls.get_archived()
     return render_template("browse_polls.html", polls=poll_list)
@@ -473,6 +473,30 @@ def add_poll():
             return redirect(url_for("browse_polls"))
 
         return render_template("add_poll.html")
+
+@app.route("/archive_poll/<int:poll_id>", methods=["POST"])
+@admin_required
+def archive_poll(poll_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = polls.archive(user_id, poll_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistointi ei onnistunut", "error")
+
+    return redirect(url_for("browse_polls"))
+
+@app.route("/unarchive_poll/<int:poll_id>", methods=["POST"])
+@admin_required
+def unarchive_poll(poll_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = polls.unarchive(user_id, poll_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistoinnin peruminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_polls"))
 
 @app.route("/manage_users")
 @admin_required
