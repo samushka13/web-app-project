@@ -6,78 +6,150 @@
 
 <h2>Profiilini</h2>
 
+{% if session.user_id %}
+
+<form style="display: inline-block;" action="/delete_current_user" method="post">
+    <input class="input" type="submit" value="Poista käyttäjätili" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form style="display: inline-block;" action="/logout">
+    <input class="input" type="submit" value="Kirjaudu ulos" />
+</form>
+
 <div class="content form">
-
-    {% if session.user_id %}
-
-    <form action="/update_profile" method="post">
-        <p>
-            Voit täyttää vain ne tiedot, jotka haluat muuttaa.
-            <br>
-            Tyhjäksi jätetyt kentät säilyvät ennallaan.
-        </p>
+    <br>
+    <form action="/update_date_of_birth" method="post">
+        <label class="label" for="date_of_birth">Syntymäaika</label>
         <br>
-        
-        <label for="date_of_birth">Syntymäaika: {{ session.date_of_birth if session.date_of_birth else "-" }}</label>
-        <br>
-        <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth">
-        <br>
-        <br>
-
-        <label for="gender">Sukupuoli: {{ gender if gender else "-" }}</label>
-        <div class="radio-button-group">
-            <div class="radio-button">
-                <input type="radio" id="female" name="gender" value="female">
-                <label for="female">nainen</label>
-            </div>
-            <br>
-            <div class="radio-button">
-                <input type="radio" id="male" name="gender" value="male">
-                <label for="male">mies</label>
-            </div>
-            <br>
-            <div class="radio-button">
-                <input type="radio" id="other" name="gender" value="other">
-                <label for="other">muu</label>
+        <div class="profile-item">
+            <input style="display: inline-block;" class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}">
+            <div style="display: inline-block; width: 20px;"></div>
+            <div>
+                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
-        <br>
+    </form>
 
-        <label for="zip_code">Postinumero: {{ session.zip_code if session.zip_code else "-" }}</label>
-        <br>
-        <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5">
-        <br>
-        <br>
+    <div style="height: 10px;"></div>
+    <hr>
+    <br>
 
-        <label for="is_admin">Ylläpitäjä: {{ is_admin }}</label>
-        <div class="radio-button-group">
-            <div class="radio-button">
-                <input type="radio" id="yes" name="is_admin" value="yes">
-                <label for="yes">kyllä</label>
+    <form action="/update_gender" method="post">
+        <label for="gender">Sukupuoli</label>
+        <br>
+        <div class="profile-item">
+            <div style="display: inline-block;">
+                <div class="radio-button-group">
+                    <div class="radio-button">
+                        {% if session.gender == "female" %}
+                        <input type="radio" id="female-checked" name="gender" value="female" checked>
+                        <label for="female-checked">nainen</label>
+                        {% else %}
+                        <input type="radio" id="female" name="gender" value="female">
+                        <label for="female">nainen</label>
+                        {% endif %}
+                    </div>
+                    <div class="radio-button">
+                        {% if session.gender == "male" %}
+                        <input type="radio" id="male-checked" name="gender" value="male" checked>
+                        <label for="male-checked">mies</label>
+                        {% else %}
+                        <input type="radio" id="male" name="gender" value="male">
+                        <label for="male">mies</label>
+                        {% endif %}
+                    </div>
+                    <div class="radio-button">
+                        {% if session.gender == "other" %}
+                        <input type="radio" id="other-checked" name="gender" value="other" checked>
+                        <label for="other-checked">muu</label>
+                        {% else %}
+                        <input type="radio" id="other" name="gender" value="other">
+                        <label for="other">muu</label>
+                        {% endif %}
+                    </div>
+                    <div class="radio-button">
+                        {% if session.gender not in ["female", "male", "other"] %}
+                        <input type="radio" id="none-checked" name="gender" value="" checked>
+                        <label for="none-checked">en kerro</label>
+                        {% else %}
+                        <input type="radio" id="none" name="gender" value="">
+                        <label for="none">en kerro</label>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <br>
-            <div class="radio-button">
-                <input type="radio" id="no" name="is_admin" value="no">
-                <label for="no">ei</label>
+            <div style="display: inline-block; width: 20px;"></div>
+            <div style="display: inline-block;">
+                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
+    </form>
 
-        <input class="input" type="submit" value="Päivitä tiedot">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <div style="height: 5px;"></div>
+    <hr>
+    <br>
+
+    <form action="/update_zip_code" method="post">
+        <label for="zip_code">Postinumero</label>
+        <br>
+        <div class="profile-item">
+            <input style="display: inline-block;" class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
+            <div style="display: inline-block; width: 20px;"></div>
+            <div>
+                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </div>
+        </div>
+    </form>
+
+    <div style="height: 10px;"></div>
+    <hr>
+    <br>
+
+    <form action="/update_admin_status" method="post">
+        <label for="is_admin">Ylläpitäjä</label>
+        <br>
+        <div class="profile-item">
+            <div style="display: inline-block;">
+                <div class="radio-button-group">
+                    <div class="radio-button">
+                        {% if session.is_admin %}
+                        <input type="radio" id="yes-checked" name="is_admin" value="yes" checked>
+                        <label for="yes-checked">kyllä</label>
+                        {% else %}
+                        <input type="radio" id="yes" name="is_admin" value="yes">
+                        <label for="yes">kyllä</label>
+                        {% endif %}
+                    </div>
+                    <div class="radio-button">
+                        {% if not session.is_admin %}
+                        <input type="radio" id="no-checked" name="is_admin" value="no" checked>
+                        <label for="no-checked">ei</label>
+                        {% else %}
+                        <input type="radio" id="no" name="is_admin" value="no">
+                        <label for="no">ei</label>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div style="display: inline-block; width: 20px;"></div>
+            <div style="display: inline-block;">
+                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </div>
+        </div>
     </form>
 
     <hr>
 
-    <form style="display: inline-block;" action="/delete_current_user" method="post">
-        <input class="input" type="submit" value="Poista käyttäjätili" />
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <form style="display: inline-block;" action="/profile">
+        <input class="input" type="submit" value="Peru tallentamattomat muutokset" />
     </form>
-
-    <form style="display: inline-block;" action="/logout">
-        <input class="input" type="submit" value="Kirjaudu ulos" />
-    </form>
-
-    {% endif %}
 </div>
+
+{% endif %}
 
 {% endblock %}

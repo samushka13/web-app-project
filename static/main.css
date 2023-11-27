@@ -101,6 +101,10 @@ textarea {
     text-align: center;
     text-decoration: none;
 }
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+}
 .radio-button-group {
     display: flex;
     align-items: center;
