@@ -28,13 +28,13 @@
 
         <label for="open_on">Alkamispäivämäärä</label>
         <br>
-        <input class="input text-small" type="date" id="open_on" name="open_on">
+        <input class="input text-small" type="date" id="open_on" name="open_on" value="{{ current_date }}" min="{{ current_date }}">
         <br>
         <br>
 
         <label for="close_on">Päättymispäivämäärä</label>
         <br>
-        <input class="input text-small" type="date" id="close_on" name="close_on">
+        <input class="input text-small" type="date" id="close_on" name="close_on" value="{{ future_date }}" min="{{ current_date }}">
         <br>
         <br>
 

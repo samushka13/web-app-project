@@ -23,7 +23,7 @@
         <label class="label" for="date_of_birth">Syntymäaika</label>
         <br>
         <div class="profile-item">
-            <input style="display: inline-block;" class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}">
+            <input style="display: inline-block;" class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
             <div style="display: inline-block; width: 20px;"></div>
             <div>
                 <input style="display: inline-block;" class="input" type="submit" value="Tallenna">

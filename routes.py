@@ -1,3 +1,5 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
@@ -17,7 +19,9 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html")
+        current_date = datetime.today().date()
+        max_date = current_date - relativedelta(years=18)
+        return render_template("register.html", max_date=max_date)
 
     if request.method == "POST":
         username = request.form["username"]
@@ -253,7 +257,10 @@ def profile():
     if session["is_admin"] is True:
         is_admin = "kyllä"
 
-    return render_template("profile.html", gender=gender, is_admin=is_admin)
+    current_date = datetime.today().date()
+    max_date = current_date - relativedelta(years=18)
+
+    return render_template("profile.html", gender=gender, is_admin=is_admin, max_date=max_date)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
@@ -429,7 +436,8 @@ def unarchive_feedback(feedback_id):
 @admin_required
 def add_news():
     if request.method == "GET":
-        return render_template("add_news.html")
+        current_date = datetime.today().date()
+        return render_template("add_news.html", current_date=current_date)
 
     if request.method == "POST":
         title = request.form["title"]
@@ -499,7 +507,9 @@ def unarchive_news(news_id):
 @admin_required
 def add_poll():
     if request.method == "GET":
-        return render_template("add_poll.html")
+        current_date = datetime.today().date()
+        future_date = current_date + relativedelta(months=+1)
+        return render_template("add_poll.html", current_date=current_date, future_date=future_date)
 
     if request.method == "POST":
         title = request.form["title"]
