@@ -263,24 +263,9 @@ def browse_archived_polls():
 @app.route("/profile")
 @login_required
 def profile():
-    gender = "-"
-
-    if session["gender"] == "female":
-        gender = "nainen"
-    elif session["gender"] == "male":
-        gender = "mies"
-    elif session["gender"] == "other":
-        gender = "muu"
-
-    is_admin = "ei"
-
-    if session["is_admin"] is True:
-        is_admin = "kyllä"
-
     current_date = datetime.today().date()
     max_date = current_date - relativedelta(years=18)
-
-    return render_template("profile.html", gender=gender, is_admin=is_admin, max_date=max_date)
+    return render_template("profile.html", max_date=max_date)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
@@ -289,32 +274,38 @@ def give_feedback():
         return render_template("give_feedback.html")
 
     if request.method == "POST":
+        is_form_valid = True
+
         title = request.form["title"]
 
         if len(title) < 1:
             flash("Otsikko ei saa olla tyhjä", "error")
+            is_form_valid = False
 
         if len(title) > 100:
             flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+            is_form_valid = False
 
         body = request.form["body"]
 
         if len(body) > 1000:
             flash("Kuvauksessa voi olla enintään 1000 merkkiä", "error")
+            is_form_valid = False
 
         if body == "":
             body = None
 
-        user_id = session["user_id"]
-        token_valid = users.is_csrf_token_valid()
-        data_updated = feedback.send(user_id, title, body)
+        if is_form_valid:
+            user_id = session["user_id"]
+            token_valid = users.is_csrf_token_valid()
+            data_updated = feedback.send(user_id, title, body)
 
-        if not (user_id and token_valid and data_updated):
-            flash("Palautteen lähetys ei onnistunut", "error")
-        else:
-            return redirect(url_for("browse_feedback"))
+            if not (user_id and token_valid and data_updated):
+                flash("Palautteen lähetys ei onnistunut", "error")
+            else:
+                return redirect(url_for("browse_feedback"))
 
-        return render_template("give_feedback.html")
+        return render_template("give_feedback.html", title=title, body=body)
 
 @app.route("/add_notice", methods=["GET", "POST"])
 @login_required
