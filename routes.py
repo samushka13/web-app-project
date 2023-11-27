@@ -41,7 +41,7 @@ def register():
             flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
             is_form_valid = False
 
-        if "gender" not in request.form:
+        if "gender" not in request.form or request.form["gender"] == "":
             gender = None
         else:
             gender = request.form["gender"]
@@ -65,7 +65,11 @@ def register():
             is_admin = request.form["is_admin"] == "yes"
 
         if is_form_valid:
-            if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
+            response = users.register(username, password, date_of_birth, gender, zip_code, is_admin)
+
+            if response == "username-exists":
+                flash("Käyttäjänimi on varattu", "error")
+            elif not response:
                 flash("Rekisteröityminen ei onnistunut", "error")
             else:
                 return redirect("/")

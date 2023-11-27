@@ -1,7 +1,7 @@
 import os
-from datetime import datetime
 from flask import request, session
 from sqlalchemy.sql import text
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
 
@@ -23,6 +23,9 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
 
         db.session.execute(text(sql), values)
         db.session.commit()
+
+    except IntegrityError:
+        return "username-exists"
 
     except Exception:
         return False
