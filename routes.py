@@ -54,7 +54,7 @@ def register():
 
         if zip_code == "":
             zip_code = None
-        elif 0 < len(zip_code) < 5:
+        elif len(zip_code) > 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         if "is_admin" not in request.form:
@@ -460,7 +460,7 @@ def add_news():
 
         if zip_code == "":
             zip_code = None
-        elif 0 < len(zip_code) < 5:
+        elif len(zip_code) > 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         publish_on = request.form["publish_on"]
@@ -513,40 +513,53 @@ def add_poll():
 
     if request.method == "POST":
         title = request.form["title"]
+        zip_code = request.form["zip_code"]
+        open_on = request.form["open_on"]
+        close_on = request.form["close_on"]
+
+        is_form_valid = True
 
         if len(title) < 1:
             flash("Otsikko ei saa olla tyhjä", "error")
+            is_form_valid = False
 
         if len(title) > 100:
             flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-
-        zip_code = request.form["zip_code"]
+            is_form_valid = False
 
         if zip_code == "":
             zip_code = None
-        elif 0 < len(zip_code) < 5:
+        elif len(zip_code) > 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
-
-        open_on = request.form["open_on"]
+            is_form_valid = False
 
         if open_on == "":
             flash("Alkamispäivämäärä ei saa olla tyhjä", "error")
-
-        close_on = request.form["close_on"]
+            is_form_valid = False
 
         if close_on == "":
             flash("Päättymispäivämäärä ei saa olla tyhjä", "error")
+            is_form_valid = False
 
-        user_id = session["user_id"]
-        token_valid = users.is_csrf_token_valid()
-        data_updated = polls.add(user_id, title, zip_code, open_on, close_on)
+        if datetime.strptime(open_on, "%Y-%m-%d") > datetime.strptime(close_on, "%Y-%m-%d"):
+            flash("Alkamispäivämäärän on oltava ennen päättymispäivämäärää", "error")
+            is_form_valid = False
 
-        if not (user_id and token_valid and data_updated):
-            flash("Kyselyn tallennus ei onnistunut", "error")
-        else:
-            return redirect(url_for("browse_polls"))
+        if is_form_valid:
+            user_id = session["user_id"]
+            token_valid = users.is_csrf_token_valid()
+            data_updated = polls.add(user_id, title, zip_code, open_on, close_on)
 
-        return render_template("add_poll.html")
+            if not (user_id and token_valid and data_updated):
+                flash("Kyselyn tallennus ei onnistunut", "error")
+            else:
+                return redirect(url_for("browse_polls"))
+
+        return render_template("add_poll.html",
+                                title=title,
+                                zip_code=zip_code,
+                                open_on=open_on,
+                                close_on=close_on)
 
 @app.route("/archive_poll/<int:poll_id>", methods=["POST"])
 @admin_required
