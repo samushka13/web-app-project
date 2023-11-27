@@ -6,9 +6,41 @@
 
 <h2>Selaa kyselyitä</h2>
 
+<form style="display: inline-block;" action="/browse_polls">
+    {% if request.path == "/browse_polls" %}
+    <input class="input active" type="submit" value="Käynnissä" />
+    {% else %}
+    <input class="input" type="submit" value="Käynnissä" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_polls/upcoming">
+    {% if request.path == "/browse_polls/upcoming" %}
+    <input class="input active" type="submit" value="Tulossa" />
+    {% else %}
+    <input class="input" type="submit" value="Tulossa" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/browse_polls/past">
+    {% if request.path == "/browse_polls/past" %}
+    <input class="input active" type="submit" value="Menneet" />
+    {% else %}
+    <input class="input" type="submit" value="Menneet" />
+    {% endif %}
+</form>
+
 {% if session.is_admin %}
 
-<form action="/add_poll">
+<form style="display: inline-block;" action="/browse_polls/archived">
+    {% if request.path == "/browse_polls/archived" %}
+    <input class="input active" type="submit" value="Arkistoidut" />
+    {% else %}
+    <input class="input" type="submit" value="Arkistoidut" />
+    {% endif %}
+</form>
+
+<form style="display: inline-block;" action="/add_poll">
     <input class="input" type="submit" value="Lisää kysely" />
 </form>
 

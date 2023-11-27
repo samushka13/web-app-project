@@ -22,7 +22,7 @@ def add(user_id: int, title: str, zip_code: str, open_on: str, close_on: str):
 
     return True
 
-def get_all():
+def get_current():
     try:
         sql = """SELECT
                     P.id,
@@ -32,10 +32,92 @@ def get_all():
                     to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
                     P.created_at,
                     U.id as "user_id",
-                    U.name as "created_by"
+                    U.name as "created_by",
+                    P.open_on <= CURRENT_DATE,
+                    P.close_on > CURRENT_DATE
                  FROM polls AS P
                  JOIN users AS U
                  ON U.id=P.created_by
+                 WHERE P.open_on <= CURRENT_DATE AND P.close_on > CURRENT_DATE AND P.archived_at IS NULL
+                 ORDER BY P.created_at DESC"""
+
+        result = db.session.execute(text(sql))
+        polls = result.fetchall()
+
+        return polls
+
+    except Exception:
+        return []
+
+def get_upcoming():
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title as title,
+                    P.zip_code as zip_code,
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    P.open_on > CURRENT_DATE
+                 FROM polls AS P
+                 JOIN users AS U
+                 ON U.id=P.created_by
+                 WHERE P.open_on > CURRENT_DATE AND P.archived_at IS NULL
+                 ORDER BY P.created_at DESC"""
+
+        result = db.session.execute(text(sql))
+        polls = result.fetchall()
+
+        return polls
+
+    except Exception:
+        return []
+
+def get_past():
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title as title,
+                    P.zip_code as zip_code,
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    P.close_on < CURRENT_DATE
+                 FROM polls AS P
+                 JOIN users AS U
+                 ON U.id=P.created_by
+                 WHERE P.close_on < CURRENT_DATE AND P.archived_at IS NULL
+                 ORDER BY P.created_at DESC"""
+
+        result = db.session.execute(text(sql))
+        polls = result.fetchall()
+
+        return polls
+
+    except Exception:
+        return []
+
+def get_archived():
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title as title,
+                    P.zip_code as zip_code,
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.created_at,
+                    P.archived_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    U.name as "archived_by",
+                 FROM polls AS P
+                 JOIN users AS U
+                 ON U.id=P.created_by OR U.id=P.archived_by
+                 WHERE P.archived_at IS NOT NULL
                  ORDER BY P.created_at DESC"""
 
         result = db.session.execute(text(sql))

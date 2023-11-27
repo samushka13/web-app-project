@@ -175,7 +175,25 @@ def browse_my_notices():
 @app.route("/browse_polls")
 @login_required
 def browse_polls():
-    poll_list = polls.get_all()
+    poll_list = polls.get_current()
+    return render_template("browse_polls.html", polls=poll_list)
+
+@app.route("/browse_polls/upcoming")
+@login_required
+def browse_upcoming_polls():
+    poll_list = polls.get_upcoming()
+    return render_template("browse_polls.html", polls=poll_list)
+
+@app.route("/browse_polls/past")
+@login_required
+def browse_past_polls():
+    poll_list = polls.get_past()
+    return render_template("browse_polls.html", polls=poll_list)
+
+@app.route("/browse_polls/archived")
+@login_required
+def browse_archived_polls():
+    poll_list = polls.get_archived()
     return render_template("browse_polls.html", polls=poll_list)
 
 @app.route("/profile")
