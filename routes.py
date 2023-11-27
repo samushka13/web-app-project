@@ -78,21 +78,31 @@ def register():
                                 zip_code=zip_code,
                                 is_admin="yes" if is_admin else "no")
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    is_form_valid = True
 
-        login_response = users.login(username, password)
+    username = request.form["username"]
+    password = request.form["password"]
 
-        if login_response == "credential-error":
-            flash("Kirjautuminen ei onnistunut (väärä käyttäjänimi tai salasana)", "error")
+    login_response = users.login(username, password)
 
-        if login_response == "account-disabled":
-            flash("Tili on poistettu käytöstä.", "error")
+    if not login_response:
+        flash("Kirjautuminen ei onnistunut", "error")
+        is_form_valid = False
 
-    return redirect(url_for("browse_news"))
+    if login_response == "credential-error":
+        flash("Väärä käyttäjänimi tai salasana", "error")
+        is_form_valid = False
+
+    if login_response == "account-disabled":
+        flash("Tili on poistettu käytöstä", "error")
+        is_form_valid = False
+
+    if is_form_valid:
+        return redirect(url_for("browse_news"))
+
+    return render_template("index.html", username=username, password=password)
 
 @app.route("/logout")
 @login_required

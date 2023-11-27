@@ -18,13 +18,13 @@
     <form action="/login" method="post">
         <label for="username">Käyttäjänimi</label>
         <br>
-        <input class="input text-small" type="text" id="username" name="username" minlength="6" maxlength="50">
+        <input class="input text-small" type="text" id="username" name="username" minlength="6" maxlength="50" value="{{ username }}">
         <br>
 
         <br>
         <label for="username">Salasana</label>
         <br>
-        <input class="input text-small" type="password" id="password" name="password" minlength="6" maxlength="50">
+        <input class="input text-small" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
         <br>
 
         <input class="input" type="submit" value="Kirjaudu">
