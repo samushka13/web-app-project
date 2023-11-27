@@ -62,6 +62,13 @@
         {% if session.is_admin %}
         <hr>
 
+            {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
+            <p style="display: inline-block;">
+                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
+                {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
+            </p>
+            {% endif %}
+
         <form
             style="display: inline-block;"
             action="/{{ 'unacknowledge_feedback' if feedback.acknowledged_at else 'acknowledge_feedback' }}/{{ feedback.id }}"
@@ -75,18 +82,27 @@
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
 
-        <form
-            style="display: inline-block;"
-            action="/{{ 'unarchive_feedback' if feedback.archived_at else 'archive_feedback' }}/{{ feedback.id }}"
-            method="post"
-        >
-            <input
-                class="input"
-                type="submit"
-                value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
-            />
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
+            {% if request.path == "/browse_feedback/archived" %}
+            <br>
+
+            <p style="display: inline-block;">
+                Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
+                {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
+            </p>
+
+            <form
+                style="display: inline-block;"
+                action="/{{ 'unarchive_feedback' if feedback.archived_at else 'archive_feedback' }}/{{ feedback.id }}"
+                method="post"
+            >
+                <input
+                    class="input"
+                    type="submit"
+                    value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
+                />
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+            {% endif %}
 
         {% endif %}
     </div>

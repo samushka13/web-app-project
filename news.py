@@ -63,11 +63,19 @@ def get_upcoming():
 def get_archived():
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at, N.archived_at,
-                    U.id as "user_id", U.name as "created_by", U.name as "archived_by"
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.publish_on,
+                    N.created_at,
+                    N.archived_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by"
                  FROM news AS N
                  JOIN users AS U
-                 ON U.id=N.created_by OR U.id=N.archived_by
+                 ON U.id=N.created_by
                  WHERE N.archived_at IS NOT NULL
                  ORDER BY N.created_at DESC"""
 

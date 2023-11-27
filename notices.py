@@ -66,8 +66,16 @@ def get_user_notices(user_id: int):
 def get_archived():
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at, N.archived_at,
-                    U.id as "user_id", U.name as "created_by", U.name as "archived_by"
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.street_address,
+                    N.created_at,
+                    N.archived_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by

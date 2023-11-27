@@ -42,8 +42,14 @@ def get_new():
 def get_acknowledged():
     try:
         sql = """SELECT
-                    F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by,
-                    U.id as "user_id", U.name as "sent_by"
+                    F.id,
+                    F.title,
+                    F.body,
+                    F.sent_at,
+                    F.acknowledged_at,
+                    (SELECT name FROM users WHERE id=F.acknowledged_by) as "acknowledged_by",
+                    U.id as "user_id",
+                    U.name as "sent_by"
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
@@ -61,8 +67,16 @@ def get_acknowledged():
 def get_archived():
     try:
         sql = """SELECT
-                    F.id, F.title, F.body, F.sent_at, F.acknowledged_at, F.acknowledged_by, F.archived_at, F.archived_by,
-                    U.id as "user_id", U.name as "sent_by"
+                    F.id,
+                    F.title,
+                    F.body,
+                    F.sent_at,
+                    F.acknowledged_at,
+                    (SELECT name FROM users WHERE id=F.acknowledged_by) as "acknowledged_by",
+                    F.archived_at,
+                    U.id as "user_id",
+                    U.name as "sent_by",
+                    (SELECT name FROM users WHERE id=F.archived_by) as "archived_by"
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by

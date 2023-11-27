@@ -113,10 +113,10 @@ def get_archived():
                     P.archived_at,
                     U.id as "user_id",
                     U.name as "created_by",
-                    U.name as "archived_by"
+                    (SELECT name FROM users WHERE id=P.archived_by) as "archived_by"
                  FROM polls AS P
                  JOIN users AS U
-                 ON U.id=P.created_by OR U.id=P.archived_by
+                 ON U.id=P.created_by
                  WHERE P.archived_at IS NOT NULL
                  ORDER BY P.created_at DESC"""
 
