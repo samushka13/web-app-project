@@ -462,18 +462,23 @@ def add_news():
         return render_template("add_news.html", current_date=current_date)
 
     if request.method == "POST":
+        is_form_valid = True
+
         title = request.form["title"]
 
         if len(title) < 1:
             flash("Otsikko ei saa olla tyhjä", "error")
+            is_form_valid = False
 
         if len(title) > 100:
             flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+            is_form_valid = False
 
         body = request.form["body"]
 
         if len(body) > 1000:
             flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+            is_form_valid = False
 
         if body == "":
             body = None
@@ -484,22 +489,28 @@ def add_news():
             zip_code = None
         elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
+            is_form_valid = False
 
         publish_on = request.form["publish_on"]
 
         if publish_on == "":
             publish_on = None
 
-        user_id = session["user_id"]
-        token_valid = users.is_csrf_token_valid()
-        data_updated = news.add(user_id, title, body, zip_code, publish_on)
+        if is_form_valid:
+            user_id = session["user_id"]
+            token_valid = users.is_csrf_token_valid()
+            data_updated = news.add(user_id, title, body, zip_code, publish_on)
 
-        if not (user_id and token_valid and data_updated):
-            flash("Uutisen tallennus ei onnistunut", "error")
-        else:
-            return redirect(url_for("browse_news"))
+            if not (user_id and token_valid and data_updated):
+                flash("Uutisen tallennus ei onnistunut", "error")
+            else:
+                return redirect(url_for("browse_news"))
 
-        return render_template("add_news.html")
+        return render_template("add_news.html",
+                                title=title,
+                                body=body,
+                                zip_code=zip_code,
+                                publish_on=publish_on)
 
 @app.route("/archive_news/<int:news_id>", methods=["POST"])
 @admin_required
