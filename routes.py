@@ -314,18 +314,23 @@ def add_notice():
         return render_template("add_notice.html")
 
     if request.method == "POST":
+        is_form_valid = True
+
         title = request.form["title"]
 
         if len(title) < 1:
             flash("Otsikko ei saa olla tyhjä", "error")
+            is_form_valid = False
 
         if len(title) > 100:
             flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+            is_form_valid = False
 
         body = request.form["body"]
 
         if len(body) > 1000:
             flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+            is_form_valid = False
 
         if body == "":
             body = None
@@ -336,22 +341,28 @@ def add_notice():
             zip_code = None
         elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
+            is_form_valid = False
 
         street_address = request.form["street_address"]
 
         if street_address == "":
             street_address = None
 
-        user_id = session["user_id"]
-        token_valid = users.is_csrf_token_valid()
-        data_updated = notices.add(user_id, title, body, zip_code, street_address)
+        if is_form_valid:
+            user_id = session["user_id"]
+            token_valid = users.is_csrf_token_valid()
+            data_updated = notices.add(user_id, title, body, zip_code, street_address)
 
-        if not (user_id and token_valid and data_updated):
-            flash("Ilmoituksen tallennus ei onnistunut", "error")
-        else:
-            return redirect(url_for("browse_notices"))
+            if not (user_id and token_valid and data_updated):
+                flash("Ilmoituksen tallennus ei onnistunut", "error")
+            else:
+                return redirect(url_for("browse_notices"))
 
-        return render_template("add_notice.html")
+        return render_template("add_notice.html",
+                                title=title,
+                                body=body,
+                                zip_code=zip_code,
+                                street_address=street_address)
 
 @app.route("/archive_notice/<int:notice_id>", methods=["POST"])
 @admin_required
