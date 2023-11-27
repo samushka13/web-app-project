@@ -22,6 +22,18 @@
     {% endif %}
 </form>
 
+{% if session.is_admin %}
+
+<form style="display: inline-block;" action="/browse_notices/archived">
+    {% if request.path == "/browse_notices/archived" %}
+    <input class="input active" type="submit" value="Arkistoidut" />
+    {% else %}
+    <input class="input" type="submit" value="Arkistoidut" />
+    {% endif %}
+</form>
+
+{% endif %}
+
 <form style="display: inline-block;" action="/add_notice">
     <input class="input" type="submit" value="Lisää ilmoitus" />
 </form>
@@ -31,6 +43,8 @@
 <div class="content flash">
     {% if request.path == "/browse_notices/my" %}
     Ei omia ilmoituksia
+    {% elif request.path == "/browse_notices/archived" %}
+    Ei arkistoituja ilmoituksia
     {% else %}
     Ei ilmoituksia
     {% endif %}
@@ -53,6 +67,30 @@
 
         <hr>
         <p>{{ notice.created_by }} @ {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+
+        {% if session.is_admin %}
+        <hr>
+
+        {% if request.path == "/browse_notices/archived" %}
+        <p style="display: inline-block;">
+            Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
+            {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
+        </p>
+        {% endif %}
+
+        <form
+            style="display: inline-block;"
+            action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
+            method="post"
+        >
+            <input
+                class="input"
+                type="submit"
+                value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
+            />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        {% endif %}
     </div>
 {% endfor %}
 

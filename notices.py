@@ -62,3 +62,60 @@ def get_user_notices(user_id: int):
 
     except Exception:
         return []
+
+def get_archived():
+    try:
+        sql = """SELECT
+                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at, N.archived_at,
+                    U.id as "user_id", U.name as "created_by", U.name as "archived_by"
+                 FROM notices AS N
+                 JOIN users AS U
+                 ON U.id=N.created_by
+                 WHERE N.archived_at IS NOT NULL
+                 ORDER BY N.created_at DESC"""
+
+        result = db.session.execute(text(sql))
+        notices = result.fetchall()
+
+        return notices
+
+    except Exception:
+        return []
+
+def archive(user_id: int, notice_id: int):
+    try:
+        sql = """UPDATE notices
+                 SET archived_at=NOW(), archived_by=:archived_by
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": notice_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def unarchive(user_id: int, notice_id: int):
+    try:
+        sql = """UPDATE notices
+                 SET archived_at=NULL, archived_by=NULL
+                 WHERE id=:id"""
+
+        values = {
+            "archived_by": user_id,
+            "id": notice_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True

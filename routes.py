@@ -172,6 +172,12 @@ def browse_my_notices():
 
     return render_template("browse_notices.html", notices=notice_list)
 
+@app.route("/browse_notices/archived")
+@admin_required
+def browse_archived_notices():
+    notice_list = notices.get_archived()
+    return render_template("browse_notices.html", notices=notice_list)
+
 @app.route("/browse_polls")
 @login_required
 def browse_polls():
@@ -294,6 +300,30 @@ def add_notice():
             return redirect(url_for("browse_notices"))
 
         return render_template("add_notice.html")
+
+@app.route("/archive_notice/<int:notice_id>", methods=["POST"])
+@admin_required
+def archive_notice(notice_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = notices.archive(user_id, notice_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistointi ei onnistunut", "error")
+
+    return redirect(url_for("browse_notices"))
+
+@app.route("/unarchive_notice/<int:notice_id>", methods=["POST"])
+@admin_required
+def unarchive_notice(notice_id):
+    user_id = session["user_id"]
+    token_valid = users.is_csrf_token_valid()
+    data_updated = notices.unarchive(user_id, notice_id)
+
+    if not (user_id and token_valid and data_updated):
+        flash("Arkistoinnin peruminen ei onnistunut", "error")
+
+    return redirect(url_for("browse_notices"))
 
 @app.route("/browse_feedback")
 @login_required
