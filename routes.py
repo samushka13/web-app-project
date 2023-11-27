@@ -24,21 +24,22 @@ def register():
         return render_template("register.html", max_date=max_date)
 
     if request.method == "POST":
+        is_form_valid = True
+
         username = request.form["username"]
+        password = request.form["password"]
 
         if len(username) < 6:
             flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä", "error")
-            return render_template("register.html")
+            is_form_valid = False
 
         if len(username) > 50:
             flash("Käyttäjänimessä voi olla enintään 50 merkkiä", "error")
-            return render_template("register.html")
-
-        password = request.form["password"]
+            is_form_valid = False
 
         if len(password) < 6:
             flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
-            return render_template("register.html")
+            is_form_valid = False
 
         if "gender" not in request.form:
             gender = None
@@ -54,19 +55,28 @@ def register():
 
         if zip_code == "":
             zip_code = None
-        elif len(zip_code) > 5:
+        elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
+            is_form_valid = False
 
         if "is_admin" not in request.form:
             is_admin = False
         else:
             is_admin = request.form["is_admin"] == "yes"
 
-        if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
-            flash("Rekisteröityminen ei onnistunut", "error")
-            return render_template("register.html")
+        if is_form_valid:
+            if not users.register(username, password, date_of_birth, gender, zip_code, is_admin):
+                flash("Rekisteröityminen ei onnistunut", "error")
+            else:
+                return redirect("/")
 
-        return redirect("/")
+        return render_template("register.html",
+                                username=username,
+                                password=password,
+                                date_of_birth=date_of_birth,
+                                gender=gender,
+                                zip_code=zip_code,
+                                is_admin="yes" if is_admin else "no")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -131,7 +141,7 @@ def update_zip_code():
 
     if zip_code == "":
         zip_code = None
-    elif len(zip_code) > 5:
+    elif len(zip_code) != 5:
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         return redirect(url_for("profile"))
 
@@ -323,7 +333,7 @@ def add_notice():
 
         if zip_code == "":
             zip_code = None
-        elif len(zip_code) > 5:
+        elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         street_address = request.form["street_address"]
@@ -460,7 +470,7 @@ def add_news():
 
         if zip_code == "":
             zip_code = None
-        elif len(zip_code) > 5:
+        elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         publish_on = request.form["publish_on"]
@@ -529,7 +539,7 @@ def add_poll():
 
         if zip_code == "":
             zip_code = None
-        elif len(zip_code) > 5:
+        elif len(zip_code) != 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
             is_form_valid = False
 
