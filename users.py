@@ -36,7 +36,7 @@ def login(name: str, password: str):
         sql = """SELECT
                     id,
                     password,
-                    to_char(DATE(date_of_birth)::date, 'DD.MM.YYYY'),
+                    to_char(DATE(date_of_birth)::date, 'YYYY-MM-DD'),
                     gender,
                     zip_code,
                     admin,
@@ -78,17 +78,14 @@ def logout():
     for key in list(session.keys()):
         session.pop(key)
 
-def update_profile(user_id: int, date_of_birth: str, gender: str, zip_code: str, admin: bool):
+def update_date_of_birth(user_id: int, date_of_birth: str):
     try:
         sql = """UPDATE users
-                 SET date_of_birth=:date_of_birth, gender=:gender, zip_code=:zip_code, admin=:admin
+                 SET date_of_birth=:date_of_birth
                  WHERE id=:id"""
 
         values = {
             "date_of_birth": date_of_birth,
-            "gender": gender,
-            "zip_code": zip_code,
-            "admin": admin,
             "id": user_id
         }
 
@@ -98,13 +95,70 @@ def update_profile(user_id: int, date_of_birth: str, gender: str, zip_code: str,
     except Exception:
         return False
 
-    if date_of_birth:
-        date_of_birth = datetime.strptime(str(date_of_birth)[:10], '%Y-%m-%d').strftime('%d.%m.%Y')
-
     session["date_of_birth"] = date_of_birth
+
+    return True
+
+def update_gender(user_id: int, gender: str):
+    try:
+        sql = """UPDATE users
+                 SET gender=:gender
+                 WHERE id=:id"""
+
+        values = {
+            "gender": gender,
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
     session["gender"] = gender
+
+    return True
+
+def update_zip_code(user_id: int, zip_code: str):
+    try:
+        sql = """UPDATE users
+                 SET zip_code=:zip_code
+                 WHERE id=:id"""
+
+        values = {
+            "zip_code": zip_code,
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
     session["zip_code"] = zip_code
-    session["is_admin"] = admin
+
+    return True
+
+def update_admin_status(user_id: int, is_admin: str):
+    try:
+        sql = """UPDATE users
+                 SET admin=:admin
+                 WHERE id=:id"""
+
+        values = {
+            "admin": is_admin,
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    session["is_admin"] = is_admin
 
     return True
 

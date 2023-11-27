@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import flash, render_template, redirect, url_for, request, session
 from app import app
 from decorators import login_required, admin_required
@@ -87,40 +86,75 @@ def logout():
     users.logout()
     return redirect("/")
 
-@app.route("/update_profile", methods=["POST"])
+@app.route("/update_date_of_birth", methods=["POST"])
 @login_required
-def update_profile():
-    if "gender" not in request.form:
-        gender = session["gender"]
-    else:
-        gender = request.form["gender"]
-
+def update_date_of_birth():
     date_of_birth = request.form["date_of_birth"]
 
     if date_of_birth == "":
-        if session["date_of_birth"]:
-            date_of_birth = datetime.strptime(str(session["date_of_birth"]), '%d.%m.%Y')
-        else:
-            date_of_birth = None
+        date_of_birth = None
 
+    user_id = session["user_id"]
+    valid_token = users.is_csrf_token_valid()
+    data_updated = users.update_date_of_birth(user_id, date_of_birth)
+
+    if not (user_id and valid_token and data_updated):
+        flash("Tallennus ei onnistunut", "error")
+
+    return redirect(url_for("profile"))
+
+@app.route("/update_gender", methods=["POST"])
+@login_required
+def update_gender():
+    gender = request.form["gender"]
+
+    if gender == "":
+        gender = None
+
+    user_id = session["user_id"]
+    valid_token = users.is_csrf_token_valid()
+    data_updated = users.update_gender(user_id, gender)
+
+    if not (user_id and valid_token and data_updated):
+        flash("Tallennus ei onnistunut", "error")
+
+    return redirect(url_for("profile"))
+
+@app.route("/update_zip_code", methods=["POST"])
+@login_required
+def update_zip_code():
     zip_code = request.form["zip_code"]
 
     if zip_code == "":
-        zip_code = session["zip_code"]
-    elif 0 < len(zip_code) < 5:
+        zip_code = None
+    elif len(zip_code) > 5:
         flash("Postinumerossa tulee olla 5 numeroa", "error")
+        return redirect(url_for("profile"))
 
+    user_id = session["user_id"]
+    valid_token = users.is_csrf_token_valid()
+    data_updated = users.update_zip_code(user_id, zip_code)
+
+    if not (user_id and valid_token and data_updated):
+        flash("Tallennus ei onnistunut", "error")
+
+    return redirect(url_for("profile"))
+
+@app.route("/update_admin_status", methods=["POST"])
+@login_required
+def update_admin_status():
     if "is_admin" not in request.form:
-        is_admin = session["is_admin"]
+        flash("Ylläpitäjän rooli ei voi olla tyhjä", "error")
+        return render_template("profile.html")
     else:
         is_admin = request.form["is_admin"] == "yes"
 
     user_id = session["user_id"]
     valid_token = users.is_csrf_token_valid()
-    data_updated = users.update_profile(user_id, date_of_birth, gender, zip_code, is_admin)
+    data_updated = users.update_admin_status(user_id, is_admin)
 
     if not (user_id and valid_token and data_updated):
-        flash("Tietojen päivitys ei onnistunut", "error")
+        flash("Tallennus ei onnistunut", "error")
 
     return redirect(url_for("profile"))
 
@@ -282,7 +316,7 @@ def add_notice():
 
         if zip_code == "":
             zip_code = None
-        elif 0 < len(zip_code) < 5:
+        elif len(zip_code) > 5:
             flash("Postinumerossa tulee olla 5 numeroa", "error")
 
         street_address = request.form["street_address"]
