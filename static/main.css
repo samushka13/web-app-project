@@ -80,9 +80,10 @@ textarea {
     margin: 0px;
     overflow: hidden;
     padding: 20px;
+    min-width: 700px;
 }
 .nav-bar-button {
-    display: inline;
+    display: inline-block;
 }
 .nav-bar-button a {
     color: white;
