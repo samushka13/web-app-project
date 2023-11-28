@@ -57,12 +57,19 @@ textarea {
     text-align: center;
     width: fit-content;
 }
+.flex-fill {
+    display: flex;
+    justify-content: space-between;
+}
 .header {
     background-color: #FAFAFA;
     overflow: hidden;
     position: fixed;
     top: 0;
     width: 100%;
+}
+.inlined {
+    display: inline-block;
 }
 .input {
     margin: 10px;
@@ -102,10 +109,6 @@ textarea {
     padding: 20px;
     text-align: center;
     text-decoration: none;
-}
-.profile-item {
-    display: flex;
-    justify-content: space-between;
 }
 .radio-button-group {
     display: flex;

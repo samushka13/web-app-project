@@ -102,7 +102,8 @@ def get_details(news_id: int):
                     N.archived_at,
                     U.id as "user_id",
                     U.name as "created_by",
-                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by"
+                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by",
+                    (SELECT COUNT(DISTINCT viewed_by) FROM news_views WHERE news_id=:news_id) as "views"
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
@@ -118,7 +119,7 @@ def get_details(news_id: int):
         return item
 
     except Exception:
-        return None
+        return False
 
 def archive(user_id: int, news_id: int):
     try:
@@ -152,6 +153,26 @@ def unarchive(user_id: int, news_id: int):
         values = {
             "archived_by": user_id,
             "id": news_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def add_view(news_id: int, user_id: int):
+    try:
+        sql = """INSERT INTO news_views
+                    (news_id, viewed_at, viewed_by)
+                 VALUES
+                    (:news_id, NOW(), :viewed_by)"""
+
+        values = {
+            "news_id": news_id,
+            "viewed_by": user_id
         }
 
         db.session.execute(text(sql), values)

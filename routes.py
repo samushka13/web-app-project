@@ -220,8 +220,15 @@ def browse_upcoming_news():
 @app.route("/browse_news/details/<int:news_id>")
 @login_required
 def view_news_details(news_id):
-    item = news.get_details(news_id)
-    return render_template("news_details.html", item=item)
+    if "user_id" in session:
+        news.add_view(news_id, session["user_id"])
+        item = news.get_details(news_id)
+
+        if item:
+            return render_template("news_details.html", item=item)
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_news"))
 
 @app.route("/browse_notices")
 @login_required

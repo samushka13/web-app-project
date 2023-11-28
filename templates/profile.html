@@ -22,7 +22,7 @@
     <form action="/update_date_of_birth" method="post">
         <label class="label" for="date_of_birth">Syntymäaika</label>
         <br>
-        <div class="profile-item">
+        <div class="flex-fill">
             <input style="display: inline-block;" class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
             <div style="display: inline-block; width: 20px;"></div>
             <div>
@@ -39,7 +39,7 @@
     <form action="/update_gender" method="post">
         <label for="gender">Sukupuoli</label>
         <br>
-        <div class="profile-item">
+        <div class="flex-fill">
             <div style="display: inline-block;">
                 <div class="radio-button-group">
                     <div class="radio-button">
@@ -95,7 +95,7 @@
     <form action="/update_zip_code" method="post">
         <label for="zip_code">Postinumero</label>
         <br>
-        <div class="profile-item">
+        <div class="flex-fill">
             <input style="display: inline-block;" class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
             <div style="display: inline-block; width: 20px;"></div>
             <div>
@@ -112,7 +112,7 @@
     <form action="/update_admin_status" method="post">
         <label for="is_admin">Ylläpitäjä</label>
         <br>
-        <div class="profile-item">
+        <div class="flex-fill">
             <div style="display: inline-block;">
                 <div class="radio-button-group">
                     <div class="radio-button">
