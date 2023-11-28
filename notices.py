@@ -105,7 +105,10 @@ def get_details(notice_id: int):
                     U.id as "user_id",
                     U.name as "created_by",
                     (SELECT name FROM users WHERE id=N.archived_by) as "archived_by",
-                    (SELECT COUNT(DISTINCT viewed_by) FROM notice_views WHERE notice_id=:notice_id) as "views"
+                    (SELECT COUNT(viewed_by) FROM notice_views WHERE notice_id=:notice_id) as "total_views",
+                    (SELECT COUNT(DISTINCT viewed_by) FROM notice_views WHERE notice_id=:notice_id) as "unique_views",
+                    (SELECT COUNT(supported_by) FROM notice_supports WHERE notice_id=:notice_id) as "total_supports",
+                    (SELECT COUNT(DISTINCT supported_by) FROM notice_supports WHERE notice_id=:notice_id) as "unique_supports"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by
@@ -175,6 +178,26 @@ def add_view(notice_id: int, user_id: int):
         values = {
             "notice_id": notice_id,
             "viewed_by": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def add_support(notice_id: int, user_id: int):
+    try:
+        sql = """INSERT INTO notice_supports
+                    (notice_id, supported_at, supported_by)
+                 VALUES
+                    (:notice_id, NOW(), :supported_by)"""
+
+        values = {
+            "notice_id": notice_id,
+            "supported_by": user_id
         }
 
         db.session.execute(text(sql), values)

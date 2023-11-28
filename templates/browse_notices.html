@@ -82,8 +82,9 @@
         </form>
         {% endif %}
 
-        <form class="inlined" action="/browse_notices/details/{{ notice.id }}">
+        <form class="inlined" action="/browse_notices/details/{{ notice.id }}" method="post">
             <input class="input" type="submit" value="Lue lisää">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
     </div>
 {% endfor %}

@@ -217,15 +217,16 @@ def browse_upcoming_news():
     news_list = news.get_upcoming()
     return render_template("browse_news.html", news=news_list)
 
-@app.route("/browse_news/details/<int:news_id>")
+@app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
 @login_required
 def view_news_details(news_id):
-    if "user_id" in session:
+    if request.method == "POST" and "user_id" in session and users.is_csrf_token_valid():
         news.add_view(news_id, session["user_id"])
-        item = news.get_details(news_id)
 
-        if item:
-            return render_template("news_details.html", item=item)
+    item = news.get_details(news_id)
+
+    if item:
+        return render_template("news_details.html", item=item)
 
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_news"))
@@ -253,15 +254,30 @@ def browse_archived_notices():
     notice_list = notices.get_archived()
     return render_template("browse_notices.html", notices=notice_list)
 
-@app.route("/browse_notices/details/<int:notice_id>")
+@app.route("/browse_notices/details/<int:notice_id>", methods=["GET", "POST"])
 @login_required
 def view_notice_details(notice_id):
-    if "user_id" in session:
+    if request.method == "POST" and "user_id" in session and users.is_csrf_token_valid():
         notices.add_view(notice_id, session["user_id"])
-        notice = notices.get_details(notice_id)
 
-        if notice:
-            return render_template("notice_details.html", notice=notice)
+    notice = notices.get_details(notice_id)
+
+    if notice:
+        return render_template("notice_details.html", notice=notice)
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_notices"))
+
+@app.route("/support_notice/<int:notice_id>", methods=["GET", "POST"])
+@login_required
+def support_notice(notice_id):
+    if request.method == "POST" and "user_id" in session and users.is_csrf_token_valid():
+        notices.add_support(notice_id, session["user_id"])
+
+    notice = notices.get_details(notice_id)
+
+    if notice:
+        return render_template("notice_details.html", notice=notice)
 
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_notices"))
