@@ -3,8 +3,10 @@ from db import db
 
 def add(user_id: int, title: str, zip_code: str, open_on: str, close_on: str):
     try:
-        sql = """INSERT INTO polls (title, zip_code, open_on, close_on, created_at, created_by)
-                 VALUES (:title, :zip_code, :open_on, :close_on, NOW(), :created_by)"""
+        sql = """INSERT INTO polls
+                    (title, zip_code, open_on, close_on, created_at, created_by)
+                 VALUES
+                    (:title, :zip_code, :open_on, :close_on, NOW(), :created_by)"""
 
         values = {
             "title": title,
@@ -26,10 +28,10 @@ def get_current():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as title,
-                    P.zip_code as zip_code,
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.title as "title",
+                    P.zip_code as "zip_code",
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
                     P.created_at,
                     U.id as "user_id",
                     U.name as "created_by",
@@ -38,7 +40,10 @@ def get_current():
                  FROM polls AS P
                  JOIN users AS U
                  ON U.id=P.created_by
-                 WHERE P.open_on <= CURRENT_DATE AND P.close_on > CURRENT_DATE AND P.archived_at IS NULL
+                 WHERE
+                    P.open_on <= CURRENT_DATE
+                    AND P.close_on > CURRENT_DATE
+                    AND P.archived_at IS NULL
                  ORDER BY P.created_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -53,10 +58,10 @@ def get_upcoming():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as title,
-                    P.zip_code as zip_code,
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.title as "title",
+                    P.zip_code as "zip_code",
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
                     P.created_at,
                     U.id as "user_id",
                     U.name as "created_by",
@@ -64,7 +69,9 @@ def get_upcoming():
                  FROM polls AS P
                  JOIN users AS U
                  ON U.id=P.created_by
-                 WHERE P.open_on > CURRENT_DATE AND P.archived_at IS NULL
+                 WHERE
+                    P.open_on > CURRENT_DATE
+                    AND P.archived_at IS NULL
                  ORDER BY P.created_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -79,10 +86,10 @@ def get_past():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as title,
-                    P.zip_code as zip_code,
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.title as "title",
+                    P.zip_code as "zip_code",
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
                     P.created_at,
                     U.id as "user_id",
                     U.name as "created_by",
@@ -90,7 +97,9 @@ def get_past():
                  FROM polls AS P
                  JOIN users AS U
                  ON U.id=P.created_by
-                 WHERE P.close_on < CURRENT_DATE AND P.archived_at IS NULL
+                 WHERE
+                    P.close_on < CURRENT_DATE
+                    AND P.archived_at IS NULL
                  ORDER BY P.created_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -105,10 +114,10 @@ def get_archived():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as title,
-                    P.zip_code as zip_code,
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as open_on,
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as close_on,
+                    P.title as "title",
+                    P.zip_code as "zip_code",
+                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
+                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
                     P.created_at,
                     P.archived_at,
                     U.id as "user_id",
@@ -131,7 +140,9 @@ def get_archived():
 def archive(user_id: int, poll_id: int):
     try:
         sql = """UPDATE polls
-                 SET archived_at=NOW(), archived_by=:archived_by
+                 SET
+                    archived_at=NOW(),
+                    archived_by=:archived_by
                  WHERE id=:id"""
 
         values = {
@@ -150,7 +161,9 @@ def archive(user_id: int, poll_id: int):
 def unarchive(user_id: int, poll_id: int):
     try:
         sql = """UPDATE polls
-                 SET archived_at=NULL, archived_by=NULL
+                 SET
+                    archived_at=NULL,
+                    archived_by=NULL
                  WHERE id=:id"""
 
         values = {

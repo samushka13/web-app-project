@@ -3,8 +3,10 @@ from db import db
 
 def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
     try:
-        sql = """INSERT INTO news (title, body, zip_code, publish_on, created_at, created_by)
-                 VALUES (:title, :body, :zip_code, :publish_on, NOW(), :created_by)"""
+        sql = """INSERT INTO news
+                    (title, body, zip_code, publish_on, created_at, created_by)
+                 VALUES
+                    (:title, :body, :zip_code, :publish_on, NOW(), :created_by)"""
 
         values = {
             "title": title,
@@ -25,12 +27,21 @@ def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
 def get_new():
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
-                    U.id as "user_id", U.name as "created_by", N.publish_on <= CURRENT_DATE
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.publish_on,
+                    N.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    N.publish_on <= CURRENT_DATE
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
-                 WHERE N.publish_on <= CURRENT_DATE AND N.archived_at IS NULL
+                 WHERE
+                    N.publish_on <= CURRENT_DATE
+                    AND N.archived_at IS NULL
                  ORDER BY N.created_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -44,12 +55,21 @@ def get_new():
 def get_upcoming():
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.publish_on, N.created_at,
-                    U.id as "user_id", U.name as "created_by", N.publish_on > CURRENT_DATE
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.publish_on,
+                    N.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    N.publish_on > CURRENT_DATE
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
-                 WHERE N.publish_on > CURRENT_DATE AND N.archived_at IS NULL
+                 WHERE
+                    N.publish_on > CURRENT_DATE
+                    AND N.archived_at IS NULL
                  ORDER BY N.publish_on ASC"""
 
         result = db.session.execute(text(sql))
@@ -90,7 +110,9 @@ def get_archived():
 def archive(user_id: int, news_id: int):
     try:
         sql = """UPDATE news
-                 SET archived_at=NOW(), archived_by=:archived_by
+                 SET
+                    archived_at=NOW(),
+                    archived_by=:archived_by
                  WHERE id=:id"""
 
         values = {
@@ -109,7 +131,9 @@ def archive(user_id: int, news_id: int):
 def unarchive(user_id: int, news_id: int):
     try:
         sql = """UPDATE news
-                 SET archived_at=NULL, archived_by=NULL
+                 SET
+                    archived_at=NULL,
+                    archived_by=NULL
                  WHERE id=:id"""
 
         values = {

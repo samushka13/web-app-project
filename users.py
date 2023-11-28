@@ -9,8 +9,10 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
     hash_value = generate_password_hash(password)
 
     try:
-        sql = """INSERT INTO users (name, password, date_of_birth, gender, zip_code, admin)
-                 VALUES (:name, :password, :date_of_birth, :gender, :zip_code, :admin)"""
+        sql = """INSERT INTO users
+                    (name, password, date_of_birth, gender, zip_code, admin)
+                 VALUES
+                    (:name, :password, :date_of_birth, :gender, :zip_code, :admin)"""
 
         values = {
             "name": name,
@@ -44,7 +46,8 @@ def login(name: str, password: str):
                     zip_code,
                     admin,
                     disabled_at
-                 FROM users WHERE name=:name"""
+                 FROM users
+                 WHERE name=:name"""
 
         result = db.session.execute(text(sql), { "name": name })
         user = result.fetchone()
@@ -167,7 +170,8 @@ def update_admin_status(user_id: int, is_admin: str):
 
 def delete_user(user_id: int):
     try:
-        sql = """DELETE FROM users WHERE id=:id"""
+        sql = """DELETE FROM users
+                 WHERE id=:id"""
 
         values = {
             "id": user_id
@@ -183,7 +187,12 @@ def delete_user(user_id: int):
 
 def get_users():
     try:
-        sql = """SELECT id, name, admin, disabled_at FROM users"""
+        sql = """SELECT
+                    id,
+                    name,
+                    admin,
+                    disabled_at
+                 FROM users"""
 
         result = db.session.execute(text(sql))
         users = result.fetchall()
@@ -196,7 +205,9 @@ def get_users():
 def disable_user(user_id: int):
     try:
         sql = """UPDATE users
-                 SET disabled_at=NOW(), disabled_by=:disabled_by
+                 SET
+                    disabled_at=NOW(),
+                    disabled_by=:disabled_by
                  WHERE id=:id"""
 
         values = {
@@ -215,7 +226,9 @@ def disable_user(user_id: int):
 def enable_user(user_id: int):
     try:
         sql = """UPDATE users
-                 SET disabled_at=NULL, disabled_by=NULL
+                 SET
+                    disabled_at=NULL,
+                    disabled_by=NULL
                  WHERE id=:id"""
 
         values = {

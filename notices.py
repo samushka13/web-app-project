@@ -3,8 +3,10 @@ from db import db
 
 def add(user_id: int, title: str, body: str, zip_code: str, street_address: str):
     try:
-        sql = """INSERT INTO notices (title, body, zip_code, street_address, created_at, created_by)
-                 VALUES (:title, :body, :zip_code, :street_address, NOW(), :created_by)"""
+        sql = """INSERT INTO notices
+                    (title, body, zip_code, street_address, created_at, created_by)
+                 VALUES
+                    (:title, :body, :zip_code, :street_address, NOW(), :created_by)"""
 
         values = {
             "title": title,
@@ -25,8 +27,14 @@ def add(user_id: int, title: str, body: str, zip_code: str, street_address: str)
 def get_all():
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                    U.id as "user_id", U.name as "created_by"
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.street_address,
+                    N.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by
@@ -43,8 +51,14 @@ def get_all():
 def get_user_notices(user_id: int):
     try:
         sql = """SELECT
-                    N.id, N.title, N.body, N.zip_code, N.street_address, N.created_at,
-                    U.id as "user_id", U.name as "created_by"
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.street_address,
+                    N.created_at,
+                    U.id as "user_id",
+                    U.name as "created_by"
                  FROM notices AS N
                  JOIN users AS U
                  ON U.id=N.created_by
@@ -93,7 +107,9 @@ def get_archived():
 def archive(user_id: int, notice_id: int):
     try:
         sql = """UPDATE notices
-                 SET archived_at=NOW(), archived_by=:archived_by
+                 SET
+                    archived_at=NOW(),
+                    archived_by=:archived_by
                  WHERE id=:id"""
 
         values = {
@@ -112,7 +128,9 @@ def archive(user_id: int, notice_id: int):
 def unarchive(user_id: int, notice_id: int):
     try:
         sql = """UPDATE notices
-                 SET archived_at=NULL, archived_by=NULL
+                 SET
+                    archived_at=NULL,
+                    archived_by=NULL
                  WHERE id=:id"""
 
         values = {

@@ -3,8 +3,10 @@ from db import db
 
 def send(user_id: int, title: str, body: str):
     try:
-        sql = """INSERT INTO feedbacks (title, body, sent_at, sent_by)
-                 VALUES (:title, :body, NOW(), :sent_by)"""
+        sql = """INSERT INTO feedbacks
+                    (title, body, sent_at, sent_by)
+                 VALUES
+                    (:title, :body, NOW(), :sent_by)"""
 
         values = {
             "title": title,
@@ -23,12 +25,18 @@ def send(user_id: int, title: str, body: str):
 def get_new():
     try:
         sql = """SELECT
-                    F.id, F.title, F.body, F.sent_at,
-                    U.id as "user_id", U.name as "sent_by"
+                    F.id,
+                    F.title,
+                    F.body,
+                    F.sent_at,
+                    U.id as "user_id",
+                    U.name as "sent_by"
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
-                 WHERE (F.acknowledged_at IS NULL and F.archived_at IS NULL)
+                 WHERE 
+                    F.acknowledged_at IS NULL
+                    AND F.archived_at IS NULL
                  ORDER BY F.sent_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -53,7 +61,9 @@ def get_acknowledged():
                  FROM feedbacks AS F
                  JOIN users AS U
                  ON U.id=F.sent_by
-                 WHERE (F.acknowledged_at IS NOT NULL and F.archived_at IS NULL)
+                 WHERE
+                    F.acknowledged_at IS NOT NULL
+                    AND F.archived_at IS NULL
                  ORDER BY F.sent_at DESC"""
 
         result = db.session.execute(text(sql))
@@ -94,7 +104,9 @@ def get_archived():
 def acknowledge(user_id: int, feedback_id: int):
     try:
         sql = """UPDATE feedbacks
-                 SET acknowledged_at=NOW(), acknowledged_by=:acknowledged_by
+                 SET
+                    acknowledged_at=NOW(),
+                    acknowledged_by=:acknowledged_by
                  WHERE id=:id"""
 
         values = {
@@ -113,7 +125,9 @@ def acknowledge(user_id: int, feedback_id: int):
 def unacknowledge(user_id: int, feedback_id: int):
     try:
         sql = """UPDATE feedbacks
-                 SET acknowledged_at=NULL, acknowledged_by=NULL
+                 SET
+                    acknowledged_at=NULL,
+                    acknowledged_by=NULL
                  WHERE id=:id"""
 
         values = {
@@ -132,7 +146,9 @@ def unacknowledge(user_id: int, feedback_id: int):
 def archive(user_id: int, feedback_id: int):
     try:
         sql = """UPDATE feedbacks
-                 SET archived_at=NOW(), archived_by=:archived_by
+                 SET
+                    archived_at=NOW(),
+                    archived_by=:archived_by
                  WHERE id=:id"""
 
         values = {
@@ -151,7 +167,9 @@ def archive(user_id: int, feedback_id: int):
 def unarchive(user_id: int, feedback_id: int):
     try:
         sql = """UPDATE feedbacks
-                 SET archived_at=NULL, archived_by=NULL
+                 SET
+                    archived_at=NULL,
+                    archived_by=NULL
                  WHERE id=:id"""
 
         values = {
