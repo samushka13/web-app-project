@@ -189,3 +189,24 @@ def unarchive(user_id: int, poll_id: int):
         return False
 
     return True
+
+def vote(poll_id: int, user_id: int, vote_type: bool):
+    try:
+        sql = """INSERT INTO votes
+                    (poll_id, vote, voted_at, voted_by)
+                 VALUES
+                    (:poll_id, :vote, NOW(), :voted_by)"""
+
+        values = {
+            "poll_id": poll_id,
+            "vote": vote_type,
+            "voted_by": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
