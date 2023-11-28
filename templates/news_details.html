@@ -34,7 +34,12 @@
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </p>
         <p>
-            {{ item.views }} {{ 'uniikki katselu' if item.views == 1 else 'uniikkia katselua' }}
+            {% if item.total_views == 0 or item.total_views == 1 %}
+            {{ item.total_views }} {{ 'katselukerta' if item.total_views == 1 else 'katselukertaa' }}
+            {% else %}
+            {{ item.total_views }} katselukertaa | 
+            {{ item.unique_views }} {{ 'katselija' if item.unique_views == 1 else 'katselijaa' }}
+            {% endif %}
         </p>
     </div>
 
@@ -44,7 +49,6 @@
     <p>
         Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
         {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
-
     </p>
 
     {% endif %}

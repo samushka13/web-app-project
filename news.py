@@ -103,7 +103,8 @@ def get_details(news_id: int):
                     U.id as "user_id",
                     U.name as "created_by",
                     (SELECT name FROM users WHERE id=N.archived_by) as "archived_by",
-                    (SELECT COUNT(DISTINCT viewed_by) FROM news_views WHERE news_id=:news_id) as "views"
+                    (SELECT COUNT(viewed_by) FROM news_views WHERE news_id=:news_id) as "total_views",
+                    (SELECT COUNT(DISTINCT viewed_by) FROM news_views WHERE news_id=:news_id) as "unique_views"
                  FROM news AS N
                  JOIN users AS U
                  ON U.id=N.created_by
