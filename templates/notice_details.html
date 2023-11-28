@@ -1,0 +1,64 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% if session.is_admin %}
+<form
+    class="inlined"
+    action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
+    method="post"
+>
+    <input
+        class="input"
+        type="submit"
+        value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
+    />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+{% endif %}
+
+<form class="inlined" action="/browse_notices">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
+
+<div class="content">
+    <h3>"{{ notice.title }}"</h3>
+    <hr>
+    <p>"{{ notice.body }}"</p>
+
+    {% if notice.street_address or notice.zip_code %}
+    <hr>
+    {% endif %}
+
+    {% if notice.street_address %}
+    <p>Katuosoite: {{ notice.street_address }}</p>
+    {% endif %}
+
+    {% if notice.zip_code %}
+    <p>Postinumero: {{ notice.zip_code }}</p>
+    {% endif %}
+
+    <hr>
+    <div class="flex-fill">
+        <p>
+            {{ (notice.created_by + " @ ") if session.is_admin else "" }}
+            {{ notice.created_at.strftime("%d.%m.%Y") }}
+        </p>
+        <p>
+            {{ notice.views }} {{ 'uniikki katselu' if notice.views == 1 else 'uniikkia katselua' }}
+        </p>
+    </div>
+
+    {% if session.is_admin and notice.archived_at %}
+
+    <p>
+        Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
+        {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
+    </p>
+
+    {% endif %}
+</div>
+
+{% endblock %}

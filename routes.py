@@ -253,6 +253,19 @@ def browse_archived_notices():
     notice_list = notices.get_archived()
     return render_template("browse_notices.html", notices=notice_list)
 
+@app.route("/browse_notices/details/<int:notice_id>")
+@login_required
+def view_notice_details(notice_id):
+    if "user_id" in session:
+        notices.add_view(notice_id, session["user_id"])
+        notice = notices.get_details(notice_id)
+
+        if notice:
+            return render_template("notice_details.html", notice=notice)
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_notices"))
+
 @app.route("/browse_polls")
 @login_required
 def browse_polls():

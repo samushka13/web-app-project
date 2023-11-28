@@ -34,17 +34,18 @@
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </p>
         <p>
-            {{ item.views }} {{ 'uniikki lukija' if item.views == 1 else 'uniikkia lukijaa' }}
+            {{ item.views }} {{ 'uniikki katselu' if item.views == 1 else 'uniikkia katselua' }}
         </p>
     </div>
 
     {% if session.is_admin and item.archived_at %}
     <hr>
 
-    <div class="inlined">
+    <p>
         Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
         {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
-    </div>
+
+    </p>
 
     {% endif %}
 </div>

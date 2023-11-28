@@ -1,6 +1,6 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
@@ -55,28 +55,18 @@
 {% for notice in notices %}
     <div class="content">
         <h3>"{{ notice.title }}"</h3>
-        <p>"{{ notice.body }}"</p>
-
-        {% if notice.street_address %}
-        <p>Katuosoite: {{ notice.street_address }}</p>
-        {% endif %}
 
         {% if notice.zip_code %}
         <p>Postinumero: {{ notice.zip_code }}</p>
         {% endif %}
 
         <hr>
-        <p>{{ notice.created_by }} @ {{ notice.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+
+        <div class="inlined">
+            {{ notice.created_at.strftime("%d.%m.%Y") }}
+        </div>
 
         {% if session.is_admin %}
-        <hr>
-
-        {% if request.path == "/browse_notices/archived" %}
-        <p class="inlined">
-            Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
-            {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
-        </p>
-        {% endif %}
 
         <form
             class="inlined"
@@ -91,6 +81,10 @@
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
         {% endif %}
+
+        <form class="inlined" action="/browse_notices/details/{{ notice.id }}">
+            <input class="input" type="submit" value="Lue lisää">
+        </form>
     </div>
 {% endfor %}
 
