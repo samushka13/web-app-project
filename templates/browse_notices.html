@@ -6,6 +6,14 @@
 
 <h2>Selaa ilmoituksia</h2>
 
+<form class="inlined" action="/browse_notices/nearby">
+    {% if request.path == "/browse_notices/nearby" %}
+    <input class="input active" type="submit" value="Lähistölläni" />
+    {% else %}
+    <input class="input" type="submit" value="Lähistölläni" />
+    {% endif %}
+</form>
+
 <form class="inlined" action="/browse_notices">
     {% if request.path == "/browse_notices" %}
     <input class="input active" type="submit" value="Kaikki" />
@@ -41,7 +49,13 @@
 {% if notices|length == 0 %}
 
 <div class="content flash">
-    {% if request.path == "/browse_notices/my" %}
+    {% if request.path == "/browse_notices/nearby" %}
+    {{
+        'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia ilmoituksia'
+        if not session.zip_code
+        else 'Ei lähistöäsi koskevia ilmoituksia'
+    }}
+    {% elif request.path == "/browse_notices/my" %}
     Ei omia ilmoituksia
     {% elif request.path == "/browse_notices/archived" %}
     Ei arkistoituja ilmoituksia

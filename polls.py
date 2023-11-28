@@ -116,6 +116,33 @@ def get_archived():
     except Exception:
         return []
 
+def get_nearby(user_zip_code: str):
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
+                    P.created_at
+                 FROM polls AS P
+                 WHERE
+                    P.archived_at IS NULL
+                    AND P.zip_code=:user_zip_code
+                 ORDER BY P.created_at DESC"""
+
+        values = {
+            "user_zip_code": user_zip_code
+        }
+
+        result = db.session.execute(text(sql), values)
+        polls = result.fetchall()
+
+        return polls
+
+    except Exception:
+        return []
+
 def get_details(poll_id: int):
     try:
         sql = """SELECT

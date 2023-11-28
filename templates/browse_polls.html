@@ -1,10 +1,18 @@
 <!doctype html>
 
-{% extends "layout.html" %}
+{% extends "layout_with_flashes.html" %}
 
 {% block content %}
 
 <h2>Selaa kyselyitä</h2>
+
+<form class="inlined" action="/browse_polls/nearby">
+    {% if request.path == "/browse_polls/nearby" %}
+    <input class="input active" type="submit" value="Lähistölläni" />
+    {% else %}
+    <input class="input" type="submit" value="Lähistölläni" />
+    {% endif %}
+</form>
 
 <form class="inlined" action="/browse_polls">
     {% if request.path == "/browse_polls" %}
@@ -49,7 +57,13 @@
 {% if polls|length == 0 %}
 
 <div class="content flash">
-    {% if request.path == "/browse_polls" %}
+    {% if request.path == "/browse_polls/nearby" %}
+    {{
+        'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia kyselyitä'
+        if not session.zip_code
+        else 'Ei lähistöäsi koskevia kyselyitä'
+    }}
+    {% elif request.path == "/browse_polls" %}
     Ei käynnissä olevia kyselyitä
     {% elif request.path == "/browse_polls/upcoming" %}
     Ei tulevia kyselyitä
@@ -58,7 +72,7 @@
     {% elif request.path == "/browse_polls/archived" %}
     Ei arkistoituja kyselyitä
     {% else %}
-    Ei palautteita
+    Ei kyselyitä
     {% endif %}
 </div>
 

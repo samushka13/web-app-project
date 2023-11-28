@@ -205,16 +205,22 @@ def browse_news():
     news_list = news.get_new()
     return render_template("browse_news.html", news=news_list)
 
+@app.route("/browse_news/upcoming")
+@admin_required
+def browse_upcoming_news():
+    news_list = news.get_upcoming()
+    return render_template("browse_news.html", news=news_list)
+
 @app.route("/browse_news/archived")
 @admin_required
 def browse_archived_news():
     news_list = news.get_archived()
     return render_template("browse_news.html", news=news_list)
 
-@app.route("/browse_news/upcoming")
-@admin_required
-def browse_upcoming_news():
-    news_list = news.get_upcoming()
+@app.route("/browse_news/nearby")
+@login_required
+def browse_nearby_news():
+    news_list = news.get_nearby(session["zip_code"])
     return render_template("browse_news.html", news=news_list)
 
 @app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
@@ -252,6 +258,12 @@ def browse_my_notices():
 @admin_required
 def browse_archived_notices():
     notice_list = notices.get_archived()
+    return render_template("browse_notices.html", notices=notice_list)
+
+@app.route("/browse_notices/nearby")
+@login_required
+def browse_nearby_notices():
+    notice_list = notices.get_nearby(session["zip_code"])
     return render_template("browse_notices.html", notices=notice_list)
 
 @app.route("/browse_notices/details/<int:notice_id>", methods=["GET", "POST"])
@@ -306,6 +318,12 @@ def browse_past_polls():
 @admin_required
 def browse_archived_polls():
     poll_list = polls.get_archived()
+    return render_template("browse_polls.html", polls=poll_list)
+
+@app.route("/browse_polls/nearby")
+@login_required
+def browse_nearby_polls():
+    poll_list = polls.get_nearby(session["zip_code"])
     return render_template("browse_polls.html", polls=poll_list)
 
 @app.route("/browse_polls/details/<int:poll_id>")

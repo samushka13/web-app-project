@@ -92,6 +92,33 @@ def get_archived():
     except Exception:
         return []
 
+def get_nearby(user_zip_code: str):
+    try:
+        sql = """SELECT
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.street_address,
+                    N.created_at
+                 FROM notices AS N
+                 WHERE
+                    N.archived_at IS NULL
+                    AND N.zip_code=:user_zip_code
+                 ORDER BY N.created_at DESC"""
+
+        values = {
+            "user_zip_code": user_zip_code
+        }
+
+        result = db.session.execute(text(sql), values)
+        news = result.fetchall()
+
+        return news
+
+    except Exception:
+        return []
+
 def get_details(notice_id: int):
     try:
         sql = """SELECT
