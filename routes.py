@@ -268,16 +268,18 @@ def view_notice_details(notice_id):
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_notices"))
 
-@app.route("/support_notice/<int:notice_id>", methods=["GET", "POST"])
+@app.route("/support_notice/<int:notice_id>", methods=["POST"])
 @login_required
 def support_notice(notice_id):
-    if request.method == "POST" and "user_id" in session and users.is_csrf_token_valid():
-        notices.add_support(notice_id, session["user_id"])
+    if "user_id" in session and users.is_csrf_token_valid():
+        supported = notices.add_support(notice_id, session["user_id"])
+        if not supported:
+            flash("Komppaaminen epäonnistui", "error")
 
     notice = notices.get_details(notice_id)
 
     if notice:
-        return render_template("notice_details.html", notice=notice)
+        return redirect(url_for("view_notice_details", notice_id=notice_id))
 
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_notices"))
@@ -305,6 +307,49 @@ def browse_past_polls():
 def browse_archived_polls():
     poll_list = polls.get_archived()
     return render_template("browse_polls.html", polls=poll_list)
+
+@app.route("/browse_polls/details/<int:poll_id>")
+@login_required
+def view_poll_details(poll_id):
+    poll = polls.get_details(poll_id)
+
+    if poll:
+        return render_template("poll_details.html", poll=poll)
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_polls"))
+
+@app.route("/vote_for/<int:poll_id>", methods=["POST"])
+@login_required
+def vote_for(poll_id):
+    if "user_id" in session and users.is_csrf_token_valid():
+        voted = polls.vote(poll_id, session["user_id"], True)
+        if not voted:
+            flash("Äänestäminen epäonnistui", "error")
+
+    poll = polls.get_details(poll_id)
+
+    if poll:
+        return redirect(url_for("view_poll_details", poll_id=poll_id))
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_polls"))
+
+@app.route("/vote_against/<int:poll_id>", methods=["POST"])
+@login_required
+def vote_against(poll_id):
+    if "user_id" in session and users.is_csrf_token_valid():
+        voted = polls.vote(poll_id, session["user_id"], False)
+        if not voted:
+            flash("Äänestäminen epäonnistui", "error")
+
+    poll = polls.get_details(poll_id)
+
+    if poll:
+        return redirect(url_for("view_poll_details", poll_id=poll_id))
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("browse_polls"))
 
 @app.route("/profile")
 @login_required

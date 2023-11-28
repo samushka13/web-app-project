@@ -28,18 +28,12 @@ def get_current():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as "title",
-                    P.zip_code as "zip_code",
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
-                    P.created_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    P.open_on <= CURRENT_DATE,
-                    P.close_on > CURRENT_DATE
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
+                    P.created_at
                  FROM polls AS P
-                 JOIN users AS U
-                 ON U.id=P.created_by
                  WHERE
                     P.open_on <= CURRENT_DATE
                     AND P.close_on > CURRENT_DATE
@@ -58,17 +52,12 @@ def get_upcoming():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as "title",
-                    P.zip_code as "zip_code",
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
-                    P.created_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    P.open_on > CURRENT_DATE
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
+                    P.created_at
                  FROM polls AS P
-                 JOIN users AS U
-                 ON U.id=P.created_by
                  WHERE
                     P.open_on > CURRENT_DATE
                     AND P.archived_at IS NULL
@@ -86,17 +75,12 @@ def get_past():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as "title",
-                    P.zip_code as "zip_code",
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
-                    P.created_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    P.close_on < CURRENT_DATE
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
+                    P.created_at
                  FROM polls AS P
-                 JOIN users AS U
-                 ON U.id=P.created_by
                  WHERE
                     P.close_on < CURRENT_DATE
                     AND P.archived_at IS NULL
@@ -114,18 +98,13 @@ def get_archived():
     try:
         sql = """SELECT
                     P.id,
-                    P.title as "title",
-                    P.zip_code as "zip_code",
-                    to_char(DATE(P.open_on)::date, 'DD.MM.YYYY') as "open_on",
-                    to_char(DATE(P.close_on)::date, 'DD.MM.YYYY') as "close_on",
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
                     P.created_at,
-                    P.archived_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    (SELECT name FROM users WHERE id=P.archived_by) as "archived_by"
+                    P.archived_at
                  FROM polls AS P
-                 JOIN users AS U
-                 ON U.id=P.created_by
                  WHERE P.archived_at IS NOT NULL
                  ORDER BY P.created_at DESC"""
 
@@ -136,6 +115,38 @@ def get_archived():
 
     except Exception:
         return []
+
+def get_details(poll_id: int):
+    try:
+        sql = """SELECT
+                    P.id,
+                    P.title,
+                    P.zip_code,
+                    P.open_on,
+                    P.close_on,
+                    P.created_at,
+                    P.archived_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    (SELECT name FROM users WHERE id=P.archived_by) as "archived_by",
+                    (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=True) as "for",
+                    (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False) as "against"
+                 FROM polls AS P
+                 JOIN users AS U
+                 ON U.id=P.created_by
+                 WHERE P.id=:poll_id"""
+
+        values = {
+            "poll_id": poll_id
+        }
+
+        result = db.session.execute(text(sql), values)
+        item = result.fetchone()
+
+        return item
+
+    except Exception:
+        return False
 
 def archive(user_id: int, poll_id: int):
     try:

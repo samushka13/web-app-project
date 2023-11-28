@@ -67,21 +67,11 @@
 {% for poll in polls %}
     <div class="content">
         <h3>{{ poll.title }}</h3>
-        <p>{{ poll.zip_code if poll.zip_code else "" }}</p>
         <hr>
-        <p>Äänestysaika: {{ poll.open_on }} – {{ poll.close_on }}</p>
+        <p>Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}</p>
 
         {% if session.is_admin %}
         <hr>
-        <p>{{ poll.created_by }} @ {{ poll.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
-        <hr>
-
-        {% if request.path == "/browse_polls/archived" %}
-        <p class="inlined">
-            Arkistoinut: {{ poll.archived_by if poll.archived_by else "-" }} @ 
-            {{ poll.archived_at.strftime("%d.%m.%Y %H:%M:%S") if poll.archived_at else "-" }}
-        </p>
-        {% endif %}
 
         <form
             class="inlined"
@@ -96,6 +86,10 @@
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
         {% endif %}
+
+        <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
+            <input class="input" type="submit" value="Lue lisää">
+        </form>
     </div>
 {% endfor %}
 
