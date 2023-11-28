@@ -1,5 +1,5 @@
 import os
-from flask import request, session
+from flask import session
 from sqlalchemy.sql import text
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -242,6 +242,3 @@ def enable_user(user_id: int):
         return False
 
     return True
-
-def is_csrf_token_valid():
-    return session["csrf_token"] == request.form["csrf_token"]
