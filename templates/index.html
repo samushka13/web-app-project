@@ -1,10 +1,6 @@
 <!doctype html>
 
-{% if session.user_id %}
 {% extends "layout.html" %}
-{% else %}
-{% extends "layout_with_flashes.html" %}
-{% endif %}
 
 {% block content %}
 
