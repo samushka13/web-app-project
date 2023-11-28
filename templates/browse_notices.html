@@ -6,7 +6,7 @@
 
 <h2>Selaa ilmoituksia</h2>
 
-<form style="display: inline-block;" action="/browse_notices">
+<form class="inlined" action="/browse_notices">
     {% if request.path == "/browse_notices" %}
     <input class="input active" type="submit" value="Kaikki" />
     {% else %}
@@ -14,7 +14,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_notices/my">
+<form class="inlined" action="/browse_notices/my">
     {% if request.path == "/browse_notices/my" %}
     <input class="input active" type="submit" value="Omat" />
     {% else %}
@@ -24,7 +24,7 @@
 
 {% if session.is_admin %}
 
-<form style="display: inline-block;" action="/browse_notices/archived">
+<form class="inlined" action="/browse_notices/archived">
     {% if request.path == "/browse_notices/archived" %}
     <input class="input active" type="submit" value="Arkistoidut" />
     {% else %}
@@ -34,7 +34,7 @@
 
 {% endif %}
 
-<form style="display: inline-block;" action="/add_notice">
+<form class="inlined" action="/add_notice">
     <input class="input" type="submit" value="Lisää ilmoitus" />
 </form>
 
@@ -72,14 +72,14 @@
         <hr>
 
         {% if request.path == "/browse_notices/archived" %}
-        <p style="display: inline-block;">
+        <p class="inlined">
             Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
             {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
         </p>
         {% endif %}
 
         <form
-            style="display: inline-block;"
+            class="inlined"
             action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
             method="post"
         >

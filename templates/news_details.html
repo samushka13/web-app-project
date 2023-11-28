@@ -6,7 +6,7 @@
 
 {% if session.is_admin %}
 <form
-    style="display: inline-block;"
+    class="inlined"
     action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
     method="post"
 >
@@ -19,7 +19,7 @@
 </form>
 {% endif %}
 
-<form style="display: inline-block;" action="/browse_news">
+<form class="inlined" action="/browse_news">
     <input class="input" type="submit" value="Takaisin" />
 </form>
 
@@ -29,23 +29,19 @@
     <p>{{ item.body }}</p>
     <hr>
     <div class="flex-fill">
-        <div style="display: inline-block;">
-            <p>
-                {{ (item.created_by + " @ ") if session.is_admin else "" }}
-                {{ item.publish_on.strftime("%d.%m.%Y") }}
-            </p>
-        </div>
-        <div style="display: inline-block;">
-            <p>
-                {{ item.views }} {{ 'uniikki lukija' if item.views == 1 else 'uniikkia lukijaa' }}
-            </p>
-        </div>
+        <p>
+            {{ (item.created_by + " @ ") if session.is_admin else "" }}
+            {{ item.publish_on.strftime("%d.%m.%Y") }}
+        </p>
+        <p>
+            {{ item.views }} {{ 'uniikki lukija' if item.views == 1 else 'uniikkia lukijaa' }}
+        </p>
     </div>
 
     {% if session.is_admin and item.archived_at %}
     <hr>
 
-    <div style="display: inline-block;">
+    <div class="inlined">
         Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
         {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
     </div>

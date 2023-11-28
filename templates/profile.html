@@ -8,12 +8,12 @@
 
 {% if session.user_id %}
 
-<form style="display: inline-block;" action="/delete_current_user" method="post">
+<form class="inlined" action="/delete_current_user" method="post">
     <input class="input" type="submit" value="Poista käyttäjätili" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
-<form style="display: inline-block;" action="/logout">
+<form class="inlined" action="/logout">
     <input class="input" type="submit" value="Kirjaudu ulos" />
 </form>
 
@@ -23,10 +23,10 @@
         <label class="label" for="date_of_birth">Syntymäaika</label>
         <br>
         <div class="flex-fill">
-            <input style="display: inline-block;" class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
-            <div style="display: inline-block; width: 20px;"></div>
+            <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
+            <div style="width: 20px;"></div>
             <div>
-                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
@@ -40,49 +40,47 @@
         <label for="gender">Sukupuoli</label>
         <br>
         <div class="flex-fill">
-            <div style="display: inline-block;">
-                <div class="radio-button-group">
-                    <div class="radio-button">
-                        {% if session.gender == "female" %}
-                        <input type="radio" id="female-checked" name="gender" value="female" checked>
-                        <label for="female-checked">nainen</label>
-                        {% else %}
-                        <input type="radio" id="female" name="gender" value="female">
-                        <label for="female">nainen</label>
-                        {% endif %}
-                    </div>
-                    <div class="radio-button">
-                        {% if session.gender == "male" %}
-                        <input type="radio" id="male-checked" name="gender" value="male" checked>
-                        <label for="male-checked">mies</label>
-                        {% else %}
-                        <input type="radio" id="male" name="gender" value="male">
-                        <label for="male">mies</label>
-                        {% endif %}
-                    </div>
-                    <div class="radio-button">
-                        {% if session.gender == "other" %}
-                        <input type="radio" id="other-checked" name="gender" value="other" checked>
-                        <label for="other-checked">muu</label>
-                        {% else %}
-                        <input type="radio" id="other" name="gender" value="other">
-                        <label for="other">muu</label>
-                        {% endif %}
-                    </div>
-                    <div class="radio-button">
-                        {% if session.gender not in ["female", "male", "other"] %}
-                        <input type="radio" id="none-checked" name="gender" value="" checked>
-                        <label for="none-checked">en kerro</label>
-                        {% else %}
-                        <input type="radio" id="none" name="gender" value="">
-                        <label for="none">en kerro</label>
-                        {% endif %}
-                    </div>
+            <div class="radio-button-group">
+                <div class="radio-button">
+                    {% if session.gender == "female" %}
+                    <input type="radio" id="female-checked" name="gender" value="female" checked>
+                    <label for="female-checked">nainen</label>
+                    {% else %}
+                    <input type="radio" id="female" name="gender" value="female">
+                    <label for="female">nainen</label>
+                    {% endif %}
+                </div>
+                <div class="radio-button">
+                    {% if session.gender == "male" %}
+                    <input type="radio" id="male-checked" name="gender" value="male" checked>
+                    <label for="male-checked">mies</label>
+                    {% else %}
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="male">mies</label>
+                    {% endif %}
+                </div>
+                <div class="radio-button">
+                    {% if session.gender == "other" %}
+                    <input type="radio" id="other-checked" name="gender" value="other" checked>
+                    <label for="other-checked">muu</label>
+                    {% else %}
+                    <input type="radio" id="other" name="gender" value="other">
+                    <label for="other">muu</label>
+                    {% endif %}
+                </div>
+                <div class="radio-button">
+                    {% if session.gender not in ["female", "male", "other"] %}
+                    <input type="radio" id="none-checked" name="gender" value="" checked>
+                    <label for="none-checked">en kerro</label>
+                    {% else %}
+                    <input type="radio" id="none" name="gender" value="">
+                    <label for="none">en kerro</label>
+                    {% endif %}
                 </div>
             </div>
-            <div style="display: inline-block; width: 20px;"></div>
-            <div style="display: inline-block;">
-                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+            <div style="width: 20px;"></div>
+            <div>
+                <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
@@ -96,10 +94,10 @@
         <label for="zip_code">Postinumero</label>
         <br>
         <div class="flex-fill">
-            <input style="display: inline-block;" class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
-            <div style="display: inline-block; width: 20px;"></div>
+            <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
+            <div style="width: 20px;"></div>
             <div>
-                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+                <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
@@ -113,31 +111,29 @@
         <label for="is_admin">Ylläpitäjä</label>
         <br>
         <div class="flex-fill">
-            <div style="display: inline-block;">
-                <div class="radio-button-group">
-                    <div class="radio-button">
-                        {% if session.is_admin %}
-                        <input type="radio" id="yes-checked" name="is_admin" value="yes" checked>
-                        <label for="yes-checked">kyllä</label>
-                        {% else %}
-                        <input type="radio" id="yes" name="is_admin" value="yes">
-                        <label for="yes">kyllä</label>
-                        {% endif %}
-                    </div>
-                    <div class="radio-button">
-                        {% if not session.is_admin %}
-                        <input type="radio" id="no-checked" name="is_admin" value="no" checked>
-                        <label for="no-checked">ei</label>
-                        {% else %}
-                        <input type="radio" id="no" name="is_admin" value="no">
-                        <label for="no">ei</label>
-                        {% endif %}
-                    </div>
+            <div class="radio-button-group">
+                <div class="radio-button">
+                    {% if session.is_admin %}
+                    <input type="radio" id="yes-checked" name="is_admin" value="yes" checked>
+                    <label for="yes-checked">kyllä</label>
+                    {% else %}
+                    <input type="radio" id="yes" name="is_admin" value="yes">
+                    <label for="yes">kyllä</label>
+                    {% endif %}
+                </div>
+                <div class="radio-button">
+                    {% if not session.is_admin %}
+                    <input type="radio" id="no-checked" name="is_admin" value="no" checked>
+                    <label for="no-checked">ei</label>
+                    {% else %}
+                    <input type="radio" id="no" name="is_admin" value="no">
+                    <label for="no">ei</label>
+                    {% endif %}
                 </div>
             </div>
-            <div style="display: inline-block; width: 20px;"></div>
-            <div style="display: inline-block;">
-                <input style="display: inline-block;" class="input" type="submit" value="Tallenna">
+            <div style="width: 20px;"></div>
+            <div>
+                <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
@@ -145,7 +141,7 @@
 
     <hr>
 
-    <form style="display: inline-block;" action="/profile">
+    <form class="inlined" action="/profile">
         <input class="input" type="submit" value="Peru tallentamattomat muutokset" />
     </form>
 </div>

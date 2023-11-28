@@ -6,7 +6,7 @@
 
 <h2>Selaa palautteita</h2>
 
-<form style="display: inline-block;" action="/browse_feedback">
+<form class="inlined" action="/browse_feedback">
     {% if request.path == "/browse_feedback" %}
     <input class="input active" type="submit" value="Uudet" />
     {% else %}
@@ -14,7 +14,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_feedback/acknowledged">
+<form class="inlined" action="/browse_feedback/acknowledged">
     {% if request.path == "/browse_feedback/acknowledged" %}
     <input class="input active" type="submit" value="Huomioidut" />
     {% else %}
@@ -24,7 +24,7 @@
 
 {% if session.is_admin %}
 
-<form style="display: inline-block;" action="/browse_feedback/archived">
+<form class="inlined" action="/browse_feedback/archived">
     {% if request.path == "/browse_feedback/archived" %}
     <input class="input active" type="submit" value="Arkistoidut" />
     {% else %}
@@ -34,7 +34,7 @@
 
 {% endif %}
 
-<form style="display: inline-block;" action="/give_feedback">
+<form class="inlined" action="/give_feedback">
     <input class="input" type="submit" value="Anna palautetta" />
 </form>
 
@@ -63,14 +63,14 @@
         <hr>
 
             {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
-            <p style="display: inline-block;">
+            <p class="inlined">
                 Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
                 {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
             </p>
             {% endif %}
 
         <form
-            style="display: inline-block;"
+            class="inlined"
             action="/{{ 'unacknowledge_feedback' if feedback.acknowledged_at else 'acknowledge_feedback' }}/{{ feedback.id }}"
             method="post"
         >
@@ -85,13 +85,13 @@
             {% if request.path == "/browse_feedback/archived" %}
             <br>
 
-            <p style="display: inline-block;">
+            <p class="inlined">
                 Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
                 {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
             </p>
 
             <form
-                style="display: inline-block;"
+                class="inlined"
                 action="/{{ 'unarchive_feedback' if feedback.archived_at else 'archive_feedback' }}/{{ feedback.id }}"
                 method="post"
             >

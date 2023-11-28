@@ -6,7 +6,7 @@
 
 <h2>Selaa kyselyitä</h2>
 
-<form style="display: inline-block;" action="/browse_polls">
+<form class="inlined" action="/browse_polls">
     {% if request.path == "/browse_polls" %}
     <input class="input active" type="submit" value="Käynnissä" />
     {% else %}
@@ -14,7 +14,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_polls/upcoming">
+<form class="inlined" action="/browse_polls/upcoming">
     {% if request.path == "/browse_polls/upcoming" %}
     <input class="input active" type="submit" value="Tulevat" />
     {% else %}
@@ -22,7 +22,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_polls/past">
+<form class="inlined" action="/browse_polls/past">
     {% if request.path == "/browse_polls/past" %}
     <input class="input active" type="submit" value="Menneet" />
     {% else %}
@@ -32,7 +32,7 @@
 
 {% if session.is_admin %}
 
-<form style="display: inline-block;" action="/browse_polls/archived">
+<form class="inlined" action="/browse_polls/archived">
     {% if request.path == "/browse_polls/archived" %}
     <input class="input active" type="submit" value="Arkistoidut" />
     {% else %}
@@ -40,7 +40,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/add_poll">
+<form class="inlined" action="/add_poll">
     <input class="input" type="submit" value="Lisää kysely" />
 </form>
 
@@ -77,14 +77,14 @@
         <hr>
 
         {% if request.path == "/browse_polls/archived" %}
-        <p style="display: inline-block;">
+        <p class="inlined">
             Arkistoinut: {{ poll.archived_by if poll.archived_by else "-" }} @ 
             {{ poll.archived_at.strftime("%d.%m.%Y %H:%M:%S") if poll.archived_at else "-" }}
         </p>
         {% endif %}
 
         <form
-            style="display: inline-block;"
+            class="inlined"
             action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
             method="post"
         >

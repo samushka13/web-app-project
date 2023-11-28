@@ -8,7 +8,7 @@
 
 {% if session.is_admin %}
 
-<form style="display: inline-block;" action="/browse_news">
+<form class="inlined" action="/browse_news">
     {% if request.path == "/browse_news" %}
     <input class="input active" type="submit" value="Näkyvät" />
     {% else %}
@@ -16,7 +16,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_news/upcoming">
+<form class="inlined" action="/browse_news/upcoming">
     {% if request.path == "/browse_news/upcoming" %}
     <input class="input active" type="submit" value="Tulevat" />
     {% else %}
@@ -24,7 +24,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/browse_news/archived">
+<form class="inlined" action="/browse_news/archived">
     {% if request.path == "/browse_news/archived" %}
     <input class="input active" type="submit" value="Arkistoidut" />
     {% else %}
@@ -32,7 +32,7 @@
     {% endif %}
 </form>
 
-<form style="display: inline-block;" action="/add_news">
+<form class="inlined" action="/add_news">
     <input class="input" type="submit" value="Lisää uutinen" />
 </form>
 
@@ -60,12 +60,12 @@
 
         {% if session.is_admin %}
 
-        <div style="display: inline-block;">
+        <div class="inlined">
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </div>
 
         <form
-            style="display: inline-block;"
+            class="inlined"
             action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
             method="post"
         >
@@ -78,7 +78,7 @@
         </form>
         {% endif %}
 
-        <form style="display: inline-block;" action="/browse_news/details/{{ item.id }}">
+        <form class="inlined" action="/browse_news/details/{{ item.id }}">
             <input class="input" type="submit" value="Lue lisää">
         </form>
 
