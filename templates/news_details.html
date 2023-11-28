@@ -1,0 +1,47 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form style="display: inline-block;" action="/browse_news">
+    <input class="input" type="submit" value="Takaisin" />
+</form>
+
+
+<div class="content">
+    <h2>{{ item.title }}</h2>
+    <hr>
+    <p>{{ item.body }}</p>
+    <hr>
+    <p>
+        {{ (item.created_by + " @ ") if session.is_admin else "" }}
+        {{ item.publish_on.strftime("%d.%m.%Y") }}
+    </p>
+
+    {% if session.is_admin %}
+    <hr>
+
+    {% if item.archived_at %}
+    <div style="display: inline-block;">
+        Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
+        {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
+    </div>
+    {% endif %}
+
+    <form
+        style="display: inline-block;"
+        action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
+        method="post"
+    >
+        <input
+            class="input"
+            type="submit"
+            value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
+        />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

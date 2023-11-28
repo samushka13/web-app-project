@@ -55,22 +55,14 @@
 {% for item in news %}
     <div class="content">
         <h3>{{ item.title }}</h3>
-        <p>{{ item.body }}</p>
+
         <hr>
-        <p>
-            {{ (item.created_by + " @ ") if session.is_admin else "" }}
-            {{ item.publish_on.strftime("%d.%m.%Y") }}
-        </p>
 
         {% if session.is_admin %}
-        <hr>
 
-        {% if request.path == "/browse_news/archived" %}
-        <p style="display: inline-block;">
-            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
-            {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
-        </p>
-        {% endif %}
+        <div style="display: inline-block;">
+            {{ item.publish_on.strftime("%d.%m.%Y") }}
+        </div>
 
         <form
             style="display: inline-block;"
@@ -81,10 +73,15 @@
                 class="input"
                 type="submit"
                 value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
-            />
+            >
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
         {% endif %}
+
+        <form style="display: inline-block;" action="/browse_news/details/{{ item.id }}">
+            <input class="input" type="submit" value="Lue lisää">
+        </form>
+
     </div>
 {% endfor %}
 

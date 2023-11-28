@@ -31,14 +31,8 @@ def get_new():
                     N.title,
                     N.body,
                     N.zip_code,
-                    N.publish_on,
-                    N.created_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    N.publish_on <= CURRENT_DATE
+                    N.publish_on
                  FROM news AS N
-                 JOIN users AS U
-                 ON U.id=N.created_by
                  WHERE
                     N.publish_on <= CURRENT_DATE
                     AND N.archived_at IS NULL
@@ -59,14 +53,8 @@ def get_upcoming():
                     N.title,
                     N.body,
                     N.zip_code,
-                    N.publish_on,
-                    N.created_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    N.publish_on > CURRENT_DATE
+                    N.publish_on
                  FROM news AS N
-                 JOIN users AS U
-                 ON U.id=N.created_by
                  WHERE
                     N.publish_on > CURRENT_DATE
                     AND N.archived_at IS NULL
@@ -89,13 +77,8 @@ def get_archived():
                     N.zip_code,
                     N.publish_on,
                     N.created_at,
-                    N.archived_at,
-                    U.id as "user_id",
-                    U.name as "created_by",
-                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by"
+                    N.archived_at
                  FROM news AS N
-                 JOIN users AS U
-                 ON U.id=N.created_by
                  WHERE N.archived_at IS NOT NULL
                  ORDER BY N.created_at DESC"""
 
@@ -106,6 +89,36 @@ def get_archived():
 
     except Exception:
         return []
+
+def get_details(news_id: int):
+    try:
+        sql = """SELECT
+                    N.id,
+                    N.title,
+                    N.body,
+                    N.zip_code,
+                    N.publish_on,
+                    N.created_at,
+                    N.archived_at,
+                    U.id as "user_id",
+                    U.name as "created_by",
+                    (SELECT name FROM users WHERE id=N.archived_by) as "archived_by"
+                 FROM news AS N
+                 JOIN users AS U
+                 ON U.id=N.created_by
+                 WHERE N.id=:news_id"""
+
+        values = {
+            "news_id": news_id
+        }
+
+        result = db.session.execute(text(sql), values)
+        item = result.fetchone()
+
+        return item
+
+    except Exception:
+        return None
 
 def archive(user_id: int, news_id: int):
     try:

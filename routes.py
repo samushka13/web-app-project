@@ -217,6 +217,12 @@ def browse_upcoming_news():
     news_list = news.get_upcoming()
     return render_template("browse_news.html", news=news_list)
 
+@app.route("/browse_news/details/<int:news_id>")
+@login_required
+def view_news_details(news_id):
+    item = news.get_details(news_id)
+    return render_template("news_details.html", item=item)
+
 @app.route("/browse_notices")
 @login_required
 def browse_notices():
