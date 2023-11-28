@@ -14,7 +14,18 @@
         class="input"
         type="submit"
         value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
-    />
+    >
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+{% endif %}
+
+{% if not notice.archived_at %}
+<form
+    class="inlined"
+    action="/support_notice/{{ notice.id }}"
+    method="post"
+>
+    <input class="input" type="submit" value="Komppaa">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 {% endif %}
@@ -30,7 +41,6 @@
 
     {% if notice.street_address or notice.zip_code %}
     <hr>
-    {% endif %}
 
     {% if notice.street_address %}
     <p>Katuosoite: {{ notice.street_address }}</p>
@@ -40,14 +50,33 @@
     <p>Postinumero: {{ notice.zip_code }}</p>
     {% endif %}
 
+    {% endif %}
+
     <hr>
+
     <div class="flex-fill">
         <p>
             {{ (notice.created_by + " @ ") if session.is_admin else "" }}
             {{ notice.created_at.strftime("%d.%m.%Y") }}
         </p>
+    </div>
+    
+    <div class="flex-fill">
         <p>
-            {{ notice.views }} {{ 'uniikki katselu' if notice.views == 1 else 'uniikkia katselua' }}
+            {% if notice.total_views == 0 or notice.total_views == 1 %}
+            {{ notice.total_views }} {{ 'katselukerta' if notice.total_views == 1 else 'katselukertaa' }}
+            {% else %}
+            {{ notice.total_views }} katselukertaa | 
+            {{ notice.unique_views }} {{ 'katselija' if notice.unique_views == 1 else 'katselijaa' }}
+            {% endif %}
+        </p>
+        <p>
+            {% if notice.total_supports == 0 or notice.total_supports == 1 %}
+            {{ notice.total_supports }} {{ 'komppaus' if notice.total_supports == 1 else 'komppausta' }}
+            {% else %}
+            {{ notice.total_supports }} komppausta | 
+            {{ notice.unique_supports }} {{ 'komppaaja' if notice.unique_supports == 1 else 'komppaajaa' }}
+            {% endif %}
         </p>
     </div>
 
