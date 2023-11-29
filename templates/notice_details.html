@@ -5,6 +5,22 @@
 {% block content %}
 
 {% if session.is_admin %}
+
+<form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
+    <input class="input" type="submit" value="Merkitse huomioiduksi">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
+    <input class="input" type="submit" value="Merkitse työn alle">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
+    <input class="input" type="submit" value="Merkitse tehdyksi">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
 <form
     class="inlined"
     action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"

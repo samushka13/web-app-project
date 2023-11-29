@@ -75,6 +75,7 @@ CREATE TABLE notice_statuses (
     id SERIAL PRIMARY KEY,
     notice_id INTEGER REFERENCES notices,
     status STATUS,
+    set_at TIMESTAMP,
     set_by INTEGER REFERENCES users
 );
 

@@ -40,9 +40,10 @@ def view_notice_details(notice_id):
         notices.add_view(notice_id, session["user_id"])
 
     notice = notices.get_details(notice_id)
+    statuses = notices.get_statuses(notice_id)
 
     if notice:
-        return render_template("notice_details.html", notice=notice)
+        return render_template("notice_details.html", notice=notice, statuses=statuses)
 
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_notices"))
@@ -118,6 +119,39 @@ def add_notice():
                                 body=body,
                                 zip_code=zip_code,
                                 street_address=street_address)
+
+@app.route("/notice/acknowledge/<int:notice_id>", methods=["POST"])
+@admin_required
+def set_notice_as_acknowledged(notice_id):
+    user_id = session["user_id"]
+    data_updated = notices.acknowledge(user_id, notice_id)
+
+    if not (user_id and is_csrf_token_valid() and data_updated):
+        flash("Tilan päivitys ei onnistunut", "error")
+
+    return redirect(url_for("view_notice_details", notice_id=notice_id))
+
+@app.route("/notice/wip/<int:notice_id>", methods=["POST"])
+@admin_required
+def set_notice_as_wip(notice_id):
+    user_id = session["user_id"]
+    data_updated = notices.wip(user_id, notice_id)
+
+    if not (user_id and is_csrf_token_valid() and data_updated):
+        flash("Tilan päivitys ei onnistunut", "error")
+
+    return redirect(url_for("view_notice_details", notice_id=notice_id))
+
+@app.route("/notice/done/<int:notice_id>", methods=["POST"])
+@admin_required
+def set_notice_as_done(notice_id):
+    user_id = session["user_id"]
+    data_updated = notices.done(user_id, notice_id)
+
+    if not (user_id and is_csrf_token_valid() and data_updated):
+        flash("Tilan päivitys ei onnistunut", "error")
+
+    return redirect(url_for("view_notice_details", notice_id=notice_id))
 
 @app.route("/archive_notice/<int:notice_id>", methods=["POST"])
 @admin_required

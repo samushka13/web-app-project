@@ -234,3 +234,59 @@ def add_support(notice_id: int, user_id: int):
         return False
 
     return True
+
+def add_status(user_id: int, notice_id: int, status: str):
+    try:
+        sql = """INSERT INTO notice_statuses
+                    (notice_id, status, set_at, set_by)
+                 VALUES
+                    (:notice_id, :status, NOW(), :set_by)"""
+
+        values = {
+            "notice_id": notice_id,
+            "status": status,
+            "set_by": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True
+
+def acknowledge(user_id: int, notice_id: int):
+    return add_status(user_id, notice_id, "read")
+
+def wip(user_id: int, notice_id: int):
+    return add_status(user_id, notice_id, "wip")
+
+def done(user_id: int, notice_id: int):
+    return add_status(user_id, notice_id, "done")
+
+def get_statuses(notice_id: int):
+    try:
+        sql = """SELECT
+                    N.id,
+                    N.notice_id,
+                    N.status,
+                    N.set_at,
+                    N.set_by
+                 FROM notice_statuses AS N
+                 WHERE N.notice_id=:notice_id
+                 ORDER BY N.set_at DESC"""
+
+        values = {
+            "notice_id": notice_id
+        }
+
+        result = db.session.execute(text(sql), values)
+        statuses = result.fetchall()
+
+        print(statuses)
+
+        return statuses
+
+    except Exception:
+        return []
