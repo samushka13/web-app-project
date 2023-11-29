@@ -272,10 +272,12 @@ def get_statuses(notice_id: int):
                     N.notice_id,
                     N.status,
                     N.set_at,
-                    N.set_by
+                    U.name as "set_by"
                  FROM notice_statuses AS N
+                 JOIN users AS U
+                 ON U.id=N.set_by
                  WHERE N.notice_id=:notice_id
-                 ORDER BY N.set_at DESC"""
+                 ORDER BY N.set_at ASC"""
 
         values = {
             "notice_id": notice_id
@@ -283,8 +285,6 @@ def get_statuses(notice_id: int):
 
         result = db.session.execute(text(sql), values)
         statuses = result.fetchall()
-
-        print(statuses)
 
         return statuses
 

@@ -104,6 +104,30 @@
     </p>
 
     {% endif %}
+
+    {% if statuses|length != 0 %}
+
+    <h4>Käsittelyhistoria:</h4>
+
+    {% endif %}
+
+    {% for status in statuses %}
+
+    <p>
+        {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
+
+        {% if status.status == "read" %}
+        Huomioitu
+        {% elif status.status == "wip" %}
+        Työn alla
+        {% elif status.status == "done" %}
+        Valmis
+        {% endif %}
+
+        {{ (' | ' + status.set_by) if session.is_admin else "" }}
+    </p>
+
+    {% endfor %}
 </div>
 
 {% endblock %}
