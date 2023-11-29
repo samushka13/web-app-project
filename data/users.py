@@ -192,7 +192,8 @@ def get_users():
                     name,
                     admin,
                     disabled_at
-                 FROM users"""
+                 FROM users
+                 ORDER BY name ASC"""
 
         result = db.session.execute(text(sql))
         users = result.fetchall()
