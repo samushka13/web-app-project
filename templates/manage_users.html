@@ -18,10 +18,16 @@
 
             {% if user.id != session.user_id %}
 
-            <form action="/enable_user/{{ user.id }}" method="post">
-                <input type="submit" value="Ota käyttöön" >
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
+            <div>
+                <div class="inlined" style="font-size: small;">
+                    Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
+                </div>
+
+                <form class="inlined" action="/enable_user/{{ user.id }}" method="post">
+                    <input type="submit" value="Ota käyttöön" >
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+            </div>
 
             {% endif %}
 
@@ -41,8 +47,6 @@
     </div>
 
 {% endfor %}
-
-
 
 {% endif %}
 
