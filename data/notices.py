@@ -4,8 +4,6 @@ from db import db
 
 def add(title: str, body: str, zip_code: str, street_address: str):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO notices
                     (title, body, zip_code, street_address, created_at, created_by)
                  VALUES
@@ -16,7 +14,7 @@ def add(title: str, body: str, zip_code: str, street_address: str):
             "body": body,
             "zip_code": zip_code,
             "street_address": street_address,
-            "created_by": user_id
+            "created_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -50,8 +48,6 @@ def get_all():
 
 def get_created_by_user():
     try:
-        user_id = session["user_id"]
-
         sql = """SELECT
                     N.id,
                     N.title,
@@ -64,7 +60,7 @@ def get_created_by_user():
                  ORDER BY N.created_at DESC"""
 
         values = {
-            "user_id": user_id
+            "user_id": session["user_id"]
         }
 
         result = db.session.execute(text(sql), values)
@@ -162,8 +158,6 @@ def get_details(notice_id: int):
 
 def archive(notice_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE notices
                  SET
                     archived_at=NOW(),
@@ -171,7 +165,7 @@ def archive(notice_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
+            "archived_by": session["user_id"],
             "id": notice_id
         }
 
@@ -205,8 +199,6 @@ def unarchive(notice_id: int):
 
 def add_view(notice_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO notice_views
                     (notice_id, viewed_at, viewed_by)
                  VALUES
@@ -214,7 +206,7 @@ def add_view(notice_id: int):
 
         values = {
             "notice_id": notice_id,
-            "viewed_by": user_id
+            "viewed_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -227,8 +219,6 @@ def add_view(notice_id: int):
 
 def add_support(notice_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO notice_supports
                     (notice_id, supported_at, supported_by)
                  VALUES
@@ -236,7 +226,7 @@ def add_support(notice_id: int):
 
         values = {
             "notice_id": notice_id,
-            "supported_by": user_id
+            "supported_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -269,16 +259,13 @@ def add_status(user_id: int, notice_id: int, status: str):
     return True
 
 def acknowledge(notice_id: int):
-    user_id = session["user_id"]
-    return add_status(user_id, notice_id, "read")
+    return add_status(session["user_id"], notice_id, "read")
 
 def wip(notice_id: int):
-    user_id = session["user_id"]
-    return add_status(user_id, notice_id, "wip")
+    return add_status(session["user_id"], notice_id, "wip")
 
 def done(notice_id: int):
-    user_id = session["user_id"]
-    return add_status(user_id, notice_id, "done")
+    return add_status(session["user_id"], notice_id, "done")
 
 def get_statuses(notice_id: int):
     try:

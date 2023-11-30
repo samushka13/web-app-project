@@ -87,15 +87,13 @@ def logout():
 
 def update_date_of_birth(date_of_birth: str):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE users
                  SET date_of_birth=:date_of_birth
                  WHERE id=:id"""
 
         values = {
             "date_of_birth": date_of_birth,
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -110,15 +108,13 @@ def update_date_of_birth(date_of_birth: str):
 
 def update_gender(gender: str):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE users
                  SET gender=:gender
                  WHERE id=:id"""
 
         values = {
             "gender": gender,
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -133,15 +129,13 @@ def update_gender(gender: str):
 
 def update_zip_code(zip_code: str):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE users
                  SET zip_code=:zip_code
                  WHERE id=:id"""
 
         values = {
             "zip_code": zip_code,
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -156,15 +150,13 @@ def update_zip_code(zip_code: str):
 
 def update_admin_status(is_admin: str):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE users
                  SET admin=:admin
                  WHERE id=:id"""
 
         values = {
             "admin": is_admin,
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -181,15 +173,13 @@ def change_password(password: str):
     hash_value = generate_password_hash(password)
 
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE users
                  SET password=:password
                  WHERE id=:id"""
 
         values = {
             "password": hash_value,
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -202,13 +192,11 @@ def change_password(password: str):
 
 def delete_current_user():
     try:
-        user_id = session["user_id"]
-
         sql = """DELETE FROM users
                  WHERE id=:id"""
 
         values = {
-            "id": user_id
+            "id": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -235,7 +223,7 @@ def get_users():
         return users
 
     except Exception:
-        return []
+        return False
 
 def disable_user(user_id: int):
     try:

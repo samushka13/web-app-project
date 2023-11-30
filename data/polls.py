@@ -4,8 +4,6 @@ from db import db
 
 def add(title: str, zip_code: str, open_on: str, close_on: str):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO polls
                     (title, zip_code, open_on, close_on, created_at, created_by)
                  VALUES
@@ -16,7 +14,7 @@ def add(title: str, zip_code: str, open_on: str, close_on: str):
             "zip_code": zip_code,
             "open_on": open_on,
             "close_on": close_on,
-            "created_by": user_id
+            "created_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -49,7 +47,7 @@ def get_current():
         return polls
 
     except Exception:
-        return []
+        return False
 
 def get_upcoming():
     try:
@@ -72,7 +70,7 @@ def get_upcoming():
         return polls
 
     except Exception:
-        return []
+        return False
 
 def get_past():
     try:
@@ -95,7 +93,7 @@ def get_past():
         return polls
 
     except Exception:
-        return []
+        return False
 
 def get_archived():
     try:
@@ -117,7 +115,7 @@ def get_archived():
         return polls
 
     except Exception:
-        return []
+        return False
 
 def get_nearby():
     try:
@@ -146,7 +144,7 @@ def get_nearby():
         return polls
 
     except Exception:
-        return []
+        return False
 
 def get_details(poll_id: int):
     try:
@@ -182,8 +180,6 @@ def get_details(poll_id: int):
 
 def archive(poll_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE polls
                  SET
                     archived_at=NOW(),
@@ -191,7 +187,7 @@ def archive(poll_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
+            "archived_by": session["user_id"],
             "id": poll_id
         }
 
@@ -225,8 +221,6 @@ def unarchive(poll_id: int):
 
 def vote(poll_id: int, vote_type: bool):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO votes
                     (poll_id, vote, voted_at, voted_by)
                  VALUES
@@ -235,7 +229,7 @@ def vote(poll_id: int, vote_type: bool):
         values = {
             "poll_id": poll_id,
             "vote": vote_type,
-            "voted_by": user_id
+            "voted_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)

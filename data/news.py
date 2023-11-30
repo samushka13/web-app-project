@@ -4,8 +4,6 @@ from db import db
 
 def add(title: str, body: str, zip_code: str, publish_on: str):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO news
                     (title, body, zip_code, publish_on, created_at, created_by)
                  VALUES
@@ -16,7 +14,7 @@ def add(title: str, body: str, zip_code: str, publish_on: str):
             "body": body,
             "zip_code": zip_code,
             "publish_on": publish_on,
-            "created_by": user_id
+            "created_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -154,8 +152,6 @@ def get_details(news_id: int):
 
 def archive(news_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE news
                  SET
                     archived_at=NOW(),
@@ -163,7 +159,7 @@ def archive(news_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
+            "archived_by": session["user_id"],
             "id": news_id
         }
 
@@ -197,8 +193,6 @@ def unarchive(news_id: int):
 
 def add_view(news_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO news_views
                     (news_id, viewed_at, viewed_by)
                  VALUES
@@ -206,7 +200,7 @@ def add_view(news_id: int):
 
         values = {
             "news_id": news_id,
-            "viewed_by": user_id
+            "viewed_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)

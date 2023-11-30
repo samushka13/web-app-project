@@ -4,8 +4,6 @@ from db import db
 
 def send(title: str, body: str):
     try:
-        user_id = session["user_id"]
-
         sql = """INSERT INTO feedbacks
                     (title, body, sent_at, sent_by)
                  VALUES
@@ -14,7 +12,7 @@ def send(title: str, body: str):
         values = {
             "title": title,
             "body": body,
-            "sent_by": user_id
+            "sent_by": session["user_id"]
         }
 
         db.session.execute(text(sql), values)
@@ -106,8 +104,6 @@ def get_archived():
 
 def acknowledge(feedback_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE feedbacks
                  SET
                     acknowledged_at=NOW(),
@@ -115,7 +111,7 @@ def acknowledge(feedback_id: int):
                  WHERE id=:id"""
 
         values = {
-            "acknowledged_by": user_id,
+            "acknowledged_by": session["user_id"],
             "id": feedback_id
         }
 
@@ -129,8 +125,6 @@ def acknowledge(feedback_id: int):
 
 def unacknowledge(feedback_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE feedbacks
                  SET
                     acknowledged_at=NULL,
@@ -138,7 +132,7 @@ def unacknowledge(feedback_id: int):
                  WHERE id=:id"""
 
         values = {
-            "acknowledged_by": user_id,
+            "acknowledged_by": session["user_id"],
             "id": feedback_id
         }
 
@@ -152,8 +146,6 @@ def unacknowledge(feedback_id: int):
 
 def archive(feedback_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE feedbacks
                  SET
                     archived_at=NOW(),
@@ -161,7 +153,7 @@ def archive(feedback_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
+            "archived_by": session["user_id"],
             "id": feedback_id
         }
 
