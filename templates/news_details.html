@@ -20,14 +20,18 @@
 {% endif %}
 
 <form class="inlined" action="/browse_news">
-    <input class="input" type="submit" value="Takaisin" />
+    <input class="input" type="submit" value="Selaa uutisia" />
 </form>
 
 <div class="content">
-    <h2>{{ item.title }}</h2>
-    <hr>
+    <h3>{{ item.title }}</h3>
+
+    {% if item.body %}
     <p>{{ item.body }}</p>
+    {% endif %}
+
     <hr>
+
     <div class="flex-fill">
         <p>
             {{ (item.created_by + " @ ") if session.is_admin else "" }}

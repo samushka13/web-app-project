@@ -82,28 +82,33 @@
     <div class="content">
         <h3>{{ poll.title }}</h3>
         <hr>
-        <p>Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}</p>
+        <div class="flex-fill">
+            <div class="inlined">
+                Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}
+            </div>
 
-        {% if session.is_admin %}
-        <hr>
+            {% if session.is_admin %}
 
-        <form
-            class="inlined"
-            action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
-            method="post"
-        >
-            <input
-                class="input"
-                type="submit"
-                value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
-            />
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
-        {% endif %}
+            <div class="inlined">
+                <form
+                    class="inlined"
+                    action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
+                    method="post"
+                >
+                    <input
+                        class="input"
+                        type="submit"
+                        value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
+                    />
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+                {% endif %}
 
-        <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
-            <input class="input" type="submit" value="Lue lisää">
-        </form>
+                <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
+                    <input class="input" type="submit" value="Lue lisää">
+                </form>
+            </div>
+        </div>
     </div>
 {% endfor %}
 

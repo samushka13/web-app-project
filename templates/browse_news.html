@@ -71,32 +71,34 @@
         <h3>{{ item.title }}</h3>
 
         <hr>
+        <div class="flex-fill">
+            <div class="inlined">
+                {{ item.publish_on.strftime("%d.%m.%Y") }}
+            </div>
 
-        <div class="inlined">
-            {{ item.publish_on.strftime("%d.%m.%Y") }}
+            {% if session.is_admin %}
+
+            <div class="inlined">
+                <form
+                    class="inlined"
+                    action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
+                    method="post"
+                >
+                    <input
+                        class="input"
+                        type="submit"
+                        value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
+                    >
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+                {% endif %}
+
+                <form class="inlined" action="/browse_news/details/{{ item.id }}" method="post">
+                    <input class="input" type="submit" value="Lue lisää">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+            </div>
         </div>
-
-        {% if session.is_admin %}
-
-        <form
-            class="inlined"
-            action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
-            method="post"
-        >
-            <input
-                class="input"
-                type="submit"
-                value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
-            >
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
-        {% endif %}
-
-        <form class="inlined" action="/browse_news/details/{{ item.id }}" method="post">
-            <input class="input" type="submit" value="Lue lisää">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
-
     </div>
 {% endfor %}
 

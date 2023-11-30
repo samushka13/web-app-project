@@ -19,7 +19,7 @@
             {% if user.id != session.user_id %}
 
             <div>
-                <div class="inlined" style="font-size: small;">
+                <div class="inlined" style="font-size: small; margin-right: 10px;">
                     Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
                 </div>
 

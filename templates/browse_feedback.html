@@ -56,39 +56,55 @@
     <div class="content">
         <h3>{{ feedback.title }}</h3>
         <p>{{ feedback.body }}</p>
+
         <hr>
-        <p>{{ feedback.sent_by }} @ {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}</p>
+
+        <div class="flex-fill">
+            <div class="inlined" style="margin-top: 12px; margin-bottom: 12px;">
+                {{ feedback.sent_by }} @ {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}
+            </div>
+
+            {% if session.is_admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
+            <form
+                class="inlined"
+                action="/{{ 'acknowledge_feedback' if request.path == '/browse_feedback' else 'archive_feedback' }}/{{ feedback.id }}"
+                method="post"
+            >
+                <input
+                    class="input"
+                    type="submit"
+                    value="{{ 'Merkitse huomioiduksi' if request.path == '/browse_feedback' else 'Arkistoi' }}"
+                />
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+            {% endif %}
+        </div>
 
         {% if session.is_admin %}
+        {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
         <hr>
 
-            {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
-            <p class="inlined">
+        <div class="flex-fill">
+
+            <div class="inlined">
                 Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
                 {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
-            </p>
-            {% endif %}
+            </div>
 
-        <form
-            class="inlined"
-            action="/{{ 'unacknowledge_feedback' if feedback.acknowledged_at else 'acknowledge_feedback' }}/{{ feedback.id }}"
-            method="post"
-        >
-            <input
-                class="input"
-                type="submit"
-                value="{{ 'Peru huomiointi' if feedback.acknowledged_at else 'Merkitse huomioiduksi' }}"
-            />
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
+            <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
+                <input class="input" type="submit" value="Peru huomiointi">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
 
+        </div>
+        {% endif %}
+
+        <div class="flex-fill">
             {% if request.path == "/browse_feedback/archived" %}
-            <br>
-
-            <p class="inlined">
+            <div class="inlined">
                 Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
                 {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
-            </p>
+            </div>
 
             <form
                 class="inlined"
@@ -105,6 +121,7 @@
             {% endif %}
 
         {% endif %}
+        </div>
     </div>
 {% endfor %}
 

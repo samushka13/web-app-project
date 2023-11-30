@@ -5,7 +5,7 @@
 {% block content %}
 
 {% if session.is_admin %}
-    <form
+<form
     class="inlined"
     action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
     method="post"
@@ -16,7 +16,7 @@
         value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
     />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
+</form>
 {% endif %}
 
 {% if not poll.archived_at %}
@@ -43,25 +43,32 @@
 
 <div class="content">
     <h3>{{ poll.title }}</h3>
-    <p>{{ poll.zip_code if poll.zip_code else "" }}</p>
+
+    {% if poll.zip_code %}
+    <p>{{ poll.zip_code }}</p>
+    {% endif %}
+
     <hr>
-    <div class="flex-fill">
-        <p>Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}</p>
-        <p>Kannattajia: {{ poll.for }} | Vastustajia: {{ poll.against }}</p>
+
+    <div class="flex-fill text">
+        <div class="inlined">
+            Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}
+        </div>
+        <div class="inlined">
+            Kannattajia: {{ poll.for }} | Vastustajia: {{ poll.against }}
+        </div>
     </div>
+
+    {% if session.is_admin and poll.archived_at %}
     <hr>
     <p>
         {{ (poll.created_by + " @ ") if session.is_admin else "" }}
         {{ poll.created_at.strftime("%d.%m.%Y") }}
     </p>
-
-    {% if session.is_admin and poll.archived_at %}
-
     <p>
         Arkistoinut: {{ poll.archived_by if poll.archived_by else "-" }} @ 
         {{ poll.archived_at.strftime("%d.%m.%Y %H:%M:%S") if poll.archived_at else "-" }}
     </p>
-
     {% endif %}
 </div>
 

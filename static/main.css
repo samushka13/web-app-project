@@ -58,8 +58,13 @@ textarea {
     width: fit-content;
 }
 .flex-fill {
+    align-items: center;
     display: flex;
     justify-content: space-between;
+}
+.flex-fill.text {
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 .header {
     background-color: #FAFAFA;

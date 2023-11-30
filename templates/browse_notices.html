@@ -68,39 +68,43 @@
 
 {% for notice in notices %}
     <div class="content">
-        <h3>"{{ notice.title }}"</h3>
+        <h3>{{ notice.title }}</h3>
 
         {% if notice.zip_code %}
-        <p>Postinumero: {{ notice.zip_code }}</p>
+        <p>{{ notice.zip_code }}</p>
         {% endif %}
 
         <hr>
 
-        <div class="inlined">
-            {{ notice.created_at.strftime("%d.%m.%Y") }}
+        <div class="flex-fill">
+            <div class="inlined">
+                {{ notice.created_at.strftime("%d.%m.%Y") }}
+            </div>
+
+            {% if session.is_admin %}
+
+            <div class="inlined">
+                <form
+                    class="inlined"
+                    action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
+                    method="post"
+                >
+                    <input
+                        class="input"
+                        type="submit"
+                        value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
+                    />
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+
+                {% endif %}
+
+                <form class="inlined" action="/browse_notices/details/{{ notice.id }}" method="post">
+                    <input class="input" type="submit" value="Lue lisää">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+            </div>
         </div>
-
-        {% if session.is_admin %}
-
-        <form
-            class="inlined"
-            action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
-            method="post"
-        >
-            <input
-                class="input"
-                type="submit"
-                value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
-            />
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
-
-        {% endif %}
-
-        <form class="inlined" action="/browse_notices/details/{{ notice.id }}" method="post">
-            <input class="input" type="submit" value="Lue lisää">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        </form>
     </div>
 {% endfor %}
 

@@ -47,86 +47,98 @@
 {% endif %}
 
 <form class="inlined" action="/browse_notices">
-    <input class="input" type="submit" value="Takaisin" />
+    <input class="input" type="submit" value="Selaa ilmoituksia" />
 </form>
 
 <div class="content">
-    <h3>"{{ notice.title }}"</h3>
-    <hr>
-    <p>"{{ notice.body }}"</p>
+    <h3>{{ notice.title }}</h3>
+
+    {% if notice.body %}
+    <p>{{ notice.body }}</p>
+    {% endif %}
 
     {% if notice.street_address or notice.zip_code %}
     <hr>
 
-    {% if notice.street_address %}
-    <p>Katuosoite: {{ notice.street_address }}</p>
-    {% endif %}
-
-    {% if notice.zip_code %}
-    <p>Postinumero: {{ notice.zip_code }}</p>
-    {% endif %}
+    <div class="flex-fill text">
+        <div class="inlined">
+            {% if notice.zip_code %}
+            {{ notice.zip_code }}
+            {% endif %}
+        </div>
+        <div class="inlined">
+            {% if notice.street_address %}
+            {{ notice.street_address }}
+            {% endif %}
+        </div>
+    </div>
 
     {% endif %}
 
     <hr>
 
-    <div class="flex-fill">
-        <p>
-            {{ (notice.created_by + " @ ") if session.is_admin else "" }}
-            {{ notice.created_at.strftime("%d.%m.%Y") }}
-        </p>
+    <div class="flex-fill text">
+        {{ (notice.created_by + " @ ") if session.is_admin else "" }}
+        {{ notice.created_at.strftime("%d.%m.%Y") }}
     </div>
     
-    <div class="flex-fill">
-        <p>
+    <div class="flex-fill text">
+        <div class="inlined">
             {% if notice.total_views == 0 or notice.total_views == 1 %}
             {{ notice.total_views }} {{ 'katselukerta' if notice.total_views == 1 else 'katselukertaa' }}
             {% else %}
             {{ notice.total_views }} katselukertaa | 
             {{ notice.unique_views }} {{ 'katselija' if notice.unique_views == 1 else 'katselijaa' }}
             {% endif %}
-        </p>
-        <p>
+        </div>
+        <div class="inlined">
             {% if notice.total_supports == 0 or notice.total_supports == 1 %}
             {{ notice.total_supports }} {{ 'komppaus' if notice.total_supports == 1 else 'komppausta' }}
             {% else %}
             {{ notice.total_supports }} komppausta | 
             {{ notice.unique_supports }} {{ 'komppaaja' if notice.unique_supports == 1 else 'komppaajaa' }}
             {% endif %}
-        </p>
+        </div>
     </div>
 
     {% if session.is_admin and notice.archived_at %}
 
-    <p>
+    <div class="flex-fill text">
         Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
         {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
-    </p>
+    </div>
 
     {% endif %}
 
     {% if statuses|length != 0 %}
+
+    <hr>
 
     <h4>Käsittelyhistoria:</h4>
 
     {% endif %}
 
     {% for status in statuses %}
+        <div class="flex-fill">
+            <div class="inlined">
+            {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
 
-    <p>
-        {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
+            {% if status.status == "read" %}
+            Huomioitu
+            {% elif status.status == "wip" %}
+            Työn alla
+            {% elif status.status == "done" %}
+            Valmis
+            {% endif %}
 
-        {% if status.status == "read" %}
-        Huomioitu
-        {% elif status.status == "wip" %}
-        Työn alla
-        {% elif status.status == "done" %}
-        Valmis
-        {% endif %}
+            {{ (' | ' + status.set_by) if session.is_admin else "" }}
+            </div>
 
-        {{ (' | ' + status.set_by) if session.is_admin else "" }}
-    </p>
-
+            <form class="inlined" action="/notice/remove_status/{{ status.id }}" method="post">
+                <input class="input" type="submit" value="Poista merkintä">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+        </div>
     {% endfor %}
 </div>
 
