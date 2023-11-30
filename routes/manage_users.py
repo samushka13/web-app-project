@@ -8,6 +8,11 @@ from data import users
 @admin_required
 def manage_users():
     user_list = users.get_users()
+
+    if user_list is False:
+        user_list = []
+        flash("Käyttäjien haku epäonnistui", "error")
+
     return render_template("manage_users.html", users=user_list)
 
 @app.route("/disable_user/<int:user_id>", methods=["POST"])
