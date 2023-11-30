@@ -27,6 +27,7 @@ All users can:
 - see anonymized poll voter distributions,
 - give feedback,
 - edit their profile (except username),
+- change their password,
 - delete their account.
 
 Only admins can:

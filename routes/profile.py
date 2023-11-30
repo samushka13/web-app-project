@@ -1,6 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
+from werkzeug.security import check_password_hash
 from app import app
 from helpers.decorators import login_required
 from helpers.csrf import is_csrf_token_valid
@@ -73,8 +74,8 @@ def update_admin_status():
     if "is_admin" not in request.form:
         flash("Ylläpitäjän rooli ei voi olla tyhjä", "error")
         return render_template("profile.html")
-    else:
-        is_admin = request.form["is_admin"] == "yes"
+
+    is_admin = request.form["is_admin"] == "yes"
 
     user_id = session["user_id"]
     valid_token = is_csrf_token_valid()
@@ -84,6 +85,31 @@ def update_admin_status():
         flash("Tallennus ei onnistunut", "error")
 
     return redirect(url_for("profile"))
+
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    if request.method == "GET":
+        return render_template("change_password.html")
+
+    if "user_id" in session and "password_hash" in session:
+        user_id = session["user_id"]
+        password_hash = session["password_hash"]
+
+        current_password = request.form["current_password"]
+        password_match = check_password_hash(password_hash, current_password)
+        new_password = request.form["new_password"]
+
+        if not password_match:
+            flash("Nykyinen salasana ei täsmää", "error")
+        elif is_csrf_token_valid() and users.change_password(user_id, new_password):
+            flash("Salasanan vaihtaminen onnistui")
+            return redirect(url_for("profile"))
+
+    flash("Salasanan vaihtaminen ei onnistunut", "error")
+    return render_template("change_password.html",
+                            current_password=current_password,
+                            new_password=new_password)
 
 @app.route("/delete_current_user", methods=["POST"])
 @login_required

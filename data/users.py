@@ -67,6 +67,7 @@ def login(name: str, password: str):
 
         session["username"] = name
         session["user_id"] = user[0]
+        session["password_hash"] = user[1]
         session["date_of_birth"] = user[2]
         session["gender"] = user[3]
         session["zip_code"] = user[4]
@@ -165,6 +166,27 @@ def update_admin_status(user_id: int, is_admin: str):
         return False
 
     session["is_admin"] = is_admin
+
+    return True
+
+def change_password(user_id: int, password: str):
+    hash_value = generate_password_hash(password)
+
+    try:
+        sql = """UPDATE users
+                 SET password=:password
+                 WHERE id=:id"""
+
+        values = {
+            "password": hash_value,
+            "id": user_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
 
     return True
 

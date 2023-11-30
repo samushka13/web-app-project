@@ -13,6 +13,10 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
+<form class="inlined" action="/change_password">
+    <input class="input" type="submit" value="Vaihda salasana" />
+</form>
+
 <form class="inlined" action="/logout">
     <input class="input" type="submit" value="Kirjaudu ulos" />
 </form>
