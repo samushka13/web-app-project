@@ -1,8 +1,11 @@
+from flask import session
 from sqlalchemy.sql import text
 from db import db
 
-def send(user_id: int, title: str, body: str):
+def send(title: str, body: str):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO feedbacks
                     (title, body, sent_at, sent_by)
                  VALUES
@@ -101,8 +104,10 @@ def get_archived():
     except Exception:
         return False
 
-def acknowledge(user_id: int, feedback_id: int):
+def acknowledge(feedback_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE feedbacks
                  SET
                     acknowledged_at=NOW(),
@@ -122,8 +127,10 @@ def acknowledge(user_id: int, feedback_id: int):
 
     return True
 
-def unacknowledge(user_id: int, feedback_id: int):
+def unacknowledge(feedback_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE feedbacks
                  SET
                     acknowledged_at=NULL,
@@ -143,8 +150,10 @@ def unacknowledge(user_id: int, feedback_id: int):
 
     return True
 
-def archive(user_id: int, feedback_id: int):
+def archive(feedback_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE feedbacks
                  SET
                     archived_at=NOW(),
@@ -164,7 +173,7 @@ def archive(user_id: int, feedback_id: int):
 
     return True
 
-def unarchive(user_id: int, feedback_id: int):
+def unarchive(feedback_id: int):
     try:
         sql = """UPDATE feedbacks
                  SET
@@ -173,7 +182,6 @@ def unarchive(user_id: int, feedback_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
             "id": feedback_id
         }
 

@@ -1,8 +1,11 @@
-from flask import flash, render_template, redirect, url_for, request, session
+from flask import flash, render_template, redirect, url_for, request
 from app import app
 from helpers.decorators import login_required, admin_required
 from helpers.csrf import is_csrf_token_valid
 from data import feedback
+
+def redirect_to_feedbacks():
+    return redirect(url_for("browse_feedback"))
 
 def render_feedback_template(feedbacks):
     if feedbacks is False:
@@ -34,9 +37,9 @@ def give_feedback():
         flash("Kuvauksessa voi olla enintään 1000 merkkiä", "error")
         is_form_valid = False
 
-    if is_form_valid and feedback.send(session["user_id"], title, body):
+    if is_form_valid and feedback.send(title, body):
         flash("Palautteen lähettäminen onnistui")
-        return redirect(url_for("browse_feedback"))
+        return redirect_to_feedbacks()
 
     flash("Palautteen lähettäminen ei onnistunut", "error")
     return render_template("give_feedback.html", title=title, body=body)
@@ -62,31 +65,31 @@ def browse_archived_feedback():
 @app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def acknowledge_feedback(feedback_id):
-    if not (is_csrf_token_valid() and feedback.acknowledge(session["user_id"], feedback_id)):
+    if not (is_csrf_token_valid() and feedback.acknowledge(feedback_id)):
         flash("Huomioiduksi merkitseminen ei onnistunut", "error")
 
-    return redirect(url_for("browse_feedback"))
+    return redirect_to_feedbacks()
 
 @app.route("/unacknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def unacknowledge_feedback(feedback_id):
-    if not (is_csrf_token_valid() and feedback.unacknowledge(session["user_id"], feedback_id)):
+    if not (is_csrf_token_valid() and feedback.unacknowledge(feedback_id)):
         flash("Huomioinnin peruminen ei onnistunut", "error")
 
-    return redirect(url_for("browse_feedback"))
+    return redirect_to_feedbacks()
 
 @app.route("/archive_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def archive_feedback(feedback_id):
-    if not (is_csrf_token_valid() and feedback.archive(session["user_id"], feedback_id)):
+    if not (is_csrf_token_valid() and feedback.archive(feedback_id)):
         flash("Arkistointi ei onnistunut", "error")
 
-    return redirect(url_for("browse_feedback"))
+    return redirect_to_feedbacks()
 
 @app.route("/unarchive_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def unarchive_feedback(feedback_id):
-    if not (is_csrf_token_valid() and feedback.unarchive(session["user_id"], feedback_id)):
+    if not (is_csrf_token_valid() and feedback.unarchive(feedback_id)):
         flash("Arkistoinnin peruminen ei onnistunut", "error")
 
-    return redirect(url_for("browse_feedback"))
+    return redirect_to_feedbacks()
