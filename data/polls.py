@@ -1,8 +1,11 @@
+from flask import session
 from sqlalchemy.sql import text
 from db import db
 
-def add(user_id: int, title: str, zip_code: str, open_on: str, close_on: str):
+def add(title: str, zip_code: str, open_on: str, close_on: str):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO polls
                     (title, zip_code, open_on, close_on, created_at, created_by)
                  VALUES
@@ -116,8 +119,10 @@ def get_archived():
     except Exception:
         return []
 
-def get_nearby(user_zip_code: str):
+def get_nearby():
     try:
+        zip_code = session["zip_code"]
+
         sql = """SELECT
                     P.id,
                     P.title,
@@ -128,11 +133,11 @@ def get_nearby(user_zip_code: str):
                  FROM polls AS P
                  WHERE
                     P.archived_at IS NULL
-                    AND P.zip_code=:user_zip_code
+                    AND P.zip_code=:zip_code
                  ORDER BY P.open_on DESC"""
 
         values = {
-            "user_zip_code": user_zip_code
+            "zip_code": zip_code
         }
 
         result = db.session.execute(text(sql), values)
@@ -175,8 +180,10 @@ def get_details(poll_id: int):
     except Exception:
         return False
 
-def archive(user_id: int, poll_id: int):
+def archive(poll_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE polls
                  SET
                     archived_at=NOW(),
@@ -196,7 +203,7 @@ def archive(user_id: int, poll_id: int):
 
     return True
 
-def unarchive(user_id: int, poll_id: int):
+def unarchive(poll_id: int):
     try:
         sql = """UPDATE polls
                  SET
@@ -205,7 +212,6 @@ def unarchive(user_id: int, poll_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
             "id": poll_id
         }
 
@@ -217,8 +223,10 @@ def unarchive(user_id: int, poll_id: int):
 
     return True
 
-def vote(poll_id: int, user_id: int, vote_type: bool):
+def vote(poll_id: int, vote_type: bool):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO votes
                     (poll_id, vote, voted_at, voted_by)
                  VALUES

@@ -10,7 +10,7 @@ def redirect_to_notices():
 def render_notices_template(notice_list):
     if notice_list is False:
         notice_list = []
-        flash("Uutisten haku epäonnistui", "error")
+        flash("Ilmoitusten haku epäonnistui", "error")
 
     return render_template("browse_notices.html", notices=notice_list)
 

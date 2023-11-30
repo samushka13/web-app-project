@@ -177,8 +177,6 @@ def archive(news_id: int):
 
 def unarchive(news_id: int):
     try:
-        user_id = session["user_id"]
-
         sql = """UPDATE news
                  SET
                     archived_at=NULL,
@@ -186,7 +184,6 @@ def unarchive(news_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
             "id": news_id
         }
 

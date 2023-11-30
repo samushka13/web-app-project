@@ -86,7 +86,7 @@ def add_news():
         is_form_valid = False
 
     if not publish_on or len(publish_on) < 10:
-        flash("Päivämäärä ei ole kelvollinen")
+        flash("Päivämäärä ei ole kelvollinen", "error")
         is_form_valid = False
 
     if is_form_valid and news.add(title, body, zip_code, publish_on):
