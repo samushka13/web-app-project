@@ -24,7 +24,7 @@ def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
 
     return True
 
-def get_new():
+def get_current():
     try:
         sql = """SELECT
                     N.id,
@@ -44,7 +44,7 @@ def get_new():
         return news
 
     except Exception:
-        return []
+        return False
 
 def get_upcoming():
     try:
@@ -66,7 +66,7 @@ def get_upcoming():
         return news
 
     except Exception:
-        return []
+        return False
 
 def get_archived():
     try:
@@ -88,7 +88,7 @@ def get_archived():
         return news
 
     except Exception:
-        return []
+        return False
 
 def get_nearby(user_zip_code: str):
     try:
@@ -115,7 +115,7 @@ def get_nearby(user_zip_code: str):
         return news
 
     except Exception:
-        return []
+        return False
 
 def get_details(news_id: int):
     try:
