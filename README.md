@@ -16,18 +16,24 @@ Users are required to register with the following information:
 
 All users can:
 - sign in and sign out,
-- view news, notices, and polls,
-- create notices about things that need improvement,
-- support notices created by other users,
-- vote in polls with a thumb up or down,
-- see anonymized poll analytics about respondents,
-- give and read feedback,
+- view news, notices, polls, and feedback,
+- see view counts of news and notices,
+- create notices,
+- support notices created by others,
+- see support counts of notices,
+- see status history of notices,
+- vote in polls (for or against),
+- see poll vote counts,
+- see anonymized poll voter distributions,
+- give feedback,
 - edit their profile (except username),
-- view notices they have created.
+- delete their account.
 
 Only admins can:
 - create news and polls,
+- edit statuses of news, notices, polls, and feedback,
 - view archived news, notices, polls, and feedback,
+- see who has changed statuses of news, notices, polls, and feedback,
 - disable user accounts.
 
 ## Installation
