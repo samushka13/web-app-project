@@ -1,0 +1,46 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form class="inlined" action="/browse_polls/details/{{ poll_id }}">
+    <input class="input" type="submit" value="Takaisin kyselyyn" />
+</form>
+
+<div class="content">
+    <h3>{{ poll_title.title }}</h3>
+
+    <pre><hr></pre>
+    <pre>Sukupuoli        puolesta | vastaan</pre>
+    <pre><hr></pre>
+    <pre>Naiset                  {{ votes_by_gender.females_for }} | {{ votes_by_gender.females_against }}</pre>
+    <pre>Miehet                  {{ votes_by_gender.males_for }} | {{ votes_by_gender.males_against }}</pre>
+    <pre>Muut                    {{ votes_by_gender.others_for }} | {{ votes_by_gender.others_against }}</pre>
+    <pre>N / A                   {{ votes_by_gender.no_genders_for }} | {{ votes_by_gender.no_genders_against }}</pre>
+
+    <pre><hr></pre>
+    <pre>Ikäryhmä         puolesta | vastaan</pre>
+    <pre><hr></pre>
+    <pre>  -29                   {{ votes_by_age_group.group_1_for }} | {{ votes_by_age_group.group_1_against }}</pre>
+    <pre>30-39                   {{ votes_by_age_group.group_2_for }} | {{ votes_by_age_group.group_2_against }}</pre>
+    <pre>40-49                   {{ votes_by_age_group.group_3_for }} | {{ votes_by_age_group.group_3_against }}</pre>
+    <pre>50-59                   {{ votes_by_age_group.group_4_for }} | {{ votes_by_age_group.group_4_against }}</pre>
+    <pre>60-                     {{ votes_by_age_group.group_5_for }} | {{ votes_by_age_group.group_5_against }}</pre>
+    <pre>N / A                   {{ votes_by_age_group.no_group_for }} | {{ votes_by_age_group.no_group_against }}</pre>
+
+    <pre><hr></pre>
+    <pre>Alue             puolesta | vastaan</pre>
+    <pre><hr></pre>
+
+    {% for group in votes_by_zip_code %}
+
+    <pre>{{ group.zip_code if group.zip_code else "N / A" }}                   {{ group.for if group.for else 0 }} | {{ group.against if group.against else 0 }}</pre>
+
+    {% endfor %}
+
+    <pre><hr></pre>
+    <pre>Yhteensä                {{ votes_by_gender.females_for + votes_by_gender.males_for + votes_by_gender.others_for + votes_by_gender.no_genders_for }} | {{ votes_by_gender.females_against + votes_by_gender.males_against + votes_by_gender.others_against + votes_by_gender.no_genders_against }}</pre>
+</div>
+
+{% endblock %}

@@ -47,6 +47,25 @@ def view_poll_details(poll_id):
     flash("Tietojen haku epäonnistui", "error")
     return redirect(url_for("browse_polls"))
 
+@app.route("/browse_polls/details/<int:poll_id>/analytics")
+@login_required
+def view_poll_analytics(poll_id):
+    poll_title = polls.get_poll_title(poll_id)
+    votes_by_gender = polls.get_votes_by_gender(poll_id)
+    votes_by_age_group = polls.get_votes_by_age_group(poll_id)
+    votes_by_zip_code = polls.get_votes_by_zip_code(poll_id)
+
+    if poll_title and votes_by_gender and votes_by_age_group and votes_by_zip_code:
+        return render_template("poll_analytics.html",
+                                poll_id=poll_id,
+                                poll_title=poll_title,
+                                votes_by_gender=votes_by_gender,
+                                votes_by_age_group=votes_by_age_group,
+                                votes_by_zip_code=votes_by_zip_code)
+
+    flash("Tietojen haku epäonnistui", "error")
+    return redirect(url_for("view_poll_details", poll_id=poll_id))
+
 @app.route("/vote_for/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_for(poll_id):
