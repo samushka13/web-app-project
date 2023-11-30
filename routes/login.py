@@ -21,15 +21,17 @@ def register():
 
     if request.method == "POST":
         is_form_valid = True
-
         username = request.form["username"]
         password = request.form["password"]
+        date_of_birth = request.form["date_of_birth"]
+        zip_code = request.form["zip_code"]
+        gender = None
+        is_admin = False
 
         if len(username) < 6:
             flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä", "error")
             is_form_valid = False
-
-        if len(username) > 50:
+        elif len(username) > 50:
             flash("Käyttäjänimessä voi olla enintään 50 merkkiä", "error")
             is_form_valid = False
 
@@ -37,17 +39,11 @@ def register():
             flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
             is_form_valid = False
 
-        if "gender" not in request.form or request.form["gender"] == "":
-            gender = None
-        else:
+        if "gender" in request.form and request.form["gender"] != "":
             gender = request.form["gender"]
-
-        date_of_birth = request.form["date_of_birth"]
 
         if date_of_birth == "":
             date_of_birth = None
-
-        zip_code = request.form["zip_code"]
 
         if zip_code == "":
             zip_code = None
@@ -55,20 +51,19 @@ def register():
             flash("Postinumerossa tulee olla 5 numeroa", "error")
             is_form_valid = False
 
-        if "is_admin" not in request.form:
-            is_admin = False
-        else:
+        if "is_admin" in request.form:
             is_admin = request.form["is_admin"] == "yes"
 
         if is_form_valid:
             response = users.register(username, password, date_of_birth, gender, zip_code, is_admin)
 
+            if response is True:
+                return redirect("/")
+
             if response == "username-exists":
                 flash("Käyttäjänimi on varattu", "error")
-            elif not response:
-                flash("Rekisteröityminen ei onnistunut", "error")
             else:
-                return redirect("/")
+                flash("Rekisteröityminen ei onnistunut", "error")
 
         return render_template("register.html",
                                 username=username,
@@ -80,27 +75,20 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-    is_form_valid = True
-
     username = request.form["username"]
     password = request.form["password"]
 
-    login_response = users.login(username, password)
+    response = users.login(username, password)
 
-    if not login_response:
-        flash("Kirjautuminen ei onnistunut", "error")
-        is_form_valid = False
-
-    if login_response == "credential-error":
-        flash("Väärä käyttäjänimi tai salasana", "error")
-        is_form_valid = False
-
-    if login_response == "account-disabled":
-        flash("Tili on poistettu käytöstä", "error")
-        is_form_valid = False
-
-    if is_form_valid:
+    if response is True:
         return redirect(url_for("browse_news"))
+
+    if response == "credential-error":
+        flash("Väärä käyttäjänimi tai salasana", "error")
+    elif response == "account-disabled":
+        flash("Tili on poistettu käytöstä", "error")
+    else:
+        flash("Kirjautuminen ei onnistunut", "error")
 
     return render_template("index.html", username=username, password=password)
 
