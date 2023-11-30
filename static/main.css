@@ -76,6 +76,10 @@ textarea {
 .inlined {
     display: inline-block;
 }
+.inlined.with-margin {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
 .input {
     margin: 10px;
 }

@@ -153,6 +153,17 @@ def set_notice_as_done(notice_id):
 
     return redirect(url_for("view_notice_details", notice_id=notice_id))
 
+@app.route("/notice/<int:notice_id>/delete_status/<int:status_id>", methods=["POST"])
+@admin_required
+def delete_status(notice_id, status_id):
+    user_id = session["user_id"]
+    data_updated = notices.delete_status(status_id)
+
+    if not (user_id and is_csrf_token_valid() and data_updated):
+        flash("Merkinnän poistaminen ei onnistunut", "error")
+
+    return redirect(url_for("view_notice_details", notice_id=notice_id))
+
 @app.route("/archive_notice/<int:notice_id>", methods=["POST"])
 @admin_required
 def archive_notice(notice_id):

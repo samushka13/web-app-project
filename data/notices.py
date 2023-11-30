@@ -290,3 +290,20 @@ def get_statuses(notice_id: int):
 
     except Exception:
         return []
+
+def delete_status(status_id: int):
+    try:
+        sql = """DELETE FROM notice_statuses
+                 WHERE id=:id"""
+
+        values = {
+            "id": status_id
+        }
+
+        db.session.execute(text(sql), values)
+        db.session.commit()
+
+    except Exception:
+        return False
+
+    return True

@@ -17,7 +17,7 @@
 </form>
 
 <form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
-    <input class="input" type="submit" value="Merkitse tehdyksi">
+    <input class="input" type="submit" value="Merkitse valmiiksi">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
@@ -120,7 +120,7 @@
 
     {% for status in statuses %}
         <div class="flex-fill">
-            <div class="inlined">
+            <div class="inlined with-margin">
             {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
 
             {% if status.status == "read" %}
@@ -134,10 +134,14 @@
             {{ (' | ' + status.set_by) if session.is_admin else "" }}
             </div>
 
-            <form class="inlined" action="/notice/remove_status/{{ status.id }}" method="post">
+            {% if session.is_admin %}
+
+            <form class="inlined" action="/notice/{{ notice.id }}/delete_status/{{ status.id }}" method="post">
                 <input class="input" type="submit" value="Poista merkintä">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </form>
+
+            {% endif %}
         </div>
     {% endfor %}
 </div>
