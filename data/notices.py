@@ -1,8 +1,11 @@
+from flask import session
 from sqlalchemy.sql import text
 from db import db
 
-def add(user_id: int, title: str, body: str, zip_code: str, street_address: str):
+def add(title: str, body: str, zip_code: str, street_address: str):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO notices
                     (title, body, zip_code, street_address, created_at, created_by)
                  VALUES
@@ -43,10 +46,12 @@ def get_all():
         return notices
 
     except Exception:
-        return []
+        return False
 
-def get_user_notices(user_id: int):
+def get_created_by_user():
     try:
+        user_id = session["user_id"]
+
         sql = """SELECT
                     N.id,
                     N.title,
@@ -68,7 +73,7 @@ def get_user_notices(user_id: int):
         return notices
 
     except Exception:
-        return []
+        return False
 
 def get_archived():
     try:
@@ -90,10 +95,12 @@ def get_archived():
         return notices
 
     except Exception:
-        return []
+        return False
 
-def get_nearby(user_zip_code: str):
+def get_nearby():
     try:
+        zip_code = session["zip_code"]
+
         sql = """SELECT
                     N.id,
                     N.title,
@@ -104,11 +111,11 @@ def get_nearby(user_zip_code: str):
                  FROM notices AS N
                  WHERE
                     N.archived_at IS NULL
-                    AND N.zip_code=:user_zip_code
+                    AND N.zip_code=:zip_code
                  ORDER BY N.created_at DESC"""
 
         values = {
-            "user_zip_code": user_zip_code
+            "zip_code": zip_code
         }
 
         result = db.session.execute(text(sql), values)
@@ -117,7 +124,7 @@ def get_nearby(user_zip_code: str):
         return news
 
     except Exception:
-        return []
+        return False
 
 def get_details(notice_id: int):
     try:
@@ -153,8 +160,10 @@ def get_details(notice_id: int):
     except Exception:
         return False
 
-def archive(user_id: int, notice_id: int):
+def archive(notice_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE notices
                  SET
                     archived_at=NOW(),
@@ -174,7 +183,7 @@ def archive(user_id: int, notice_id: int):
 
     return True
 
-def unarchive(user_id: int, notice_id: int):
+def unarchive(notice_id: int):
     try:
         sql = """UPDATE notices
                  SET
@@ -183,7 +192,6 @@ def unarchive(user_id: int, notice_id: int):
                  WHERE id=:id"""
 
         values = {
-            "archived_by": user_id,
             "id": notice_id
         }
 
@@ -195,8 +203,10 @@ def unarchive(user_id: int, notice_id: int):
 
     return True
 
-def add_view(notice_id: int, user_id: int):
+def add_view(notice_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO notice_views
                     (notice_id, viewed_at, viewed_by)
                  VALUES
@@ -215,8 +225,10 @@ def add_view(notice_id: int, user_id: int):
 
     return True
 
-def add_support(notice_id: int, user_id: int):
+def add_support(notice_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO notice_supports
                     (notice_id, supported_at, supported_by)
                  VALUES
@@ -256,13 +268,16 @@ def add_status(user_id: int, notice_id: int, status: str):
 
     return True
 
-def acknowledge(user_id: int, notice_id: int):
+def acknowledge(notice_id: int):
+    user_id = session["user_id"]
     return add_status(user_id, notice_id, "read")
 
-def wip(user_id: int, notice_id: int):
+def wip(notice_id: int):
+    user_id = session["user_id"]
     return add_status(user_id, notice_id, "wip")
 
-def done(user_id: int, notice_id: int):
+def done(notice_id: int):
+    user_id = session["user_id"]
     return add_status(user_id, notice_id, "done")
 
 def get_statuses(notice_id: int):
@@ -289,7 +304,7 @@ def get_statuses(notice_id: int):
         return statuses
 
     except Exception:
-        return []
+        return False
 
 def delete_status(status_id: int):
     try:
