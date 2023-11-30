@@ -85,8 +85,10 @@ def logout():
     for key in list(session.keys()):
         session.pop(key)
 
-def update_date_of_birth(user_id: int, date_of_birth: str):
+def update_date_of_birth(date_of_birth: str):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE users
                  SET date_of_birth=:date_of_birth
                  WHERE id=:id"""
@@ -106,8 +108,10 @@ def update_date_of_birth(user_id: int, date_of_birth: str):
 
     return True
 
-def update_gender(user_id: int, gender: str):
+def update_gender(gender: str):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE users
                  SET gender=:gender
                  WHERE id=:id"""
@@ -127,8 +131,10 @@ def update_gender(user_id: int, gender: str):
 
     return True
 
-def update_zip_code(user_id: int, zip_code: str):
+def update_zip_code(zip_code: str):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE users
                  SET zip_code=:zip_code
                  WHERE id=:id"""
@@ -148,8 +154,10 @@ def update_zip_code(user_id: int, zip_code: str):
 
     return True
 
-def update_admin_status(user_id: int, is_admin: str):
+def update_admin_status(is_admin: str):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE users
                  SET admin=:admin
                  WHERE id=:id"""
@@ -169,10 +177,12 @@ def update_admin_status(user_id: int, is_admin: str):
 
     return True
 
-def change_password(user_id: int, password: str):
+def change_password(password: str):
     hash_value = generate_password_hash(password)
 
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE users
                  SET password=:password
                  WHERE id=:id"""
@@ -190,8 +200,10 @@ def change_password(user_id: int, password: str):
 
     return True
 
-def delete_user(user_id: int):
+def delete_current_user():
     try:
+        user_id = session["user_id"]
+
         sql = """DELETE FROM users
                  WHERE id=:id"""
 

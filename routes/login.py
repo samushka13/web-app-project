@@ -1,7 +1,9 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
+from helpers.contants import MIN_USER_AGE
 from helpers.decorators import login_required
+from helpers.forms import get_date_of_birth, get_gender, get_zip_code, get_admin_status
 from app import app
 from data import users
 
@@ -16,16 +18,16 @@ def index():
 def register():
     if request.method == "GET":
         current_date = datetime.today().date()
-        max_date = current_date - relativedelta(years=18)
+        max_date = current_date - relativedelta(years=MIN_USER_AGE)
         return render_template("register.html", max_date=max_date)
 
     is_form_valid = True
     username = request.form["username"]
     password = request.form["password"]
-    date_of_birth = request.form["date_of_birth"]
-    zip_code = request.form["zip_code"]
-    gender = None
-    is_admin = False
+    date_of_birth = get_date_of_birth()
+    zip_code = get_zip_code()
+    gender = get_gender()
+    is_admin = get_admin_status()
 
     if len(username) < 6:
         flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä", "error")
@@ -33,25 +35,15 @@ def register():
     elif len(username) > 50:
         flash("Käyttäjänimessä voi olla enintään 50 merkkiä", "error")
         is_form_valid = False
-
-    if len(password) < 6:
+    elif len(password) < 6:
         flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
         is_form_valid = False
-
-    if "gender" in request.form and request.form["gender"] != "":
-        gender = request.form["gender"]
-
-    if date_of_birth == "":
-        date_of_birth = None
-
-    if zip_code == "":
-        zip_code = None
-    elif len(zip_code) != 5:
+    elif date_of_birth and len(date_of_birth) < 10:
+        flash("Päivämäärä ei ole kelvollinen", "error")
+        is_form_valid = False
+    elif zip_code and len(zip_code) != 5:
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         is_form_valid = False
-
-    if "is_admin" in request.form:
-        is_admin = request.form["is_admin"] == "yes"
 
     if is_form_valid:
         response = users.register(username, password, date_of_birth, gender, zip_code, is_admin)

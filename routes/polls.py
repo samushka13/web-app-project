@@ -2,8 +2,9 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request
 from app import app
+from helpers.contants import DATE_LENGTH, TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, ZIP_CODE_LENGTH
 from helpers.decorators import login_required, admin_required
-from helpers.csrf import is_csrf_token_valid
+from helpers.forms import csrf_check_passed, get_date, get_zip_code
 from data import polls
 
 def redirect_to_polls():
@@ -82,7 +83,7 @@ def view_poll_analytics(poll_id):
 @app.route("/vote_for/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_for(poll_id):
-    if not (is_csrf_token_valid() and polls.vote(poll_id, True)):
+    if not (csrf_check_passed() and polls.vote(poll_id, True)):
         flash("Äänestäminen epäonnistui", "error")
 
     if polls.get_details(poll_id):
@@ -94,7 +95,7 @@ def vote_for(poll_id):
 @app.route("/vote_against/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_against(poll_id):
-    if not (is_csrf_token_valid() and polls.vote(poll_id, False)):
+    if not (csrf_check_passed() and polls.vote(poll_id, False)):
         flash("Äänestäminen epäonnistui", "error")
 
     if polls.get_details(poll_id):
@@ -111,34 +112,28 @@ def add_poll():
         future_date = current_date + relativedelta(months=+1)
         return render_template("add_poll.html", current_date=current_date, future_date=future_date)
 
-    is_form_valid = is_csrf_token_valid()
+    is_form_valid = csrf_check_passed()
     title = request.form["title"]
-    zip_code = request.form["zip_code"]
-    open_on = request.form["open_on"]
-    close_on = request.form["close_on"]
+    zip_code = get_zip_code()
+    open_on = get_date("open_on")
+    close_on = get_date("close_on")
 
-    if len(title) < 1:
+    if len(title) < TITLE_MIN_LENGTH:
         flash("Otsikko ei saa olla tyhjä", "error")
         is_form_valid = False
-    elif len(title) > 100:
+    elif len(title) > TITLE_MAX_LENGTH:
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
         is_form_valid = False
-
-    if zip_code == "":
-        zip_code = None
-    elif len(zip_code) != 5:
+    elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         is_form_valid = False
-
-    if not open_on or len(open_on) < 10:
+    elif not open_on or len(open_on) < DATE_LENGTH:
         flash("Alkamispäivämäärä ei ole kelvollinen", "error")
         is_form_valid = False
-
-    if not close_on or len(close_on) < 10:
+    elif not close_on or len(close_on) < DATE_LENGTH:
         flash("Päättymispäivämäärä ei ole kelvollinen", "error")
         is_form_valid = False
-
-    if datetime.strptime(open_on, "%Y-%m-%d") > datetime.strptime(close_on, "%Y-%m-%d"):
+    elif datetime.strptime(open_on, "%Y-%m-%d") > datetime.strptime(close_on, "%Y-%m-%d"):
         flash("Alkamispäivämäärän on oltava ennen päättymispäivämäärää", "error")
         is_form_valid = False
 
@@ -156,7 +151,7 @@ def add_poll():
 @app.route("/archive_poll/<int:poll_id>", methods=["POST"])
 @admin_required
 def archive_poll(poll_id):
-    if not (is_csrf_token_valid() and polls.archive(poll_id)):
+    if not (csrf_check_passed() and polls.archive(poll_id)):
         flash("Arkistointi ei onnistunut", "error")
 
     return redirect_to_polls()
@@ -164,7 +159,7 @@ def archive_poll(poll_id):
 @app.route("/unarchive_poll/<int:poll_id>", methods=["POST"])
 @admin_required
 def unarchive_poll(poll_id):
-    if not (is_csrf_token_valid() and polls.unarchive(poll_id)):
+    if not (csrf_check_passed() and polls.unarchive(poll_id)):
         flash("Arkistoinnin peruminen ei onnistunut", "error")
 
     return redirect_to_polls()
