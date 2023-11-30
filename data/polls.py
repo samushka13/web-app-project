@@ -38,7 +38,7 @@ def get_current():
                     P.open_on <= CURRENT_DATE
                     AND P.close_on > CURRENT_DATE
                     AND P.archived_at IS NULL
-                 ORDER BY P.created_at DESC"""
+                 ORDER BY P.open_on DESC"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()
@@ -61,7 +61,7 @@ def get_upcoming():
                  WHERE
                     P.open_on > CURRENT_DATE
                     AND P.archived_at IS NULL
-                 ORDER BY P.created_at DESC"""
+                 ORDER BY P.open_on DESC"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()
@@ -84,7 +84,7 @@ def get_past():
                  WHERE
                     P.close_on < CURRENT_DATE
                     AND P.archived_at IS NULL
-                 ORDER BY P.created_at DESC"""
+                 ORDER BY P.open_on DESC"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()
@@ -106,7 +106,7 @@ def get_archived():
                     P.archived_at
                  FROM polls AS P
                  WHERE P.archived_at IS NOT NULL
-                 ORDER BY P.created_at DESC"""
+                 ORDER BY P.open_on DESC"""
 
         result = db.session.execute(text(sql))
         polls = result.fetchall()
@@ -129,7 +129,7 @@ def get_nearby(user_zip_code: str):
                  WHERE
                     P.archived_at IS NULL
                     AND P.zip_code=:user_zip_code
-                 ORDER BY P.created_at DESC"""
+                 ORDER BY P.open_on DESC"""
 
         values = {
             "user_zip_code": user_zip_code
