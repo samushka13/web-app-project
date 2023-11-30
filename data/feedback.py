@@ -45,7 +45,7 @@ def get_new():
         return feedbacks
 
     except Exception:
-        return []
+        return False
 
 def get_acknowledged():
     try:
@@ -72,7 +72,7 @@ def get_acknowledged():
         return feedbacks
 
     except Exception:
-        return []
+        return False
 
 def get_archived():
     try:
@@ -99,7 +99,7 @@ def get_archived():
         return feedbacks
 
     except Exception:
-        return []
+        return False
 
 def acknowledge(user_id: int, feedback_id: int):
     try:
