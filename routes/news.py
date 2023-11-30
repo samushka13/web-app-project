@@ -5,6 +5,9 @@ from helpers.decorators import login_required, admin_required
 from helpers.csrf import is_csrf_token_valid
 from data import news
 
+def redirect_to_news():
+    return redirect(url_for("browse_news"))
+
 def render_news_template(news_list):
     if news_list is False:
         news_list = []
@@ -40,7 +43,7 @@ def browse_nearby_news():
 @login_required
 def view_news_details(news_id):
     if request.method == "POST" and is_csrf_token_valid():
-        news.add_view(news_id, session["user_id"])
+        news.add_view(news_id)
 
     item = news.get_details(news_id)
 
@@ -48,7 +51,7 @@ def view_news_details(news_id):
         return render_template("news_details.html", item=item)
 
     flash("Tietojen haku epäonnistui", "error")
-    return redirect(url_for("browse_news"))
+    return redirect_to_news()
 
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required
@@ -86,9 +89,9 @@ def add_news():
         flash("Päivämäärä ei ole kelvollinen")
         is_form_valid = False
 
-    if is_form_valid and news.add(session["user_id"], title, body, zip_code, publish_on):
+    if is_form_valid and news.add(title, body, zip_code, publish_on):
         flash("Uutisen tallennus onnistui")
-        return redirect(url_for("browse_news"))
+        return redirect_to_news()
 
     flash("Uutisen tallennus ei onnistunut", "error")
     return render_template("add_news.html",
@@ -100,15 +103,15 @@ def add_news():
 @app.route("/archive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def archive_news(news_id):
-    if not (is_csrf_token_valid() and news.archive(session["user_id"], news_id)):
+    if not (is_csrf_token_valid() and news.archive(news_id)):
         flash("Arkistointi ei onnistunut", "error")
 
-    return redirect(url_for("browse_news"))
+    return redirect_to_news()
 
 @app.route("/unarchive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def unarchive_news(news_id):
-    if not (is_csrf_token_valid() and news.unarchive(session["user_id"], news_id)):
+    if not (is_csrf_token_valid() and news.unarchive(news_id)):
         flash("Arkistoinnin peruminen ei onnistunut", "error")
 
-    return redirect(url_for("browse_news"))
+    return redirect_to_news()

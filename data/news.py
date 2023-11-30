@@ -1,8 +1,11 @@
+from flask import session
 from sqlalchemy.sql import text
 from db import db
 
-def add(user_id: int, title: str, body: str, zip_code: str, publish_on: str):
+def add(title: str, body: str, zip_code: str, publish_on: str):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO news
                     (title, body, zip_code, publish_on, created_at, created_by)
                  VALUES
@@ -149,8 +152,10 @@ def get_details(news_id: int):
     except Exception:
         return False
 
-def archive(user_id: int, news_id: int):
+def archive(news_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE news
                  SET
                     archived_at=NOW(),
@@ -170,8 +175,10 @@ def archive(user_id: int, news_id: int):
 
     return True
 
-def unarchive(user_id: int, news_id: int):
+def unarchive(news_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """UPDATE news
                  SET
                     archived_at=NULL,
@@ -191,8 +198,10 @@ def unarchive(user_id: int, news_id: int):
 
     return True
 
-def add_view(news_id: int, user_id: int):
+def add_view(news_id: int):
     try:
+        user_id = session["user_id"]
+
         sql = """INSERT INTO news_views
                     (news_id, viewed_at, viewed_by)
                  VALUES
