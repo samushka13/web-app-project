@@ -36,7 +36,7 @@ def get_new():
                  WHERE
                     N.publish_on <= CURRENT_DATE
                     AND N.archived_at IS NULL
-                 ORDER BY N.created_at DESC"""
+                 ORDER BY N.publish_on DESC"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()
@@ -80,7 +80,7 @@ def get_archived():
                     N.archived_at
                  FROM news AS N
                  WHERE N.archived_at IS NOT NULL
-                 ORDER BY N.created_at DESC"""
+                 ORDER BY N.publish_on DESC"""
 
         result = db.session.execute(text(sql))
         news = result.fetchall()
@@ -103,7 +103,7 @@ def get_nearby(user_zip_code: str):
                  WHERE
                     N.archived_at IS NULL
                     AND N.zip_code=:user_zip_code
-                 ORDER BY N.created_at DESC"""
+                 ORDER BY N.publish_on DESC"""
 
         values = {
             "user_zip_code": user_zip_code
