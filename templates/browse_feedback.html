@@ -55,13 +55,16 @@
 {% for feedback in feedbacks %}
     <div class="content">
         <h3>{{ feedback.title }}</h3>
+
+        {% if feedback.body %}
         <p>{{ feedback.body }}</p>
+        {% endif %}
 
         <hr>
 
         <div class="flex-fill">
             <div class="inlined with-margin">
-                {{ feedback.sent_by }} @ {{ feedback.sent_at.strftime("%d.%m.%Y %H:%M:%S") }}
+                {{ (feedback.sent_by + " @ ") if session.is_admin else "" }}{{ feedback.sent_at.strftime("%d.%m.%Y") }}
             </div>
 
             {% if session.is_admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
@@ -81,23 +84,24 @@
         </div>
 
         {% if session.is_admin %}
-        {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
-        <hr>
 
-        <div class="flex-fill">
+            {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
+            <hr>
 
-            <div class="inlined">
-                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
-                {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
+            <div class="flex-fill">
+
+                <div class="inlined">
+                    Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
+                    {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
+                </div>
+
+                <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
+                    <input class="input" type="submit" value="Peru huomiointi">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
+
             </div>
-
-            <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
-                <input class="input" type="submit" value="Peru huomiointi">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-
-        </div>
-        {% endif %}
+            {% endif %}
 
         <div class="flex-fill">
             {% if request.path == "/browse_feedback/archived" %}
