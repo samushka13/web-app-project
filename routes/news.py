@@ -57,46 +57,45 @@ def add_news():
         current_date = datetime.today().date()
         return render_template("add_news.html", current_date=current_date)
 
-    if request.method == "POST":
-        is_form_valid = is_csrf_token_valid()
-        title = request.form["title"]
-        body = request.form["body"]
-        zip_code = request.form["zip_code"]
-        publish_on = request.form["publish_on"]
+    is_form_valid = is_csrf_token_valid()
+    title = request.form["title"]
+    body = request.form["body"]
+    zip_code = request.form["zip_code"]
+    publish_on = request.form["publish_on"]
 
-        if len(title) < 1:
-            flash("Otsikko ei saa olla tyhjä", "error")
-            is_form_valid = False
-        elif len(title) > 100:
-            flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-            is_form_valid = False
-        elif len(body) > 1000:
-            flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
-            is_form_valid = False
+    if len(title) < 1:
+        flash("Otsikko ei saa olla tyhjä", "error")
+        is_form_valid = False
+    elif len(title) > 100:
+        flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+        is_form_valid = False
+    elif len(body) > 1000:
+        flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+        is_form_valid = False
 
-        if body == "":
-            body = None
+    if body == "":
+        body = None
 
-        if zip_code == "":
-            zip_code = None
-        elif len(zip_code) != 5:
-            flash("Postinumerossa tulee olla 5 numeroa", "error")
-            is_form_valid = False
+    if zip_code == "":
+        zip_code = None
+    elif len(zip_code) != 5:
+        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        is_form_valid = False
 
-        if not publish_on or len(publish_on) < 10:
-            flash("Päivämäärä ei ole kelvollinen")
-            is_form_valid = False
+    if not publish_on or len(publish_on) < 10:
+        flash("Päivämäärä ei ole kelvollinen")
+        is_form_valid = False
 
-        if is_form_valid and news.add(session["user_id"], title, body, zip_code, publish_on):
-            flash("Uutisen tallennus onnistui")
-            return redirect(url_for("browse_news"))
+    if is_form_valid and news.add(session["user_id"], title, body, zip_code, publish_on):
+        flash("Uutisen tallennus onnistui")
+        return redirect(url_for("browse_news"))
 
-        flash("Uutisen tallennus ei onnistunut", "error")
-        return render_template("add_news.html",
-                                title=title,
-                                body=body,
-                                zip_code=zip_code,
-                                publish_on=publish_on)
+    flash("Uutisen tallennus ei onnistunut", "error")
+    return render_template("add_news.html",
+                            title=title,
+                            body=body,
+                            zip_code=zip_code,
+                            publish_on=publish_on)
 
 @app.route("/archive_news/<int:news_id>", methods=["POST"])
 @admin_required
