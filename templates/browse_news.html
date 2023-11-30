@@ -14,15 +14,15 @@
     {% endif %}
 </form>
 
-{% if session.is_admin %}
-
 <form class="inlined" action="/browse_news">
     {% if request.path == "/browse_news" %}
-    <input class="input active" type="submit" value="Näkyvät" />
+    <input class="input active" type="submit" value="Kaikki" />
     {% else %}
-    <input class="input" type="submit" value="Näkyvät" />
+    <input class="input" type="submit" value="Kaikki" />
     {% endif %}
 </form>
+
+{% if session.is_admin %}
 
 <form class="inlined" action="/browse_news/upcoming">
     {% if request.path == "/browse_news/upcoming" %}
