@@ -71,6 +71,7 @@ def view_poll_analytics(poll_id):
     votes_by_gender = polls.get_votes_by_gender(poll_id)
     votes_by_age_group = polls.get_votes_by_age_group(poll_id)
     votes_by_zip_code = polls.get_votes_by_zip_code(poll_id)
+    total_votes = sum(votes_by_gender)
 
     if poll_title and votes_by_gender and votes_by_age_group and votes_by_zip_code:
         return render_template("poll_analytics.html",
@@ -78,7 +79,8 @@ def view_poll_analytics(poll_id):
                                 poll_title=poll_title,
                                 votes_by_gender=votes_by_gender,
                                 votes_by_age_group=votes_by_age_group,
-                                votes_by_zip_code=votes_by_zip_code)
+                                votes_by_zip_code=votes_by_zip_code,
+                                total_votes=total_votes)
 
     flashes.data_fetch_failed()
     return render_poll_template(poll_id)
