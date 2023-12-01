@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import flash, render_template, redirect, url_for, request, session
+from flask import flash, render_template, redirect, url_for, request
 from app import app
 from helpers.contants import (
     DATE_LENGTH,
@@ -16,10 +16,6 @@ def redirect_to_news():
     return redirect(url_for("browse_news"))
 
 def render_news_template(news_list):
-    if news_list is False:
-        news_list = []
-        flash("Uutisten haku epäonnistui", "error")
-
     return render_template("browse_news.html", news=news_list)
 
 @app.route("/browse_news")
@@ -43,7 +39,7 @@ def browse_archived_news():
 @app.route("/browse_news/nearby")
 @login_required
 def browse_nearby_news():
-    news_list = news.get_nearby(session["zip_code"])
+    news_list = news.get_nearby()
     return render_news_template(news_list)
 
 @app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
@@ -67,7 +63,7 @@ def add_news():
         current_date = datetime.today().date()
         return render_template("add_news.html", current_date=current_date)
 
-    is_form_valid = csrf_check_passed()
+    form_valid = csrf_check_passed()
     title = request.form["title"]
     body = get_body()
     zip_code = get_zip_code()
@@ -75,21 +71,21 @@ def add_news():
 
     if len(title) < TITLE_MIN_LENGTH:
         flash("Otsikko ei saa olla tyhjä", "error")
-        is_form_valid = False
+        form_valid = False
     elif len(title) > TITLE_MAX_LENGTH:
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
     elif body and len(body) > BODY_MAX_LENGTH:
         flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
     elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
-        is_form_valid = False
+        form_valid = False
     elif not publish_on or len(publish_on) < DATE_LENGTH:
         flash("Päivämäärä ei ole kelvollinen", "error")
-        is_form_valid = False
+        form_valid = False
 
-    if is_form_valid and news.add(title, body, zip_code, publish_on):
+    if form_valid and news.add(title, body, zip_code, publish_on):
         flash("Uutisen tallennus onnistui")
         return redirect_to_news()
 

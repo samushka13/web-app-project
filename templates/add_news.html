@@ -6,7 +6,7 @@
 
 <h2>Lisää uutinen</h2>
 
-{% if session.is_admin %}
+{% if session.admin %}
 
 <form action="/browse_news">
     <input class="input" type="submit" value="Selaa uutisia" />

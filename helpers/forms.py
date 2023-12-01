@@ -32,12 +32,12 @@ def get_zip_code():
     return zip_code
 
 def get_admin_status():
-    is_admin = False
+    admin = False
 
-    if "is_admin" in request.form:
-        is_admin = request.form["is_admin"] == "yes"
+    if "admin" in request.form:
+        admin = request.form["admin"] == "yes"
 
-    return is_admin
+    return admin
 
 def get_body():
     body = None

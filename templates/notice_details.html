@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if session.is_admin %}
+{% if session.admin %}
 
 <form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
     <input class="input" type="submit" value="Merkitse huomioiduksi">
@@ -78,7 +78,7 @@
     <hr>
 
     <div class="flex-fill text">
-        {{ (notice.created_by + " @ ") if session.is_admin else "" }}
+        {{ (notice.created_by + " @ ") if session.admin else "" }}
         {{ notice.created_at.strftime("%d.%m.%Y") }}
     </div>
     
@@ -101,13 +101,18 @@
         </div>
     </div>
 
-    {% if session.is_admin and notice.archived_at %}
+    {% if notice.archived_at %}
 
     <div class="flex-fill text">
+        {% if session.admin %}
         Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
-        {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") if notice.archived_at else "-" }}
-    </div>
+        {% else %}
+        Arkistoitu
+        {% endif %}
 
+        {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") }}
+    </div>
+        
     {% endif %}
 
     {% if statuses|length != 0 %}
@@ -131,10 +136,10 @@
             Valmis
             {% endif %}
 
-            {{ (' | ' + status.set_by) if session.is_admin else "" }}
+            {{ (' | ' + status.set_by) if session.admin else "" }}
             </div>
 
-            {% if session.is_admin %}
+            {% if session.admin %}
 
             <form class="inlined" action="/notice/{{ notice.id }}/delete_status/{{ status.id }}" method="post">
                 <input class="input" type="submit" value="Poista merkintä">

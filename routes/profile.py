@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
 from werkzeug.security import check_password_hash
 from app import app
-from helpers.contants import MIN_USER_AGE
+from helpers.contants import DATE_LENGTH, MIN_USER_AGE, ZIP_CODE_LENGTH
 from helpers.decorators import login_required
 from helpers.forms import (
     csrf_check_passed,
@@ -29,7 +29,7 @@ def profile():
 def update_date_of_birth():
     date_of_birth = get_date_of_birth()
 
-    if date_of_birth and len(date_of_birth) < 10:
+    if date_of_birth and len(date_of_birth) < DATE_LENGTH:
         flash("Päivämäärä ei ole kelvollinen", "error")
 
     if not (csrf_check_passed() and users.update_date_of_birth(date_of_birth)):
@@ -52,7 +52,7 @@ def update_gender():
 def update_zip_code():
     zip_code = get_zip_code()
 
-    if len(zip_code) != 5:
+    if len(zip_code) != ZIP_CODE_LENGTH:
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         return redirect_to_profile()
 
@@ -64,9 +64,9 @@ def update_zip_code():
 @app.route("/update_admin_status", methods=["POST"])
 @login_required
 def update_admin_status():
-    is_admin = get_admin_status()
+    admin = get_admin_status()
 
-    if not (csrf_check_passed() and users.update_admin_status(is_admin)):
+    if not (csrf_check_passed() and users.update_admin_status(admin)):
         flash("Tallennus ei onnistunut", "error")
 
     return redirect_to_profile()
@@ -78,10 +78,8 @@ def change_password():
         return render_template("change_password.html")
 
     if "password_hash" in session:
-        password_hash = session["password_hash"]
-
         current_password = request.form["current_password"]
-        password_match = check_password_hash(password_hash, current_password)
+        password_match = check_password_hash(session["password_hash"], current_password)
         new_password = request.form["new_password"]
 
         if not password_match:

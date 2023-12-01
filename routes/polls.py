@@ -11,10 +11,6 @@ def redirect_to_polls():
     return redirect(url_for("browse_polls"))
 
 def render_polls_template(poll_list):
-    if poll_list is False:
-        poll_list = []
-        flash("Ilmoitusten haku epäonnistui", "error")
-
     return render_template("browse_polls.html", polls=poll_list)
 
 def render_poll_template(poll_id):
@@ -86,11 +82,7 @@ def vote_for(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, True)):
         flash("Äänestäminen epäonnistui", "error")
 
-    if polls.get_details(poll_id):
-        return render_poll_template(poll_id)
-
-    flash("Tietojen haku epäonnistui", "error")
-    return redirect_to_polls()
+    return render_poll_template(poll_id)
 
 @app.route("/vote_against/<int:poll_id>", methods=["POST"])
 @login_required
@@ -98,11 +90,7 @@ def vote_against(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, False)):
         flash("Äänestäminen epäonnistui", "error")
 
-    if polls.get_details(poll_id):
-        return render_poll_template(poll_id)
-
-    flash("Tietojen haku epäonnistui", "error")
-    return redirect_to_polls()
+    return render_poll_template(poll_id)
 
 @app.route("/add_poll", methods=["GET", "POST"])
 @admin_required
@@ -112,7 +100,7 @@ def add_poll():
         future_date = current_date + relativedelta(months=+1)
         return render_template("add_poll.html", current_date=current_date, future_date=future_date)
 
-    is_form_valid = csrf_check_passed()
+    form_valid = csrf_check_passed()
     title = request.form["title"]
     zip_code = get_zip_code()
     open_on = get_date("open_on")
@@ -120,24 +108,24 @@ def add_poll():
 
     if len(title) < TITLE_MIN_LENGTH:
         flash("Otsikko ei saa olla tyhjä", "error")
-        is_form_valid = False
+        form_valid = False
     elif len(title) > TITLE_MAX_LENGTH:
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
     elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
-        is_form_valid = False
+        form_valid = False
     elif not open_on or len(open_on) < DATE_LENGTH:
         flash("Alkamispäivämäärä ei ole kelvollinen", "error")
-        is_form_valid = False
+        form_valid = False
     elif not close_on or len(close_on) < DATE_LENGTH:
         flash("Päättymispäivämäärä ei ole kelvollinen", "error")
-        is_form_valid = False
+        form_valid = False
     elif datetime.strptime(open_on, "%Y-%m-%d") > datetime.strptime(close_on, "%Y-%m-%d"):
         flash("Alkamispäivämäärän on oltava ennen päättymispäivämäärää", "error")
-        is_form_valid = False
+        form_valid = False
 
-    if is_form_valid and polls.add(title, zip_code, open_on, close_on):
+    if form_valid and polls.add(title, zip_code, open_on, close_on):
         flash("Kyselyn tallennus onnistui")
         return redirect_to_polls()
 

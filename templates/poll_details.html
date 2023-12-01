@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if session.is_admin %}
+{% if session.admin %}
 <form
     class="inlined"
     action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
@@ -59,10 +59,10 @@
         </div>
     </div>
 
-    {% if session.is_admin and poll.archived_at %}
+    {% if session.admin and poll.archived_at %}
     <hr>
     <p>
-        {{ (poll.created_by + " @ ") if session.is_admin else "" }}
+        {{ (poll.created_by + " @ ") if session.admin else "" }}
         {{ poll.created_at.strftime("%d.%m.%Y") }}
     </p>
     <p>

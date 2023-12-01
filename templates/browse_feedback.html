@@ -22,7 +22,7 @@
     {% endif %}
 </form>
 
-{% if session.is_admin %}
+{% if session.admin %}
 
 <form class="inlined" action="/browse_feedback/archived">
     {% if request.path == "/browse_feedback/archived" %}
@@ -64,10 +64,10 @@
 
         <div class="flex-fill">
             <div class="inlined with-margin">
-                {{ (feedback.sent_by + " @ ") if session.is_admin else "" }}{{ feedback.sent_at.strftime("%d.%m.%Y") }}
+                {{ (feedback.sent_by + " @ ") if session.admin else "" }}{{ feedback.sent_at.strftime("%d.%m.%Y") }}
             </div>
 
-            {% if session.is_admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
+            {% if session.admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
             <form
                 class="inlined"
                 action="/{{ 'acknowledge_feedback' if request.path == '/browse_feedback' else 'archive_feedback' }}/{{ feedback.id }}"
@@ -83,7 +83,7 @@
             {% endif %}
         </div>
 
-        {% if session.is_admin %}
+        {% if session.admin %}
 
             {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
             <hr>

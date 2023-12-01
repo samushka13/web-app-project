@@ -9,10 +9,6 @@ def redirect_to_notices():
     return redirect(url_for("browse_notices"))
 
 def render_notices_template(notice_list):
-    if notice_list is False:
-        notice_list = []
-        flash("Ilmoitusten haku epäonnistui", "error")
-
     return render_template("browse_notices.html", notices=notice_list)
 
 def render_notice_template(notice_id):
@@ -63,13 +59,7 @@ def support_notice(notice_id):
     if not (csrf_check_passed() and notices.add_support(notice_id)):
         flash("Komppaaminen epäonnistui", "error")
 
-    notice = notices.get_details(notice_id)
-
-    if notice:
-        return redirect(url_for("view_notice_details", notice_id=notice_id))
-
-    flash("Tietojen haku epäonnistui", "error")
-    return redirect_to_notices()
+    return redirect(url_for("view_notice_details", notice_id=notice_id))
 
 @app.route("/add_notice", methods=["GET", "POST"])
 @login_required
@@ -77,7 +67,7 @@ def add_notice():
     if request.method == "GET":
         return render_template("add_notice.html")
 
-    is_form_valid = csrf_check_passed()
+    form_valid = csrf_check_passed()
     title = request.form["title"]
     body = get_body()
     zip_code = get_zip_code()
@@ -85,21 +75,21 @@ def add_notice():
 
     if len(title) < TITLE_MIN_LENGTH:
         flash("Otsikko ei saa olla tyhjä", "error")
-        is_form_valid = False
+        form_valid = False
     elif len(title) > TITLE_MAX_LENGTH:
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
     elif body and len(body) > BODY_MAX_LENGTH:
         flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
     elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
-        is_form_valid = False
+        form_valid = False
     elif street_address and street_address.isdigit():
         flash("Katuosoite ei ole kelvollinen", "error")
-        is_form_valid = False
+        form_valid = False
 
-    if is_form_valid and notices.add(title, body, zip_code, street_address):
+    if form_valid and notices.add(title, body, zip_code, street_address):
         flash("Ilmoituksen tallennus onnistui", "error")
         return redirect_to_notices()
 

@@ -74,24 +74,24 @@
         <br>
         <br>
 
-        <label for="is_admin">Ylläpitäjä</label>
+        <label for="admin">Ylläpitäjä</label>
         <div class="radio-button-group">
             <div class="radio-button">
-                {% if is_admin %}
-                <input type="radio" id="yes-checked" name="is_admin" value="yes" checked>
+                {% if admin %}
+                <input type="radio" id="yes-checked" name="admin" value="yes" checked>
                 <label for="yes-checked">kyllä</label>
                 {% else %}
-                <input type="radio" id="yes" name="is_admin" value="yes">
+                <input type="radio" id="yes" name="admin" value="yes">
                 <label for="yes">kyllä</label>
                 {% endif %}
             </div>
             <br>
             <div class="radio-button">
-                {% if not is_admin %}
-                <input type="radio" id="no-checked" name="is_admin" value="no" checked>
+                {% if not admin %}
+                <input type="radio" id="no-checked" name="admin" value="no" checked>
                 <label for="no-checked">ei</label>
                 {% else %}
-                <input type="radio" id="no" name="is_admin" value="no">
+                <input type="radio" id="no" name="admin" value="no">
                 <label for="no">ei</label>
                 {% endif %}
             </div>

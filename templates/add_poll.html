@@ -10,7 +10,7 @@
     <input class="input" type="submit" value="Selaa kyselyitä" />
 </form>
 
-{% if session.is_admin %}
+{% if session.admin %}
 
 <div class="content form">
     <form action="/add_poll" method="post">

@@ -9,10 +9,6 @@ def redirect_to_feedbacks():
     return redirect(url_for("browse_feedback"))
 
 def render_feedback_template(feedbacks):
-    if feedbacks is False:
-        feedbacks = []
-        flash("Palautteiden haku epäonnistui", "error")
-
     return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
@@ -21,21 +17,21 @@ def give_feedback():
     if request.method == "GET":
         return render_template("give_feedback.html")
 
-    is_form_valid = csrf_check_passed()
+    form_valid = csrf_check_passed()
     title = request.form["title"]
     body = get_body()
 
     if len(title) < TITLE_MIN_LENGTH:
         flash("Otsikko ei saa olla tyhjä", "error")
-        is_form_valid = False
+        form_valid = False
     elif len(title) > TITLE_MAX_LENGTH:
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
-        is_form_valid = False
-    elif len(body) > BODY_MAX_LENGTH:
+        form_valid = False
+    elif body and len(body) > BODY_MAX_LENGTH:
         flash("Kuvauksessa voi olla enintään 1000 merkkiä", "error")
-        is_form_valid = False
+        form_valid = False
 
-    if is_form_valid and feedback.send(title, body):
+    if form_valid and feedback.send(title, body):
         flash("Palautteen lähettäminen onnistui")
         return redirect_to_feedbacks()
 

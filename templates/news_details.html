@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if session.is_admin %}
+{% if session.admin %}
 <form
     class="inlined"
     action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
@@ -34,7 +34,7 @@
 
     <div class="flex-fill">
         <p>
-            {{ (item.created_by + " @ ") if session.is_admin else "" }}
+            {{ (item.created_by + " @ ") if session.admin else "" }}
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </p>
         <p>
@@ -47,7 +47,7 @@
         </p>
     </div>
 
-    {% if session.is_admin and item.archived_at %}
+    {% if session.admin and item.archived_at %}
     <hr>
 
     <p>
