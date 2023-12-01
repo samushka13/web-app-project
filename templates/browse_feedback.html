@@ -69,6 +69,7 @@
                             class="input" type="submit"
                             value="{{ 'Merkitse huomioiduksi' if request.path == '/browse_feedback' else 'Arkistoi' }}"
                         >
+                        <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
                 {% endif %}
@@ -90,6 +91,7 @@
                     {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
                         <form action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
                             <input class="input" type="submit" value="Peru huomiointi">
+                            <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     {% endif %}
@@ -110,6 +112,7 @@
                             class="input" type="submit"
                             value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
                         >
+                        <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
                 </div>

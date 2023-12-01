@@ -14,6 +14,14 @@ from helpers.validators import (
 from data import news
 
 def redirect_to_news():
+    if "referrer" in request.form:
+        if "nearby" in request.form["referrer"]:
+            return redirect(url_for("browse_nearby_news"))
+        if "upcoming" in request.form["referrer"]:
+            return redirect(url_for("browse_upcoming_news"))
+        if "archived" in request.form["referrer"]:
+            return redirect(url_for("browse_archived_news"))
+
     return redirect(url_for("browse_news"))
 
 def render_news_template(news_list):

@@ -15,6 +15,16 @@ from helpers.validators import (
 from data import polls
 
 def redirect_to_polls():
+    if "referrer" in request.form:
+        if "nearby" in request.form["referrer"]:
+            return redirect(url_for("browse_nearby_polls"))
+        if "upcoming" in request.form["referrer"]:
+            return redirect(url_for("browse_upcoming_polls"))
+        if "past" in request.form["referrer"]:
+            return redirect(url_for("browse_past_polls"))
+        if "archived" in request.form["referrer"]:
+            return redirect(url_for("browse_archived_polls"))
+
     return redirect(url_for("browse_polls"))
 
 def render_polls_template(poll_list):

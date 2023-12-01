@@ -80,6 +80,7 @@
                                 class="input" type="submit"
                                 value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
                             >
+                            <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     {% endif %}

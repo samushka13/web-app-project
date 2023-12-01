@@ -13,6 +13,14 @@ from helpers.validators import (
 from data import notices
 
 def redirect_to_notices():
+    if "referrer" in request.form:
+        if "nearby" in request.form["referrer"]:
+            return redirect(url_for("browse_nearby_notices"))
+        if "my" in request.form["referrer"]:
+            return redirect(url_for("browse_my_notices"))
+        if "archived" in request.form["referrer"]:
+            return redirect(url_for("browse_archived_notices"))
+
     return redirect(url_for("browse_notices"))
 
 def render_notices_template(notice_list):

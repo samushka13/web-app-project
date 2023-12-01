@@ -7,9 +7,15 @@ from helpers.validators import title_too_long, no_title, body_too_long
 from data import feedback
 
 def redirect_to_feedbacks():
+    if "referrer" in request.form:
+        if "acknowledged" in request.form["referrer"]:
+            return redirect(url_for("browse_acknowledged_feedback"))
+        if "archived" in request.form["referrer"]:
+            return redirect(url_for("browse_archived_feedback"))
+
     return redirect(url_for("browse_feedback"))
 
-def render_feedback_template(feedbacks):
+def render_feedbacks_template(feedbacks):
     return render_template("browse_feedback.html", feedbacks=feedbacks)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
@@ -43,19 +49,19 @@ def give_feedback():
 @login_required
 def browse_feedback():
     feedbacks = feedback.get_new()
-    return render_feedback_template(feedbacks)
+    return render_feedbacks_template(feedbacks)
 
 @app.route("/browse_feedback/acknowledged")
 @login_required
 def browse_acknowledged_feedback():
     feedbacks = feedback.get_acknowledged()
-    return render_feedback_template(feedbacks)
+    return render_feedbacks_template(feedbacks)
 
 @app.route("/browse_feedback/archived")
 @admin_required
 def browse_archived_feedback():
     feedbacks = feedback.get_archived()
-    return render_feedback_template(feedbacks)
+    return render_feedbacks_template(feedbacks)
 
 @app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
