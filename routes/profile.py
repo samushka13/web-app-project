@@ -10,7 +10,7 @@ from helpers.forms import (
     get_admin_status,
     get_max_date_of_birth
 )
-from helpers.validators import invalid_optional_date, invalid_zip_code
+from helpers.validators import password_too_short, invalid_optional_date, invalid_zip_code
 from data import users
 
 def redirect_to_profile():
@@ -82,6 +82,8 @@ def change_password():
 
         if not password_match:
             flash("Nykyinen salasana ei täsmää", "error")
+        elif password_too_short(new_password):
+            flash("Uudessa salasanassa tulee olla vähintään 6 merkkiä", "error")
         elif csrf_check_passed() and users.change_password(new_password):
             flash("Salasanan vaihtaminen onnistui")
             return redirect_to_profile()
