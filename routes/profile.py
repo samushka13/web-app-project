@@ -79,22 +79,20 @@ def change_password():
         return render_template("change_password.html")
 
     if "password_hash" in session:
-        current_password = request.form["current_password"]
-        password_match = check_password_hash(session["password_hash"], current_password)
-        new_password = request.form["new_password"]
+        current = request.form["current"]
+        new = request.form["new"]
+        password_match = check_password_hash(session["password_hash"], current)
 
         if not password_match:
             flashes.password_mismatch()
-        elif password_too_short(new_password):
+        elif password_too_short(new):
             flashes.password_too_short()
-        elif csrf_check_passed() and users.change_password(new_password):
+        elif csrf_check_passed() and users.change_password(new):
             flashes.password_changed()
             return redirect_to_profile()
 
     flashes.password_change_error()
-    return render_template("change_password.html",
-                            current_password=current_password,
-                            new_password=new_password)
+    return render_template("change_password.html", current=current, new=new)
 
 @app.route("/delete_current_user", methods=["POST"])
 @login_required
