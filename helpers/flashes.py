@@ -12,6 +12,9 @@ def username_too_short():
 def username_too_long():
     return flash("Käyttäjänimessä voi olla enintään 50 merkkiä")
 
+def username_already_exists():
+    return flash("Käyttäjänimi on varattu")
+
 def password_too_short():
     return flash("Salasanassa tulee olla vähintään 6 merkkiä")
 

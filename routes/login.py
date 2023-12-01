@@ -55,9 +55,12 @@ def register():
         flashes.invalid_zip_code()
         form_valid = False
 
-    if form_valid and users.register(username, password, date_of_birth, gender, zip_code, admin):
-        users.login(username, password)
-        return redirect("/")
+    if form_valid:
+        if users.register(username, password, date_of_birth, gender, zip_code, admin):
+            users.login(username, password)
+            return redirect("/")
+
+        flashes.username_already_exists()
 
     return render_template("register.html",
                             username=username,
@@ -67,8 +70,11 @@ def register():
                             zip_code=zip_code,
                             admin="yes" if admin else "no")
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "GET":
+        return redirect("/")
+
     username = request.form["username"]
     password = request.form["password"]
 
@@ -82,7 +88,9 @@ def login():
     else:
         flashes.invalid_credentials()
 
-    return render_template("index.html", username=username, password=password)
+    return render_template("index.html",
+                            username=username,
+                            password=password)
 
 @app.route("/logout")
 @login_required
