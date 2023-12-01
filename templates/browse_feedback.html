@@ -83,25 +83,34 @@
             {% endif %}
         </div>
 
-        {% if session.admin %}
+        {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
+        <hr>
 
-            {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
-            <hr>
+        <div class="flex-fill">
+            <div class="inlined with-margin">
+                {% if feedback.acknowledged_at %}
 
-            <div class="flex-fill">
-
-                <div class="inlined">
-                    Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
-                    {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
-                </div>
-
-                <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
-                    <input class="input" type="submit" value="Peru huomiointi">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
-
+                {% if session.admin %}
+                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
+                {% else %}
+                Huomioitu
+                {% endif %}
+        
+                {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
+                    
+                {% endif %}
             </div>
+
+            {% if session.admin %}
+            <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
+                <input class="input" type="submit" value="Peru huomiointi">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
             {% endif %}
+        </div>
+        {% endif %}
+
+        {% if session.admin %}
 
         <div class="flex-fill">
             {% if request.path == "/browse_feedback/archived" %}

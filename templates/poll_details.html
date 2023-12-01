@@ -61,14 +61,14 @@
 
     {% if session.admin and poll.archived_at %}
     <hr>
-    <p>
+    <div class="flex-fill text">
         {{ (poll.created_by + " @ ") if session.admin else "" }}
         {{ poll.created_at.strftime("%d.%m.%Y") }}
-    </p>
-    <p>
+    </div>
+    <div class="flex-fill text">
         Arkistoinut: {{ poll.archived_by if poll.archived_by else "-" }} @ 
         {{ poll.archived_at.strftime("%d.%m.%Y %H:%M:%S") if poll.archived_at else "-" }}
-    </p>
+    </div>
     {% endif %}
 </div>
 

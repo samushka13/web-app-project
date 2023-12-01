@@ -7,24 +7,25 @@
 <div class="content form">
     <h2>Rekisteröidy</h2>
 
-    <p>Pakolliset kentät on merkitty asteriskilla (*)</p>
+    <div class="caption">Pakolliset kentät on merkitty asteriskilla (*)</div>
+    <div style="height: 30px;"></div>
 
     <form action="/register" method="post">
-        <label for="username">Käyttäjänimi *<br>(6-50 merkkiä)</label>
-        <br>
-        <input class="input text-medium" type="text" id="username" name="username" minlength="6" maxlength="50" value="{{ username }}">
+        <label for="username">Käyttäjänimi *</label>
+        <div class="caption">(6-50 merkkiä)</div>
+        <input class="input text" type="text" id="username" name="username" minlength="6" maxlength="50" value="{{ username }}">
         <br>
         <br>
 
-        <label for="password">Salasana *<br>(väh. 6 merkkiä)</label>
-        <br>
-        <input class="input text-medium" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
+        <label for="password">Salasana *</label>
+        <div class="caption">(väh. 6 merkkiä)</div>
+        <input class="input text" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
         <br>
         <br>
 
         <label for="date_of_birth">Syntymäaika</label>
         <br>
-        <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth" max="{{ max_date }}" value="{{ date_of_birth }}">
+        <input class="input text" type="date" id="date_of_birth" name="date_of_birth" max="{{ max_date }}" value="{{ date_of_birth }}">
         <br>
         <br>
 
@@ -70,7 +71,7 @@
 
         <label for="zip_code">Postinumero</label>
         <br>
-        <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+        <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
         <br>
         <br>
 

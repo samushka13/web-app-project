@@ -126,17 +126,17 @@
     {% for status in statuses %}
         <div class="flex-fill">
             <div class="inlined with-margin">
-            {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
+                {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
 
-            {% if status.status == "read" %}
-            Huomioitu
-            {% elif status.status == "wip" %}
-            Työn alla
-            {% elif status.status == "done" %}
-            Valmis
-            {% endif %}
+                {% if status.status == "read" %}
+                Huomioitu
+                {% elif status.status == "wip" %}
+                Työn alla
+                {% elif status.status == "done" %}
+                Valmis
+                {% endif %}
 
-            {{ (' | ' + status.set_by) if session.admin else "" }}
+                {{ (' | ' + status.set_by) if session.admin else "" }}
             </div>
 
             {% if session.admin %}

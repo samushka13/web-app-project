@@ -30,13 +30,13 @@
         <br>
         <label for="zip_code">Mitä postinumeroaluetta uutinen koskee erityisesti? (vapaaehtoinen)</label>
         <br>
-        <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+        <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
         <br>
         <br>
 
         <label for="publish_on">Julkaisupäivämäärä</label>
         <br>
-        <input class="input text-small" type="date" id="publish_on" name="publish_on" value="{{ publish_on if publish_on else current_date }}" min="{{ current_date }}">
+        <input class="input text" type="date" id="publish_on" name="publish_on" value="{{ publish_on if publish_on else current_date }}" min="{{ current_date }}">
         <br>
         <br>
 

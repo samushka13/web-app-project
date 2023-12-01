@@ -32,28 +32,28 @@
 
     <hr>
 
-    <div class="flex-fill">
-        <p>
+    <div class="flex-fill text">
+        <div class="inlined">
             {{ (item.created_by + " @ ") if session.admin else "" }}
             {{ item.publish_on.strftime("%d.%m.%Y") }}
-        </p>
-        <p>
+        </div>
+        <div class="inlined">
             {% if item.total_views == 0 or item.total_views == 1 %}
             {{ item.total_views }} {{ 'katselukerta' if item.total_views == 1 else 'katselukertaa' }}
             {% else %}
             {{ item.total_views }} katselukertaa | 
             {{ item.unique_views }} {{ 'katselija' if item.unique_views == 1 else 'katselijaa' }}
             {% endif %}
-        </p>
+        </div>
     </div>
 
     {% if session.admin and item.archived_at %}
     <hr>
 
-    <p>
+    <div class="flex-fill text">
         Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
         {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
-    </p>
+    </div>
 
     {% endif %}
 </div>

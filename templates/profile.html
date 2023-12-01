@@ -27,7 +27,7 @@
         <label class="label" for="date_of_birth">Syntymäaika</label>
         <br>
         <div class="flex-fill">
-            <input class="input text-small" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
+            <input class="input text" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
             <div style="width: 20px;"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
@@ -98,7 +98,7 @@
         <label for="zip_code">Postinumero</label>
         <br>
         <div class="flex-fill">
-            <input class="input text-small" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
+            <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
             <div style="width: 20px;"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
