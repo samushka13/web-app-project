@@ -1,15 +1,15 @@
 from datetime import datetime
 from flask import flash, render_template, redirect, url_for, request
 from app import app
-from helpers.contants import (
-    DATE_LENGTH,
-    TITLE_MIN_LENGTH,
-    TITLE_MAX_LENGTH,
-    BODY_MAX_LENGTH,
-    ZIP_CODE_LENGTH
-)
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
+from helpers.validators import (
+    no_title,
+    title_too_long,
+    body_too_long,
+    invalid_zip_code,
+    invalid_required_date
+)
 from data import news
 
 def redirect_to_news():
@@ -69,19 +69,19 @@ def add_news():
     zip_code = get_zip_code()
     publish_on = get_date("publish_on")
 
-    if len(title) < TITLE_MIN_LENGTH:
+    if no_title(title):
         flash("Otsikko ei saa olla tyhjä", "error")
         form_valid = False
-    elif len(title) > TITLE_MAX_LENGTH:
+    elif title_too_long(title):
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
         form_valid = False
-    elif body and len(body) > BODY_MAX_LENGTH:
+    elif body_too_long(body):
         flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
         form_valid = False
-    elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
+    elif invalid_zip_code(zip_code):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         form_valid = False
-    elif not publish_on or len(publish_on) < DATE_LENGTH:
+    elif invalid_required_date(publish_on):
         flash("Päivämäärä ei ole kelvollinen", "error")
         form_valid = False
 

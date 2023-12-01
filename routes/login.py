@@ -1,9 +1,16 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
-from helpers.contants import DATE_LENGTH, MIN_USER_AGE, ZIP_CODE_LENGTH
+from helpers.contants import MIN_USER_AGE
 from helpers.decorators import login_required
 from helpers.forms import get_date_of_birth, get_gender, get_zip_code, get_admin_status
+from helpers.validators import (
+    username_too_short,
+    username_too_long,
+    password_too_short,
+    invalid_optional_date,
+    invalid_zip_code
+)
 from app import app
 from data import users
 
@@ -29,19 +36,19 @@ def register():
     gender = get_gender()
     admin = get_admin_status()
 
-    if len(username) < 6:
+    if username_too_short(username):
         flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä", "error")
         form_valid = False
-    elif len(username) > 50:
+    elif username_too_long(username):
         flash("Käyttäjänimessä voi olla enintään 50 merkkiä", "error")
         form_valid = False
-    elif len(password) < 6:
+    elif password_too_short(password):
         flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
         form_valid = False
-    elif date_of_birth and len(date_of_birth) < DATE_LENGTH:
+    elif invalid_optional_date(date_of_birth):
         flash("Päivämäärä ei ole kelvollinen", "error")
         form_valid = False
-    elif zip_code and len(zip_code) != ZIP_CODE_LENGTH:
+    elif invalid_zip_code(zip_code):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         form_valid = False
 

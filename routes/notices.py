@@ -1,8 +1,14 @@
 from flask import flash, render_template, redirect, url_for, request
 from app import app
-from helpers.contants import TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, BODY_MAX_LENGTH, ZIP_CODE_LENGTH
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_body, get_zip_code, get_street_address
+from helpers.validators import (
+    no_title,
+    title_too_long,
+    body_too_long,
+    invalid_zip_code,
+    invalid_street_address
+)
 from data import notices
 
 def redirect_to_notices():
@@ -73,19 +79,19 @@ def add_notice():
     zip_code = get_zip_code()
     street_address = get_street_address()
 
-    if len(title) < TITLE_MIN_LENGTH:
+    if no_title(title):
         flash("Otsikko ei saa olla tyhjä", "error")
         form_valid = False
-    elif len(title) > TITLE_MAX_LENGTH:
+    elif title_too_long(title):
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
         form_valid = False
-    elif body and len(body) > BODY_MAX_LENGTH:
+    elif body_too_long(body):
         flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
         form_valid = False
-    elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
+    elif invalid_zip_code(zip_code):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         form_valid = False
-    elif street_address and street_address.isdigit():
+    elif invalid_street_address(street_address):
         flash("Katuosoite ei ole kelvollinen", "error")
         form_valid = False
 

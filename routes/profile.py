@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
 from werkzeug.security import check_password_hash
 from app import app
-from helpers.contants import DATE_LENGTH, MIN_USER_AGE, ZIP_CODE_LENGTH
+from helpers.contants import MIN_USER_AGE
 from helpers.decorators import login_required
 from helpers.forms import (
     csrf_check_passed,
@@ -12,6 +12,7 @@ from helpers.forms import (
     get_zip_code,
     get_admin_status
 )
+from helpers.validators import invalid_optional_date, invalid_zip_code
 from data import users
 
 def redirect_to_profile():
@@ -29,7 +30,7 @@ def profile():
 def update_date_of_birth():
     date_of_birth = get_date_of_birth()
 
-    if date_of_birth and len(date_of_birth) < DATE_LENGTH:
+    if invalid_optional_date(date_of_birth):
         flash("Päivämäärä ei ole kelvollinen", "error")
 
     if not (csrf_check_passed() and users.update_date_of_birth(date_of_birth)):
@@ -52,7 +53,7 @@ def update_gender():
 def update_zip_code():
     zip_code = get_zip_code()
 
-    if len(zip_code) != ZIP_CODE_LENGTH:
+    if invalid_zip_code(zip_code):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         return redirect_to_profile()
 

@@ -2,9 +2,15 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request
 from app import app
-from helpers.contants import DATE_LENGTH, TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, ZIP_CODE_LENGTH
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_zip_code
+from helpers.validators import (
+    invalid_required_date,
+    no_title,
+    title_too_long,
+    invalid_zip_code,
+    start_date_before_end_date
+)
 from data import polls
 
 def redirect_to_polls():
@@ -106,22 +112,22 @@ def add_poll():
     open_on = get_date("open_on")
     close_on = get_date("close_on")
 
-    if len(title) < TITLE_MIN_LENGTH:
+    if no_title(title):
         flash("Otsikko ei saa olla tyhjä", "error")
         form_valid = False
-    elif len(title) > TITLE_MAX_LENGTH:
+    elif title_too_long(title):
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
         form_valid = False
-    elif zip_code and (len(zip_code) != ZIP_CODE_LENGTH or not zip_code.isdigit()):
+    elif invalid_zip_code(zip_code):
         flash("Postinumerossa tulee olla 5 numeroa", "error")
         form_valid = False
-    elif not open_on or len(open_on) < DATE_LENGTH:
+    elif invalid_required_date(open_on):
         flash("Alkamispäivämäärä ei ole kelvollinen", "error")
         form_valid = False
-    elif not close_on or len(close_on) < DATE_LENGTH:
+    elif invalid_required_date(close_on):
         flash("Päättymispäivämäärä ei ole kelvollinen", "error")
         form_valid = False
-    elif datetime.strptime(open_on, "%Y-%m-%d") > datetime.strptime(close_on, "%Y-%m-%d"):
+    elif start_date_before_end_date(open_on, close_on):
         flash("Alkamispäivämäärän on oltava ennen päättymispäivämäärää", "error")
         form_valid = False
 

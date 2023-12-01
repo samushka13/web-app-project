@@ -1,8 +1,8 @@
 from flask import flash, render_template, redirect, url_for, request
 from app import app
-from helpers.contants import TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, BODY_MAX_LENGTH
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_body
+from helpers.validators import title_too_long, no_title, body_too_long
 from data import feedback
 
 def redirect_to_feedbacks():
@@ -21,13 +21,13 @@ def give_feedback():
     title = request.form["title"]
     body = get_body()
 
-    if len(title) < TITLE_MIN_LENGTH:
+    if no_title(title):
         flash("Otsikko ei saa olla tyhjä", "error")
         form_valid = False
-    elif len(title) > TITLE_MAX_LENGTH:
+    elif title_too_long(title):
         flash("Otsikossa voi olla enintään 100 merkkiä", "error")
         form_valid = False
-    elif body and len(body) > BODY_MAX_LENGTH:
+    elif body_too_long(body):
         flash("Kuvauksessa voi olla enintään 1000 merkkiä", "error")
         form_valid = False
 
