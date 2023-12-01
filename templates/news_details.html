@@ -5,56 +5,47 @@
 {% block content %}
 
 {% if session.admin %}
-<form
-    class="inlined"
-    action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
-    method="post"
->
-    <input
-        class="input"
-        type="submit"
-        value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
-    />
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
+    <form class="inlined" action="/{{ 'un' if item.archived_at else '' }}archive_news/{{ item.id }}" method="post">
+        <input class="input" type="submit" value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
 {% endif %}
 
 <form class="inlined" action="/browse_news">
-    <input class="input" type="submit" value="Selaa uutisia" />
+    <input class="input" type="submit" value="Selaa uutisia">
 </form>
 
 <div class="content">
     <h3>{{ item.title }}</h3>
 
     {% if item.body %}
-    <p>{{ item.body }}</p>
+        <div class="flex-fill text">
+            {{ item.body }}
+        </div>
     {% endif %}
 
     <hr>
-
     <div class="flex-fill text">
-        <div class="inlined">
+        <div>
             {{ (item.created_by + " @ ") if session.admin else "" }}
             {{ item.publish_on.strftime("%d.%m.%Y") }}
         </div>
-        <div class="inlined">
+        <div>
             {% if item.total_views == 0 or item.total_views == 1 %}
-            {{ item.total_views }} {{ 'katselukerta' if item.total_views == 1 else 'katselukertaa' }}
+                {{ item.total_views }} {{ 'katselukerta' if item.total_views == 1 else 'katselukertaa' }}
             {% else %}
-            {{ item.total_views }} katselukertaa | 
-            {{ item.unique_views }} {{ 'katselija' if item.unique_views == 1 else 'katselijaa' }}
+                {{ item.total_views }} katselukertaa | 
+                {{ item.unique_views }} {{ 'katselija' if item.unique_views == 1 else 'katselijaa' }}
             {% endif %}
         </div>
     </div>
 
     {% if session.admin and item.archived_at %}
-    <hr>
-
-    <div class="flex-fill text">
-        Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
-        {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
-    </div>
-
+        <hr>
+        <div class="flex-fill text">
+            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
+            {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
+        </div>
     {% endif %}
 </div>
 

@@ -7,101 +7,84 @@
 <h2>Selaa uutisia</h2>
 
 <form class="inlined" action="/browse_news/nearby">
-    {% if request.path == "/browse_news/nearby" %}
-    <input class="input active" type="submit" value="Lähistölläni" />
-    {% else %}
-    <input class="input" type="submit" value="Lähistölläni" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_news/nearby' else '' }}"
+        type="submit" value="Lähistölläni"
+    >
 </form>
-
 <form class="inlined" action="/browse_news">
-    {% if request.path == "/browse_news" %}
-    <input class="input active" type="submit" value="Kaikki" />
-    {% else %}
-    <input class="input" type="submit" value="Kaikki" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_news' else '' }}"
+        type="submit" value="Kaikki"
+    >
 </form>
 
 {% if session.admin %}
-
-<form class="inlined" action="/browse_news/upcoming">
-    {% if request.path == "/browse_news/upcoming" %}
-    <input class="input active" type="submit" value="Tulevat" />
-    {% else %}
-    <input class="input" type="submit" value="Tulevat" />
-    {% endif %}
-</form>
-
-<form class="inlined" action="/browse_news/archived">
-    {% if request.path == "/browse_news/archived" %}
-    <input class="input active" type="submit" value="Arkistoidut" />
-    {% else %}
-    <input class="input" type="submit" value="Arkistoidut" />
-    {% endif %}
-</form>
-
-<form class="inlined" action="/add_news">
-    <input class="input" type="submit" value="Lisää uutinen" />
-</form>
-
+    <form class="inlined" action="/browse_news/upcoming">
+        <input
+            class="input {{ 'active' if request.path == '/browse_news/upcoming' else '' }}"
+            type="submit" value="Tulevat"
+        >
+    </form>
+    <form class="inlined" action="/browse_news/archived">
+        <input
+            class="input {{ 'active' if request.path == '/browse_news/archived' else '' }}"
+            type="submit" value="Arkistoidut"
+        >
+    </form>
+    <form class="inlined" action="/add_news">
+        <input class="input" type="submit" value="Lisää uutinen">
+    </form>
 {% endif %}
 
 {% if news|length == 0 %}
-
-<div class="content flash">
-    {% if request.path == "/browse_news/nearby" %}
-    {{
-        'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia uutisia'
-        if not session.zip_code
-        else 'Ei lähistöäsi koskevia uutisia'
-    }}
-    {% elif request.path == "/browse_news/archived" %}
-    Ei arkistoituja uutisia
-    {% elif request.path == "/browse_news/upcoming" %}
-    Ei tulossa olevia uutisia
-    {% else %}
-    Ei uutisia
-    {% endif %}
-</div>
-
+    <div class="content flash">
+        {% if request.path == "/browse_news/nearby" %}
+            {{
+                'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia uutisia'
+                if not session.zip_code
+                else 'Ei lähistöäsi koskevia uutisia'
+            }}
+        {% elif request.path == "/browse_news/archived" %}
+            Ei arkistoituja uutisia
+        {% elif request.path == "/browse_news/upcoming" %}
+            Ei tulossa olevia uutisia
+        {% else %}
+            Ei uutisia
+        {% endif %}
+    </div>
 {% else %}
+    {% for item in news %}
+        <div class="content">
+            <h3>{{ item.title }}</h3>
 
-{% for item in news %}
-    <div class="content">
-        <h3>{{ item.title }}</h3>
+            <hr>
+            <div class="flex-fill">
+                <div>
+                    {{ item.publish_on.strftime("%d.%m.%Y") }}
+                </div>
+                <div>
+                    {% if session.admin %}
+                        <form
+                            class="inlined" method="post"
+                            action="/{{ 'un' if item.archived_at else '' }}archive_news/{{ item.id }}"
+                        >
+                            <input
+                                class="input" type="submit"
+                                value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
+                            >
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        </form>
+                    {% endif %}
 
-        <hr>
-        <div class="flex-fill">
-            <div class="inlined">
-                {{ item.publish_on.strftime("%d.%m.%Y") }}
-            </div>
-
-            {% if session.admin %}
-
-            <div class="inlined">
-                <form
-                    class="inlined"
-                    action="/{{ 'unarchive_news' if item.archived_at else 'archive_news' }}/{{ item.id }}"
-                    method="post"
-                >
-                    <input
-                        class="input"
-                        type="submit"
-                        value="{{ 'Peru arkistointi' if item.archived_at else 'Arkistoi' }}"
-                    >
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
-                {% endif %}
-
-                <form class="inlined" action="/browse_news/details/{{ item.id }}" method="post">
-                    <input class="input" type="submit" value="Lue lisää">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
+                    <form class="inlined" action="/browse_news/details/{{ item.id }}" method="post">
+                        <input class="input" type="submit" value="Lue lisää">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
-
+    {% endfor %}
 {% endif %}
 
 {% endblock %}

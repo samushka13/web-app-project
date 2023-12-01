@@ -7,107 +7,91 @@
 <h2>Selaa ilmoituksia</h2>
 
 <form class="inlined" action="/browse_notices/nearby">
-    {% if request.path == "/browse_notices/nearby" %}
-    <input class="input active" type="submit" value="Lähistölläni" />
-    {% else %}
-    <input class="input" type="submit" value="Lähistölläni" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_notices/nearby' else '' }}"
+        type="submit" value="Lähistölläni"
+    >
 </form>
-
 <form class="inlined" action="/browse_notices">
-    {% if request.path == "/browse_notices" %}
-    <input class="input active" type="submit" value="Kaikki" />
-    {% else %}
-    <input class="input" type="submit" value="Kaikki" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_notices' else '' }}"
+        type="submit" value="Kaikki"
+    >
 </form>
-
 <form class="inlined" action="/browse_notices/my">
-    {% if request.path == "/browse_notices/my" %}
-    <input class="input active" type="submit" value="Omat" />
-    {% else %}
-    <input class="input" type="submit" value="Omat" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_notices/my' else '' }}"
+        type="submit" value="Omat"
+    >
 </form>
 
 {% if session.admin %}
-
-<form class="inlined" action="/browse_notices/archived">
-    {% if request.path == "/browse_notices/archived" %}
-    <input class="input active" type="submit" value="Arkistoidut" />
-    {% else %}
-    <input class="input" type="submit" value="Arkistoidut" />
-    {% endif %}
-</form>
-
+    <form class="inlined" action="/browse_notices/archived">
+        <input
+            class="input {{ 'active' if request.path == '/browse_notices/archived' else '' }}"
+            type="submit" value="Arkistoidut"
+        >
+    </form>
 {% endif %}
 
 <form class="inlined" action="/add_notice">
-    <input class="input" type="submit" value="Lisää ilmoitus" />
+    <input class="input" type="submit" value="Lisää ilmoitus">
 </form>
 
 {% if notices|length == 0 %}
-
-<div class="content flash">
-    {% if request.path == "/browse_notices/nearby" %}
-    {{
-        'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia ilmoituksia'
-        if not session.zip_code
-        else 'Ei lähistöäsi koskevia ilmoituksia'
-    }}
-    {% elif request.path == "/browse_notices/my" %}
-    Ei omia ilmoituksia
-    {% elif request.path == "/browse_notices/archived" %}
-    Ei arkistoituja ilmoituksia
-    {% else %}
-    Ei ilmoituksia
-    {% endif %}
-</div>
-
-{% else %}
-
-{% for notice in notices %}
-    <div class="content">
-        <h3>{{ notice.title }}</h3>
-
-        {% if notice.zip_code %}
-        <p>{{ notice.zip_code }}</p>
+    <div class="content flash">
+        {% if request.path == "/browse_notices/nearby" %}
+            {{
+                'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia ilmoituksia'
+                if not session.zip_code
+                else 'Ei lähistöäsi koskevia ilmoituksia'
+            }}
+        {% elif request.path == "/browse_notices/my" %}
+            Ei omia ilmoituksia
+        {% elif request.path == "/browse_notices/archived" %}
+            Ei arkistoituja ilmoituksia
+        {% else %}
+            Ei ilmoituksia
         {% endif %}
+    </div>
+{% else %}
+    {% for notice in notices %}
+        <div class="content">
+            <h3>{{ notice.title }}</h3>
 
-        <hr>
+            {% if notice.zip_code %}
+                <div class="flex-fill text">
+                    {{ notice.zip_code }}
+                </div>
+            {% endif %}
 
-        <div class="flex-fill">
-            <div class="inlined">
-                {{ notice.created_at.strftime("%d.%m.%Y") }}
-            </div>
+            <hr>
+            <div class="flex-fill">
+                <div>
+                    {{ notice.created_at.strftime("%d.%m.%Y") }}
+                </div>
+                <div>
+                    {% if session.admin %}
+                        <form
+                            class="inlined" method="post"
+                            action="/{{ 'un' if notice.archived_at else '' }}archive_notice/{{ notice.id }}"
+                        >
+                            <input
+                                class="input" type="submit"
+                                value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
+                            >
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        </form>
+                    {% endif %}
 
-            {% if session.admin %}
-
-            <div class="inlined">
-                <form
-                    class="inlined"
-                    action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
-                    method="post"
-                >
-                    <input
-                        class="input"
-                        type="submit"
-                        value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
-                    />
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
-
-                {% endif %}
-
-                <form class="inlined" action="/browse_notices/details/{{ notice.id }}" method="post">
-                    <input class="input" type="submit" value="Lue lisää">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
+                    <form class="inlined" action="/browse_notices/details/{{ notice.id }}" method="post">
+                        <input class="input" type="submit" value="Lue lisää">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
-
+    {% endfor %}
 {% endif %}
 
 {% endblock %}

@@ -7,7 +7,7 @@
 <h2>Lisää ilmoitus</h2>
 
 <form action="/browse_notices">
-    <input class="input" type="submit" value="Selaa ilmoituksia" />
+    <input class="input" type="submit" value="Selaa ilmoituksia">
 </form>
 
 <div class="content form">
@@ -18,33 +18,28 @@
     <br>
     <br>
     <br>
-
     <form action="/add_notice" method="post">
         <label for="title">Otsikko</label>
         <br>
         <textarea class="input" id="title" name="title" rows="3" cols="80" minlength="1" maxlength="100">{{ title }}</textarea>
         <br>
-
         <br>
-        <label for="body">Lisätiedot (vapaaehtoinen)</label>
-        <br>
+        <label for="body">Lisätiedot</label>
+        <div class="caption">(vapaaehtoinen)</div>
         <textarea class="input" id="body" name="body" rows="6" cols="80" maxlength="1000">{{ body }}</textarea>
         <br>
-
         <br>
-        <label for="street_address">Katuosoite (vapaaehtoinen)</label>
-        <br>
+        <label for="street_address">Katuosoite</label>
+        <div class="caption">(vapaaehtoinen)</div>
         <input class="input text" type="text" id="street_address" name="street_address" maxlength="100" value="{{ street_address }}">
         <br>
         <br>
-
-        <label for="zip_code">Postinumero (vapaaehtoinen)</label>
-        <br>
+        <label for="zip_code">Postinumero</label>
+        <div class="caption">(vapaaehtoinen)</div>
         <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
         <br>
         <br>
-
-        <input type="submit" value="Lähetä">
+        <input class="input" type="submit" value="Lähetä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 </div>

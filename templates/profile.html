@@ -6,19 +6,17 @@
 
 <h2>Profiilini</h2>
 
-{% if session.user_id %}
-
 <form class="inlined" action="/delete_current_user" method="post">
-    <input class="input" type="submit" value="Poista käyttäjätili" />
+    <input class="input" type="submit" value="Poista käyttäjätili">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 <form class="inlined" action="/change_password">
-    <input class="input" type="submit" value="Vaihda salasana" />
+    <input class="input" type="submit" value="Vaihda salasana">
 </form>
 
 <form class="inlined" action="/logout">
-    <input class="input" type="submit" value="Kirjaudu ulos" />
+    <input class="input" type="submit" value="Kirjaudu ulos">
 </form>
 
 <div class="content form">
@@ -35,11 +33,9 @@
             </div>
         </div>
     </form>
-
     <div style="height: 10px;"></div>
     <hr>
     <br>
-
     <form action="/update_gender" method="post">
         <label for="gender">Sukupuoli</label>
         <br>
@@ -47,38 +43,38 @@
             <div class="radio-button-group">
                 <div class="radio-button">
                     {% if session.gender == "female" %}
-                    <input type="radio" id="female-checked" name="gender" value="female" checked>
-                    <label for="female-checked">nainen</label>
+                        <input type="radio" id="female-checked" name="gender" value="female" checked>
+                        <label for="female-checked">nainen</label>
                     {% else %}
-                    <input type="radio" id="female" name="gender" value="female">
-                    <label for="female">nainen</label>
+                        <input type="radio" id="female" name="gender" value="female">
+                        <label for="female">nainen</label>
                     {% endif %}
                 </div>
                 <div class="radio-button">
                     {% if session.gender == "male" %}
-                    <input type="radio" id="male-checked" name="gender" value="male" checked>
-                    <label for="male-checked">mies</label>
+                        <input type="radio" id="male-checked" name="gender" value="male" checked>
+                        <label for="male-checked">mies</label>
                     {% else %}
-                    <input type="radio" id="male" name="gender" value="male">
-                    <label for="male">mies</label>
+                        <input type="radio" id="male" name="gender" value="male">
+                        <label for="male">mies</label>
                     {% endif %}
                 </div>
                 <div class="radio-button">
                     {% if session.gender == "other" %}
-                    <input type="radio" id="other-checked" name="gender" value="other" checked>
-                    <label for="other-checked">muu</label>
+                        <input type="radio" id="other-checked" name="gender" value="other" checked>
+                        <label for="other-checked">muu</label>
                     {% else %}
-                    <input type="radio" id="other" name="gender" value="other">
-                    <label for="other">muu</label>
+                        <input type="radio" id="other" name="gender" value="other">
+                        <label for="other">muu</label>
                     {% endif %}
                 </div>
                 <div class="radio-button">
-                    {% if session.gender not in ["female", "male", "other"] %}
-                    <input type="radio" id="none-checked" name="gender" value="" checked>
-                    <label for="none-checked">en kerro</label>
+                    {% if session.gender not in genders %}
+                        <input type="radio" id="none-checked" name="gender" value="" checked>
+                        <label for="none-checked">en kerro</label>
                     {% else %}
-                    <input type="radio" id="none" name="gender" value="">
-                    <label for="none">en kerro</label>
+                        <input type="radio" id="none" name="gender" value="">
+                        <label for="none">en kerro</label>
                     {% endif %}
                 </div>
             </div>
@@ -89,11 +85,9 @@
             </div>
         </div>
     </form>
-
     <div style="height: 5px;"></div>
     <hr>
     <br>
-
     <form action="/update_zip_code" method="post">
         <label for="zip_code">Postinumero</label>
         <br>
@@ -106,11 +100,9 @@
             </div>
         </div>
     </form>
-
     <div style="height: 10px;"></div>
     <hr>
     <br>
-
     <form action="/update_admin_status" method="post">
         <label for="admin">Ylläpitäjä</label>
         <br>
@@ -118,20 +110,20 @@
             <div class="radio-button-group">
                 <div class="radio-button">
                     {% if session.admin %}
-                    <input type="radio" id="yes-checked" name="admin" value="yes" checked>
-                    <label for="yes-checked">kyllä</label>
+                        <input type="radio" id="yes-checked" name="admin" value="yes" checked>
+                        <label for="yes-checked">kyllä</label>
                     {% else %}
-                    <input type="radio" id="yes" name="admin" value="yes">
-                    <label for="yes">kyllä</label>
+                        <input type="radio" id="yes" name="admin" value="yes">
+                        <label for="yes">kyllä</label>
                     {% endif %}
                 </div>
                 <div class="radio-button">
                     {% if not session.admin %}
-                    <input type="radio" id="no-checked" name="admin" value="no" checked>
-                    <label for="no-checked">ei</label>
+                        <input type="radio" id="no-checked" name="admin" value="no" checked>
+                        <label for="no-checked">ei</label>
                     {% else %}
-                    <input type="radio" id="no" name="admin" value="no">
-                    <label for="no">ei</label>
+                        <input type="radio" id="no" name="admin" value="no">
+                        <label for="no">ei</label>
                     {% endif %}
                 </div>
             </div>
@@ -142,14 +134,10 @@
             </div>
         </div>
     </form>
-
     <hr>
-
     <form class="inlined" action="/profile">
-        <input class="input" type="submit" value="Peru tallentamattomat muutokset" />
+        <input class="input" type="submit" value="Peru tallentamattomat muutokset">
     </form>
 </div>
-
-{% endif %}
 
 {% endblock %}

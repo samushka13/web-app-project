@@ -7,137 +7,115 @@
 <h2>Selaa palautteita</h2>
 
 <form class="inlined" action="/browse_feedback">
-    {% if request.path == "/browse_feedback" %}
-    <input class="input active" type="submit" value="Uudet" />
-    {% else %}
-    <input class="input" type="submit" value="Uudet" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_feedback' else '' }}"
+        type="submit" value="Uudet"
+    >
 </form>
-
 <form class="inlined" action="/browse_feedback/acknowledged">
-    {% if request.path == "/browse_feedback/acknowledged" %}
-    <input class="input active" type="submit" value="Huomioidut" />
-    {% else %}
-    <input class="input" type="submit" value="Huomioidut" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_feedback/acknowledged' else '' }}"
+        type="submit" value="Huomioidut"
+    >
 </form>
 
 {% if session.admin %}
-
-<form class="inlined" action="/browse_feedback/archived">
-    {% if request.path == "/browse_feedback/archived" %}
-    <input class="input active" type="submit" value="Arkistoidut" />
-    {% else %}
-    <input class="input" type="submit" value="Arkistoidut" />
-    {% endif %}
-</form>
-
+    <form class="inlined" action="/browse_feedback/archived">
+        <input
+            class="input {{ 'active' if request.path == '/browse_feedback/archived' else '' }}"
+            type="submit" value="Arkistoidut"
+        >
+    </form>
 {% endif %}
 
 <form class="inlined" action="/give_feedback">
-    <input class="input" type="submit" value="Anna palautetta" />
+    <input class="input" type="submit" value="Anna palautetta">
 </form>
 
 {% if feedbacks|length == 0 %}
-
-<div class="content flash">
-    {% if request.path == "/browse_feedback/acknowledged" %}
-    Ei huomioituja palautteita
-    {% elif request.path == "/browse_feedback/archived" %}
-    Ei arkistoituja palautteita
-    {% else %}
-    Ei palautteita
-    {% endif %}
-</div>
-
-{% else %}
-
-{% for feedback in feedbacks %}
-    <div class="content">
-        <h3>{{ feedback.title }}</h3>
-
-        {% if feedback.body %}
-        <p>{{ feedback.body }}</p>
+    <div class="content flash">
+        {% if request.path == "/browse_feedback/acknowledged" %}
+            Ei huomioituja palautteita
+        {% elif request.path == "/browse_feedback/archived" %}
+            Ei arkistoituja palautteita
+        {% else %}
+            Ei palautteita
         {% endif %}
-
-        <hr>
-
-        <div class="flex-fill">
-            <div class="inlined with-margin">
-                {{ (feedback.sent_by + " @ ") if session.admin else "" }}{{ feedback.sent_at.strftime("%d.%m.%Y") }}
-            </div>
-
-            {% if session.admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
-            <form
-                class="inlined"
-                action="/{{ 'acknowledge_feedback' if request.path == '/browse_feedback' else 'archive_feedback' }}/{{ feedback.id }}"
-                method="post"
-            >
-                <input
-                    class="input"
-                    type="submit"
-                    value="{{ 'Merkitse huomioiduksi' if request.path == '/browse_feedback' else 'Arkistoi' }}"
-                />
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-            {% endif %}
-        </div>
-
-        {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
-        <hr>
-
-        <div class="flex-fill">
-            <div class="inlined with-margin">
-                {% if feedback.acknowledged_at %}
-
-                {% if session.admin %}
-                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
-                {% else %}
-                Huomioitu
-                {% endif %}
-        
-                {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }}
-                    
-                {% endif %}
-            </div>
-
-            {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
-            <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
-                <input class="input" type="submit" value="Peru huomiointi">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if session.admin %}
-
-        <div class="flex-fill">
-            {% if request.path == "/browse_feedback/archived" %}
-            <div class="inlined">
-                Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
-                {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
-            </div>
-
-            <form
-                class="inlined"
-                action="/{{ 'unarchive_feedback' if feedback.archived_at else 'archive_feedback' }}/{{ feedback.id }}"
-                method="post"
-            >
-                <input
-                    class="input"
-                    type="submit"
-                    value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
-                />
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-            {% endif %}
-
-        {% endif %}
-        </div>
     </div>
-{% endfor %}
+{% else %}
+    {% for feedback in feedbacks %}
+        <div class="content">
+            <h3>{{ feedback.title }}</h3>
 
+            {% if feedback.body %}
+                <div class="flex-fill text">
+                    {{ feedback.body }}
+                </div>
+            {% endif %}
+
+            <hr>
+            <div class="flex-fill">
+                <div class="inlined with-margin">
+                    {{ (feedback.sent_by + " @ ") if session.admin else "" }}
+                    {{ feedback.sent_at.strftime("%d.%m.%Y") }}
+                </div>
+
+                {% if session.admin and (request.path == "/browse_feedback" or request.path == "/browse_feedback/acknowledged") %}
+                    <form
+                        class="inlined" method="post"
+                        action="/{{ 'acknowledge' if request.path == '/browse_feedback' else 'archive' }}_feedback/{{ feedback.id }}"
+                    >
+                        <input
+                            class="input" type="submit"
+                            value="{{ 'Merkitse huomioiduksi' if request.path == '/browse_feedback' else 'Arkistoi' }}"
+                        >
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    </form>
+                {% endif %}
+            </div>
+
+            {% if request.path == "/browse_feedback/acknowledged" or request.path == "/browse_feedback/archived" %}
+                <hr>
+                <div class="flex-fill">
+                    <div class="inlined with-margin">
+                        {% if feedback.acknowledged_at %}
+                            {% if session.admin %}
+                                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
+                            {% else %}
+                                Huomioitu
+                            {% endif %}
+                            {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }} 
+                        {% endif %}
+                    </div>
+                    {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
+                        <form action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
+                            <input class="input" type="submit" value="Peru huomiointi">
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if session.admin and request.path == "/browse_feedback/archived" %}
+                <div class="flex-fill">
+                    <div>
+                        Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
+                        {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
+                    </div>
+                    <form
+                        method="post"
+                        action="/{{ 'un' if feedback.archived_at else '' }}archive_feedback/{{ feedback.id }}"
+                    >
+                        <input
+                            class="input" type="submit"
+                            value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
+                        >
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endif %}
 
 {% endblock %}

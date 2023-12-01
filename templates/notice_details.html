@@ -5,147 +5,120 @@
 {% block content %}
 
 {% if session.admin %}
-
-<form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
-    <input class="input" type="submit" value="Merkitse huomioiduksi">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
-
-<form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
-    <input class="input" type="submit" value="Merkitse työn alle">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
-
-<form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
-    <input class="input" type="submit" value="Merkitse valmiiksi">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
-
-<form
-    class="inlined"
-    action="/{{ 'unarchive_notice' if notice.archived_at else 'archive_notice' }}/{{ notice.id }}"
-    method="post"
->
-    <input
-        class="input"
-        type="submit"
-        value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}"
-    >
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
+    <form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
+        <input class="input" type="submit" value="Merkitse huomioiduksi">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    <form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
+        <input class="input" type="submit" value="Merkitse työn alle">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    <form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
+        <input class="input" type="submit" value="Merkitse valmiiksi">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    <form class="inlined" action="/{{ 'un' if notice.archived_at else '' }}archive_notice/{{ notice.id }}" method="post">
+        <input class="input" type="submit" value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
 {% endif %}
 
 {% if not notice.archived_at %}
-<form
-    class="inlined"
-    action="/support_notice/{{ notice.id }}"
-    method="post"
->
-    <input class="input" type="submit" value="Komppaa">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
+    <form class="inlined" action="/support_notice/{{ notice.id }}" method="post">
+        <input class="input" type="submit" value="Komppaa">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
 {% endif %}
 
 <form class="inlined" action="/browse_notices">
-    <input class="input" type="submit" value="Selaa ilmoituksia" />
+    <input class="input" type="submit" value="Selaa ilmoituksia">
 </form>
 
 <div class="content">
     <h3>{{ notice.title }}</h3>
 
     {% if notice.body %}
-    <p>{{ notice.body }}</p>
+        <div class="flex-fill text">
+            {{ notice.body }}
+        </div>
     {% endif %}
 
     {% if notice.street_address or notice.zip_code %}
-    <hr>
-
-    <div class="flex-fill text">
-        <div class="inlined">
-            {% if notice.zip_code %}
-            {{ notice.zip_code }}
-            {% endif %}
+        <hr>
+        <div class="flex-fill text">
+            <div class="inlined">
+                {% if notice.zip_code %}
+                    {{ notice.zip_code }}
+                {% endif %}
+            </div>
+            <div class="inlined">
+                {% if notice.street_address %}
+                    {{ notice.street_address }}
+                {% endif %}
+            </div>
         </div>
-        <div class="inlined">
-            {% if notice.street_address %}
-            {{ notice.street_address }}
-            {% endif %}
-        </div>
-    </div>
-
     {% endif %}
 
     <hr>
-
     <div class="flex-fill text">
         {{ (notice.created_by + " @ ") if session.admin else "" }}
         {{ notice.created_at.strftime("%d.%m.%Y") }}
     </div>
-    
+
     <div class="flex-fill text">
-        <div class="inlined">
+        <div>
             {% if notice.total_views == 0 or notice.total_views == 1 %}
-            {{ notice.total_views }} {{ 'katselukerta' if notice.total_views == 1 else 'katselukertaa' }}
+                {{ notice.total_views }} {{ 'katselukerta' if notice.total_views == 1 else 'katselukertaa' }}
             {% else %}
-            {{ notice.total_views }} katselukertaa | 
-            {{ notice.unique_views }} {{ 'katselija' if notice.unique_views == 1 else 'katselijaa' }}
+                {{ notice.total_views }} katselukertaa | 
+                {{ notice.unique_views }} {{ 'katselija' if notice.unique_views == 1 else 'katselijaa' }}
             {% endif %}
         </div>
-        <div class="inlined">
+        <div>
             {% if notice.total_supports == 0 or notice.total_supports == 1 %}
-            {{ notice.total_supports }} {{ 'komppaus' if notice.total_supports == 1 else 'komppausta' }}
+                {{ notice.total_supports }} {{ 'komppaus' if notice.total_supports == 1 else 'komppausta' }}
             {% else %}
-            {{ notice.total_supports }} komppausta | 
-            {{ notice.unique_supports }} {{ 'komppaaja' if notice.unique_supports == 1 else 'komppaajaa' }}
+                {{ notice.total_supports }} komppausta | 
+                {{ notice.unique_supports }} {{ 'komppaaja' if notice.unique_supports == 1 else 'komppaajaa' }}
             {% endif %}
         </div>
     </div>
 
     {% if notice.archived_at %}
-
-    <div class="flex-fill text">
-        {% if session.admin %}
-        Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
-        {% else %}
-        Arkistoitu
-        {% endif %}
-
-        {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") }}
-    </div>
-        
+        <div class="flex-fill text">
+            {% if session.admin %}
+                Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
+            {% else %}
+                Arkistoitu
+            {% endif %}
+            {{ notice.archived_at.strftime("%d.%m.%Y %H:%M:%S") }}
+        </div>
     {% endif %}
 
     {% if statuses|length != 0 %}
-
-    <hr>
-
-    <h4>Käsittelyhistoria:</h4>
-
+        <hr>
+        <h4>Käsittelyhistoria:</h4>
     {% endif %}
 
     {% for status in statuses %}
         <div class="flex-fill">
             <div class="inlined with-margin">
                 {{ status.set_at.strftime("%d.%m.%Y %H:%M:%S") }}
-
                 {% if status.status == "read" %}
-                Huomioitu
+                    Huomioitu
                 {% elif status.status == "wip" %}
-                Työn alla
+                    Työn alla
                 {% elif status.status == "done" %}
-                Valmis
+                    Valmis
                 {% endif %}
-
                 {{ (' | ' + status.set_by) if session.admin else "" }}
             </div>
 
             {% if session.admin %}
-
-            <form class="inlined" action="/notice/{{ notice.id }}/delete_status/{{ status.id }}" method="post">
-                <input class="input" type="submit" value="Poista merkintä">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-
+                <form class="inlined" action="/notice/{{ notice.id }}/delete_status/{{ status.id }}" method="post">
+                    <input class="input" type="submit" value="Poista merkintä">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                </form>
             {% endif %}
         </div>
     {% endfor %}

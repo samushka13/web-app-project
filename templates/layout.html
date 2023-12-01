@@ -1,89 +1,60 @@
 <!doctype html>
 
 <link rel="stylesheet" href="/static/main.css">
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Oma Kaupunki</title>
 
 <center>
-
 <div class="header">
-
-<h1>Oma Kaupunki</h1>
-
-{% if session.user_id %}
-
-<ul class="nav-bar">
-    <li class="nav-bar-button">
-        {% if "news" in request.path %}
-        <a class="nav-bar-button-active" href="/browse_news">Uutiset</a>
-        {% else %}
-        <a href="/browse_news">Uutiset</a>
-        {% endif %}
-    </li>
-
-    <li class="nav-bar-button">
-        {% if "notice" in request.path %}
-        <a class="nav-bar-button-active" href="/browse_notices">Ilmoitukset</a>
-        {% else %}
-        <a href="/browse_notices">Ilmoitukset</a>
-        {% endif %}
-    </li>
-
-    <li class="nav-bar-button">
-        {% if "poll" in request.path %}
-        <a class="nav-bar-button-active" href="/browse_polls">Kyselyt</a>
-        {% else %}
-        <a href="/browse_polls">Kyselyt</a>
-        {% endif %}
-    </li>
-
-    <li class="nav-bar-button">
-        {% if "feedback" in request.path %}
-        <a class="nav-bar-button-active" href="/browse_feedback">Palautteet</a>
-        {% else %}
-        <a href="/browse_feedback">Palautteet</a>
-        {% endif %}
-    </li>
-
-    {% if session.admin %}
-
-    <li class="nav-bar-button">
-        {% if request.path == "/manage_users" %}
-        <a class="nav-bar-button-active" href="/manage_users">Käyttäjät</a>
-        {% else %}
-        <a href="/manage_users">Käyttäjät</a>
-        {% endif %}
-    </li>
-
+    <h1>Oma Kaupunki</h1>
+    {% if session.user_id %}
+        <ul class="nav-bar">
+            <li class="nav-bar-button">
+                <a class="{{ 'nav-bar-button-active' if 'news' in request.path else '' }}" href="/browse_news">
+                    Uutiset
+                </a>
+            </li>
+            <li class="nav-bar-button">
+                <a class="{{ 'nav-bar-button-active' if 'notice' in request.path else '' }}" href="/browse_notices">
+                    Ilmoitukset
+                </a>
+            </li>
+            <li class="nav-bar-button">
+                <a class="{{ 'nav-bar-button-active' if 'poll' in request.path else '' }}" href="/browse_polls">
+                    Kyselyt
+                </a>
+            </li>
+            <li class="nav-bar-button">
+                <a class="{{ 'nav-bar-button-active' if 'feedback' in request.path else '' }}" href="/browse_feedback">
+                    Palautteet
+                </a>
+            </li>
+            {% if session.admin %}
+                <li class="nav-bar-button">
+                    <a class="{{ 'nav-bar-button-active' if request.path == '/manage_users' else '' }}" href="/manage_users">
+                        Käyttäjät
+                    </a>
+                </li>
+            {% endif %}
+            <li class="nav-bar-button">
+                <a class="{{ 'nav-bar-button-active' if request.path == '/profile' else '' }}" href="/profile">
+                    Profiilini
+                </a>
+            </li>
+        </ul>
     {% endif %}
-
-    <li class="nav-bar-button">
-        {% if request.path == "/profile" %}
-        <a class="nav-bar-button-active" href="/profile">Profiilini</a>
-        {% else %}
-        <a href="/profile">Profiilini</a>
-        {% endif %}
-    </li>
-
-</ul>
-
-{% endif %}
-
 </div>
 
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-    <div class="content flash">
-      {{ message }}
-    </div>
-    {% endfor %}
-    <br>
-  {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="content flash {{ 'login' if not session.user_id else '' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <br>
+    {% endif %}
 {% endwith %}
 
 {% block content %}{% endblock %}
-
 </center>

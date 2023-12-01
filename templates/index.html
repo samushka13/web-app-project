@@ -4,42 +4,32 @@
 
 {% block content %}
 
-<center>
-
 {% if not session.user_id %}
-
-<div class="content form">
-    <h2>Kirjaudu sisään</h2>
-
-    <form action="/login" method="post">
-        <label for="username">Käyttäjänimi</label>
+    <div class="content form login">
+        <h2>Kirjaudu sisään</h2>
         <br>
-        <input class="input text" type="text" id="username" name="username" minlength="6" maxlength="50" value="{{ username }}">
+        <form action="/login" method="post">
+            <label for="username">Käyttäjänimi</label>
+            <br>
+            <input class="input text" type="text" id="username" name="username" minlength="6" maxlength="50" value="{{ username }}">
+            <br>
+            <br>
+            <label for="password">Salasana</label>
+            <br>
+            <input class="input text" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
+            <br>
+            <input class="input" type="submit" value="Kirjaudu">
+            <br>
+        </form>
         <br>
-
+        <hr>
         <br>
-        <label for="password">Salasana</label>
+        Ei tunnuksia?
         <br>
-        <input class="input text" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
-        <br>
-
-        <input class="input" type="submit" value="Kirjaudu">
-        <br>
-    </form>
-
-    <br>
-    <hr>
-    <br>
-
-    Ei tunnuksia?
-    <br>
-    <form action="/register">
-        <input class="input" type="submit" value="Rekisteröidy" />
-    </form>
-</div>
-
+        <form action="/register">
+            <input class="input" type="submit" value="Rekisteröidy">
+        </form>
+    </div>
 {% endif %}
-
-</center>
 
 {% endblock %}

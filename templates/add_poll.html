@@ -7,42 +7,37 @@
 <h2>Lisää kysely</h2>
 
 <form action="/browse_polls">
-    <input class="input" type="submit" value="Selaa kyselyitä" />
+    <input class="input" type="submit" value="Selaa kyselyitä">
 </form>
 
 {% if session.admin %}
-
-<div class="content form">
-    <form action="/add_poll" method="post">
-        <label for="title">Otsikko</label>
-        <br>
-        <textarea class="input" id="title" name="title" rows="3" cols="80" minlength="1" maxlength="100">{{ title }}</textarea>
-        <br>
-
-        <br>
-        <label for="zip_code">Mitä postinumeroaluetta kysely koskee erityisesti? (vapaaehtoinen)</label>
-        <br>
-        <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
-        <br>
-        <br>
-
-        <label for="open_on">Alkamispäivämäärä</label>
-        <br>
-        <input class="input text" type="date" id="open_on" name="open_on" value="{{ open_on if open_on else current_date }}" min="{{ current_date }}">
-        <br>
-        <br>
-
-        <label for="close_on">Päättymispäivämäärä</label>
-        <br>
-        <input class="input text" type="date" id="close_on" name="close_on" value="{{ close_on if close_on else future_date }}" min="{{ current_date }}">
-        <br>
-        <br>
-
-        <input type="submit" value="Lähetä">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-</div>
-
+    <div class="content form">
+        <form action="/add_poll" method="post">
+            <br>
+            <label for="title">Otsikko</label>
+            <br>
+            <textarea class="input" id="title" name="title" rows="3" cols="80" minlength="1" maxlength="100">{{ title }}</textarea>
+            <br>
+            <br>
+            <label for="zip_code">Mitä postinumeroaluetta kysely koskee erityisesti?</label>
+            <div class="caption">(vapaaehtoinen)</div>
+            <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+            <br>
+            <br>
+            <label for="open_on">Alkamispäivämäärä</label>
+            <br>
+            <input class="input text" type="date" id="open_on" name="open_on" value="{{ open_on if open_on else current_date }}" min="{{ current_date }}">
+            <br>
+            <br>
+            <label for="close_on">Päättymispäivämäärä</label>
+            <br>
+            <input class="input text" type="date" id="close_on" name="close_on" value="{{ close_on if close_on else future_date }}" min="{{ current_date }}">
+            <br>
+            <br>
+            <input class="input" type="submit" value="Lähetä">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+    </div>
 {% endif %}
 
 {% endblock %}

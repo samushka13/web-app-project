@@ -7,23 +7,23 @@
 <h2>Anna palautetta</h2>
 
 <form action="/browse_feedback">
-    <input class="input" type="submit" value="Selaa palautteita" />
+    <input class="input" type="submit" value="Selaa palautteita">
 </form>
 
 <div class="content form">
     <form action="/give_feedback" method="post">
-        <label for="title">Otsikko:</label>
+        <br>
+        <label for="title">Otsikko</label>
         <br>
         <textarea class="input" id="title" name="title" rows="3" cols="80" minlength="1" maxlength="100">{{ title }}</textarea>
         <br>
-
         <br>
-        <label for="body">Tarkempi kuvaus (vapaaehtoinen):</label>
-        <br>
+        <label for="body">Tarkempi kuvaus</label>
+        <div class="caption">(vapaaehtoinen)</div>
         <textarea class="input" id="body" name="body" rows="6" cols="80" maxlength="1000">{{ body }}</textarea>
         <br>
-
-        <input type="submit" value="Lähetä">
+        <br>
+        <input class="input" type="submit" value="Lähetä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 </div>

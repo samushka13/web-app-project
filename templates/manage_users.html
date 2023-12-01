@@ -7,47 +7,33 @@
 <h2>Hallinnoi käyttäjätilejä</h2>
 
 {% if session.admin %}
-
-{% for user in users %}
-
-    <div class="content user">
-
-        {{ user.name }}
-
-        {% if user.disabled_at %}
-
-            {% if user.id != session.user_id %}
-
-            <div>
-                <div class="inlined" style="font-size: small; margin-right: 10px;">
-                    Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
-                </div>
-
-                <form class="inlined" action="/enable_user/{{ user.id }}" method="post">
-                    <input type="submit" value="Ota käyttöön" >
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
+    {% for user in users %}
+        <div class="content user">
+            <div class="flex-fill text">
+                {{ user.name }}
             </div>
 
-            {% endif %}
-
-        {% else %}
-
             {% if user.id != session.user_id %}
+                <div class="flex-fill">
+                    {% if user.disabled_at %}
+                        <div style="font-size: small; margin-left: 20px; margin-right: 10px;">
+                            Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
+                        </div>
+                    {% endif %}
 
-            <form action="/disable_user/{{ user.id }}" method="post">
-                <input type="submit" value="Poista käytöstä" >
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-
+                    <form
+                        class="inlined" method="post"
+                        action="/{{ 'enable' if user.disabled_at else 'disable'}}_user/{{ user.id }}">
+                        <input
+                            class="input" type="submit"
+                            value="{{ 'Ota käyttöön' if user.disabled_at else 'Poista käytöstä' }}"
+                        >
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    </form>
+                </div>
             {% endif %}
-
-        {% endif %}
-
-    </div>
-
-{% endfor %}
-
+        </div>
+    {% endfor %}
 {% endif %}
 
 {% endblock %}

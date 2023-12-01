@@ -7,111 +7,92 @@
 <h2>Selaa kyselyitä</h2>
 
 <form class="inlined" action="/browse_polls/nearby">
-    {% if request.path == "/browse_polls/nearby" %}
-    <input class="input active" type="submit" value="Lähistölläni" />
-    {% else %}
-    <input class="input" type="submit" value="Lähistölläni" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_polls/nearby' else ''}}"
+        type="submit" value="Lähistölläni"
+    >
 </form>
-
 <form class="inlined" action="/browse_polls">
-    {% if request.path == "/browse_polls" %}
-    <input class="input active" type="submit" value="Käynnissä" />
-    {% else %}
-    <input class="input" type="submit" value="Käynnissä" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_polls' else ''}}"
+        type="submit" value="Käynnissä"
+    >
 </form>
-
 <form class="inlined" action="/browse_polls/upcoming">
-    {% if request.path == "/browse_polls/upcoming" %}
-    <input class="input active" type="submit" value="Tulevat" />
-    {% else %}
-    <input class="input" type="submit" value="Tulevat" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_polls/upcoming' else ''}}"
+        type="submit" value="Tulevat"
+    >
 </form>
-
 <form class="inlined" action="/browse_polls/past">
-    {% if request.path == "/browse_polls/past" %}
-    <input class="input active" type="submit" value="Menneet" />
-    {% else %}
-    <input class="input" type="submit" value="Menneet" />
-    {% endif %}
+    <input
+        class="input {{ 'active' if request.path == '/browse_polls/past' else ''}}"
+        type="submit" value="Menneet"
+    >
 </form>
 
 {% if session.admin %}
-
-<form class="inlined" action="/browse_polls/archived">
-    {% if request.path == "/browse_polls/archived" %}
-    <input class="input active" type="submit" value="Arkistoidut" />
-    {% else %}
-    <input class="input" type="submit" value="Arkistoidut" />
-    {% endif %}
-</form>
-
-<form class="inlined" action="/add_poll">
-    <input class="input" type="submit" value="Lisää kysely" />
-</form>
-
+    <form class="inlined" action="/browse_polls/archived">
+        <input
+            class="input {{ 'active' if request.path == '/browse_polls/archived' else ''}}"
+            type="submit" value="Arkistoidut"
+        >
+    </form>
+    <form class="inlined" action="/add_poll">
+        <input class="input" type="submit" value="Lisää kysely">
+    </form>
 {% endif %}
 
 {% if polls|length == 0 %}
-
-<div class="content flash">
-    {% if request.path == "/browse_polls/nearby" %}
-    {{
-        'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia kyselyitä'
-        if not session.zip_code
-        else 'Ei lähistöäsi koskevia kyselyitä'
-    }}
-    {% elif request.path == "/browse_polls" %}
-    Ei käynnissä olevia kyselyitä
-    {% elif request.path == "/browse_polls/upcoming" %}
-    Ei tulevia kyselyitä
-    {% elif request.path == "/browse_polls/past" %}
-    Ei menneitä kyselyitä
-    {% elif request.path == "/browse_polls/archived" %}
-    Ei arkistoituja kyselyitä
-    {% else %}
-    Ei kyselyitä
-    {% endif %}
-</div>
-
+    <div class="content flash">
+        {% if request.path == "/browse_polls/nearby" %}
+            {{
+                'Täytä profiiliisi postinumero nähdäksesi lähistöäsi koskevia kyselyitä'
+                if not session.zip_code
+                else 'Ei lähistöäsi koskevia kyselyitä'
+            }}
+        {% elif request.path == "/browse_polls" %}
+            Ei käynnissä olevia kyselyitä
+        {% elif request.path == "/browse_polls/upcoming" %}
+            Ei tulevia kyselyitä
+        {% elif request.path == "/browse_polls/past" %}
+            Ei menneitä kyselyitä
+        {% elif request.path == "/browse_polls/archived" %}
+            Ei arkistoituja kyselyitä
+        {% else %}
+            Ei kyselyitä
+        {% endif %}
+    </div>
 {% else %}
+    {% for poll in polls %}
+        <div class="content">
+            <h3>{{ poll.title }}</h3>
+            <hr>
+            <div class="flex-fill">
+                <div>
+                    Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}
+                </div>
+                <div>
+                    {% if session.admin %}
+                        <form
+                            class="inlined" method="post"
+                            action="/{{ 'un' if poll.archived_at else '' }}archive_poll/{{ poll.id }}"
+                        >
+                            <input
+                                class="input" type="submit"
+                                value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
+                            >
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        </form>
+                    {% endif %}
 
-{% for poll in polls %}
-    <div class="content">
-        <h3>{{ poll.title }}</h3>
-        <hr>
-        <div class="flex-fill">
-            <div class="inlined">
-                Äänestysaika: {{ poll.open_on.strftime("%d.%m.%Y") }} – {{ poll.close_on.strftime("%d.%m.%Y") }}
-            </div>
-
-            {% if session.admin %}
-
-            <div class="inlined">
-                <form
-                    class="inlined"
-                    action="/{{ 'unarchive_poll' if poll.archived_at else 'archive_poll' }}/{{ poll.id }}"
-                    method="post"
-                >
-                    <input
-                        class="input"
-                        type="submit"
-                        value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
-                    />
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                </form>
-                {% endif %}
-
-                <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
-                    <input class="input" type="submit" value="Lue lisää">
-                </form>
+                    <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
+                        <input class="input" type="submit" value="Lue lisää">
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
-
+    {% endfor %}
 {% endif %}
 
 {% endblock %}
