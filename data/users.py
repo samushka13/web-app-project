@@ -12,7 +12,8 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
         sql = """INSERT INTO users
                     (name, password, date_of_birth, gender, zip_code, admin)
                  VALUES
-                    (:name, :password, :date_of_birth, :gender, :zip_code, :admin)"""
+                    (:name, :password, :date_of_birth, :gender, :zip_code, :admin)
+                RETURNING id"""
 
         values = {
             "name": name,
@@ -23,245 +24,219 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
             "admin": admin
         }
 
-        db.session.execute(text(sql), values)
+        result = db.session.execute(text(sql), values)
         db.session.commit()
 
+        return result.fetchone()
+
     except IntegrityError:
-        return "username-exists"
-
-    except Exception:
-        return False
-
-    login(name, password)
-
-    return True
+        return None
 
 def login(name: str, password: str):
-    try:
-        sql = """SELECT
-                    id,
-                    password,
-                    to_char(DATE(date_of_birth)::date, 'YYYY-MM-DD'),
-                    gender,
-                    zip_code,
-                    admin,
-                    disabled_at
-                 FROM users
-                 WHERE name=:name"""
+    sql = """SELECT
+                id,
+                password,
+                to_char(DATE(date_of_birth)::date, 'YYYY-MM-DD'),
+                gender,
+                zip_code,
+                admin,
+                disabled_at
+            FROM users
+            WHERE name=:name"""
 
-        result = db.session.execute(text(sql), { "name": name })
-        user = result.fetchone()
+    result = db.session.execute(text(sql), { "name": name })
+    user = result.fetchone()
 
-        if not user:
-            return "credential-error"
+    if not (user and check_password_hash(user[1], password)):
+        return "credential-error"
 
-        password_match = check_password_hash(user[1], password)
+    disabled = user[6]
 
-        if not password_match:
-            return "credential-error"
+    if disabled:
+        return "account-disabled"
 
-        disabled = user[6]
+    session["username"] = name
+    session["user_id"] = user[0]
+    session["password_hash"] = user[1]
+    session["date_of_birth"] = user[2]
+    session["gender"] = user[3]
+    session["zip_code"] = user[4]
+    session["admin"] = user[5]
 
-        if disabled:
-            return "account-disabled"
+    csrf_token = os.urandom(16).hex()
+    session["csrf_token"] = csrf_token
 
-        session["username"] = name
-        session["user_id"] = user[0]
-        session["password_hash"] = user[1]
-        session["date_of_birth"] = user[2]
-        session["gender"] = user[3]
-        session["zip_code"] = user[4]
-        session["is_admin"] = user[5]
-
-        csrf_token = os.urandom(16).hex()
-        session["csrf_token"] = csrf_token
-
-    except Exception:
-        return False
-
-    return True
+    return "success"
 
 def logout():
     for key in list(session.keys()):
         session.pop(key)
 
 def update_date_of_birth(date_of_birth: str):
-    try:
-        sql = """UPDATE users
-                 SET date_of_birth=:date_of_birth
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET date_of_birth=:date_of_birth
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "date_of_birth": date_of_birth,
-            "id": session["user_id"]
-        }
+    values = {
+        "date_of_birth": date_of_birth,
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
+    item = result.fetchone()
 
-    session["date_of_birth"] = date_of_birth
+    if item:
+        session["date_of_birth"] = date_of_birth
 
-    return True
+    return item
 
 def update_gender(gender: str):
-    try:
-        sql = """UPDATE users
-                 SET gender=:gender
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET gender=:gender
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "gender": gender,
-            "id": session["user_id"]
-        }
+    values = {
+        "gender": gender,
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
+    item = result.fetchone()
 
-    session["gender"] = gender
+    if item:
+        session["gender"] = gender
 
-    return True
+    return item
 
 def update_zip_code(zip_code: str):
-    try:
-        sql = """UPDATE users
-                 SET zip_code=:zip_code
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET zip_code=:zip_code
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "zip_code": zip_code,
-            "id": session["user_id"]
-        }
+    values = {
+        "zip_code": zip_code,
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
+    item = result.fetchone()
 
-    session["zip_code"] = zip_code
+    if item:
+        session["zip_code"] = zip_code
 
-    return True
+    return item
 
-def update_admin_status(is_admin: str):
-    try:
-        sql = """UPDATE users
-                 SET admin=:admin
-                 WHERE id=:id"""
+def update_admin_status(admin: bool):
+    sql = """UPDATE users
+            SET admin=:admin
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "admin": is_admin,
-            "id": session["user_id"]
-        }
+    values = {
+        "admin": admin,
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
+    item = result.fetchone()
 
-    session["is_admin"] = is_admin
+    if item:
+        session["admin"] = admin
 
-    return True
+    return item
 
 def change_password(password: str):
     hash_value = generate_password_hash(password)
 
-    try:
-        sql = """UPDATE users
-                 SET password=:password
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET password=:password
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "password": hash_value,
-            "id": session["user_id"]
-        }
+    values = {
+        "password": hash_value,
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
+    item = result.fetchone()
 
-    return True
+    if item:
+        session["password_hash"] = hash_value
+
+    return item
 
 def delete_current_user():
-    try:
-        sql = """DELETE FROM users
-                 WHERE id=:id"""
+    sql = """DELETE FROM users
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "id": session["user_id"]
-        }
+    values = {
+        "id": session["user_id"]
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
-
-    return True
+    return result.fetchone()
 
 def get_users():
-    try:
-        sql = """SELECT
-                    id,
-                    name,
-                    admin,
-                    disabled_at
-                 FROM users
-                 ORDER BY name ASC"""
+    sql = """SELECT
+                id,
+                name,
+                admin,
+                disabled_at
+            FROM users
+            ORDER BY name ASC"""
 
-        result = db.session.execute(text(sql))
-        users = result.fetchall()
+    result = db.session.execute(text(sql))
 
-        return users
-
-    except Exception:
-        return False
+    return result.fetchall()
 
 def disable_user(user_id: int):
-    try:
-        sql = """UPDATE users
-                 SET
-                    disabled_at=NOW(),
-                    disabled_by=:disabled_by
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET
+                disabled_at=NOW(),
+                disabled_by=:disabled_by
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "disabled_by": session["user_id"],
-            "id": user_id
-        }
+    values = {
+        "disabled_by": session["user_id"],
+        "id": user_id
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
-
-    return True
+    return result.fetchone()
 
 def enable_user(user_id: int):
-    try:
-        sql = """UPDATE users
-                 SET
-                    disabled_at=NULL,
-                    disabled_by=NULL
-                 WHERE id=:id"""
+    sql = """UPDATE users
+            SET
+                disabled_at=NULL,
+                disabled_by=NULL
+            WHERE id=:id
+            RETURNING id"""
 
-        values = {
-            "id": user_id
-        }
+    values = {
+        "id": user_id
+    }
 
-        db.session.execute(text(sql), values)
-        db.session.commit()
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
 
-    except Exception:
-        return False
-
-    return True
+    return result.fetchone()
