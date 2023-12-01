@@ -1,5 +1,7 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from flask import request, session
-from helpers.contants import GENDERS, DATE_LENGTH
+from helpers.contants import GENDERS, DATE_LENGTH, MIN_USER_AGE
 
 def csrf_check_passed():
     return session["csrf_token"] == request.form["csrf_token"]
@@ -54,3 +56,9 @@ def get_street_address():
         street_address = request.form["street_address"]
 
     return street_address
+
+def get_max_date_of_birth():
+    current_date = datetime.today().date()
+    max_date = current_date - relativedelta(years=MIN_USER_AGE)
+
+    return max_date

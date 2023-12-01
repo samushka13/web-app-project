@@ -1,9 +1,12 @@
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
-from helpers.contants import MIN_USER_AGE
 from helpers.decorators import login_required
-from helpers.forms import get_date_of_birth, get_gender, get_zip_code, get_admin_status
+from helpers.forms import (
+    get_date_of_birth,
+    get_gender,
+    get_zip_code,
+    get_admin_status,
+    get_max_date_of_birth
+)
 from helpers.validators import (
     username_too_short,
     username_too_long,
@@ -24,8 +27,7 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        current_date = datetime.today().date()
-        max_date = current_date - relativedelta(years=MIN_USER_AGE)
+        max_date = get_max_date_of_birth()
         return render_template("register.html", max_date=max_date)
 
     form_valid = True

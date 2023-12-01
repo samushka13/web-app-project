@@ -1,16 +1,14 @@
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from flask import flash, render_template, redirect, url_for, request, session
 from werkzeug.security import check_password_hash
 from app import app
-from helpers.contants import MIN_USER_AGE
 from helpers.decorators import login_required
 from helpers.forms import (
     csrf_check_passed,
     get_date_of_birth,
     get_gender,
     get_zip_code,
-    get_admin_status
+    get_admin_status,
+    get_max_date_of_birth
 )
 from helpers.validators import invalid_optional_date, invalid_zip_code
 from data import users
@@ -21,8 +19,7 @@ def redirect_to_profile():
 @app.route("/profile")
 @login_required
 def profile():
-    current_date = datetime.today().date()
-    max_date = current_date - relativedelta(years=MIN_USER_AGE)
+    max_date = get_max_date_of_birth()
     return render_template("profile.html", max_date=max_date)
 
 @app.route("/update_date_of_birth", methods=["POST"])
