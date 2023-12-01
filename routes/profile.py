@@ -2,6 +2,7 @@ from flask import render_template, redirect, url_for, request, session
 from werkzeug.security import check_password_hash
 from app import app
 from helpers import flashes
+from helpers.contants import GENDERS
 from helpers.decorators import login_required
 from helpers.forms import (
     csrf_check_passed,
@@ -27,7 +28,7 @@ def handle_profile_update(update_success: bool):
 @login_required
 def profile():
     max_date = get_max_date_of_birth()
-    return render_template("profile.html", max_date=max_date)
+    return render_template("profile.html", max_date=max_date, genders=GENDERS)
 
 @app.route("/update_date_of_birth", methods=["POST"])
 @login_required
