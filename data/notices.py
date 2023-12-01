@@ -47,7 +47,9 @@ def get_created_by_user():
                 N.street_address,
                 N.created_at
             FROM notices AS N
-            WHERE :user_id=N.created_by
+            WHERE
+                :user_id=N.created_by
+                AND N.archived_at IS NULL
             ORDER BY N.created_at DESC"""
 
     values = {
@@ -131,7 +133,8 @@ def archive(notice_id: int):
             SET
                 archived_at=NOW(),
                 archived_by=:archived_by
-            WHERE id=:id"""
+            WHERE id=:id
+            RETURNING id"""
 
     values = {
         "archived_by": session["user_id"],
@@ -148,7 +151,8 @@ def unarchive(notice_id: int):
             SET
                 archived_at=NULL,
                 archived_by=NULL
-            WHERE id=:id"""
+            WHERE id=:id
+            RETURNING id"""
 
     values = {
         "id": notice_id
@@ -243,7 +247,8 @@ def get_statuses(notice_id: int):
 
 def delete_status(status_id: int):
     sql = """DELETE FROM notice_statuses
-            WHERE id=:id"""
+            WHERE id=:id
+            RETURNING id"""
 
     values = {
         "id": status_id
