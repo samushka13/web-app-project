@@ -1,4 +1,5 @@
-from flask import flash, render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session
+from helpers import flashes
 from helpers.decorators import login_required
 from helpers.forms import (
     get_date_of_birth,
@@ -39,19 +40,19 @@ def register():
     admin = get_admin_status()
 
     if username_too_short(username):
-        flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä", "error")
+        flashes.username_too_short()
         form_valid = False
     elif username_too_long(username):
-        flash("Käyttäjänimessä voi olla enintään 50 merkkiä", "error")
+        flashes.username_too_long()
         form_valid = False
     elif password_too_short(password):
-        flash("Salasanassa tulee olla vähintään 6 merkkiä", "error")
+        flashes.password_too_short()
         form_valid = False
     elif invalid_optional_date(date_of_birth):
-        flash("Päivämäärä ei ole kelvollinen", "error")
+        flashes.invalid_date()
         form_valid = False
     elif invalid_zip_code(zip_code):
-        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        flashes.invalid_zip_code()
         form_valid = False
 
     if form_valid and users.register(username, password, date_of_birth, gender, zip_code, admin):
@@ -77,9 +78,9 @@ def login():
         return redirect(url_for("browse_news"))
 
     if response == "account-disabled":
-        flash("Tili on poistettu käytöstä", "error")
+        flashes.account_disabled()
     else:
-        flash("Väärä käyttäjänimi tai salasana", "error")
+        flashes.invalid_credentials()
 
     return render_template("index.html", username=username, password=password)
 

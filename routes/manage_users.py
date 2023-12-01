@@ -1,5 +1,6 @@
-from flask import flash, render_template, redirect, url_for
+from flask import render_template, redirect, url_for
 from app import app
+from helpers import flashes
 from helpers.decorators import admin_required
 from helpers.forms import csrf_check_passed
 from data import users
@@ -14,7 +15,7 @@ def manage_users():
 @admin_required
 def disable_user(user_id):
     if not (csrf_check_passed() and users.disable_user(user_id)):
-        flash("Tilin poistaminen käytöstä ei onnistunut", "error")
+        flashes.account_disable_error()
 
     return redirect(url_for("manage_users"))
 
@@ -22,6 +23,6 @@ def disable_user(user_id):
 @admin_required
 def enable_user(user_id):
     if not (csrf_check_passed() and users.enable_user(user_id)):
-        flash("Tilin ottaminen käyttöön ei onnistunut", "error")
+        flashes.account_enable_error()
 
     return redirect(url_for("manage_users"))

@@ -1,6 +1,7 @@
 from datetime import datetime
-from flask import flash, render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request
 from app import app
+from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
 from helpers.validators import (
@@ -53,7 +54,7 @@ def view_news_details(news_id):
     if item:
         return render_template("news_details.html", item=item)
 
-    flash("Tietojen haku epäonnistui", "error")
+    flashes.data_fetch_failed()
     return redirect_to_news()
 
 @app.route("/add_news", methods=["GET", "POST"])
@@ -70,26 +71,26 @@ def add_news():
     publish_on = get_date("publish_on")
 
     if no_title(title):
-        flash("Otsikko ei saa olla tyhjä", "error")
+        flashes.no_title()
         form_valid = False
     elif title_too_long(title):
-        flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+        flashes.title_too_long()
         form_valid = False
     elif body_too_long(body):
-        flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+        flashes.body_too_long()
         form_valid = False
     elif invalid_zip_code(zip_code):
-        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        flashes.invalid_zip_code()
         form_valid = False
     elif invalid_required_date(publish_on):
-        flash("Päivämäärä ei ole kelvollinen", "error")
+        flashes.invalid_date()
         form_valid = False
 
     if form_valid and news.add(title, body, zip_code, publish_on):
-        flash("Uutisen tallennus onnistui")
+        flashes.news_saved()
         return redirect_to_news()
 
-    flash("Uutisen tallennus ei onnistunut", "error")
+    flashes.news_save_error()
     return render_template("add_news.html",
                             title=title,
                             body=body,
@@ -99,15 +100,19 @@ def add_news():
 @app.route("/archive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def archive_news(news_id):
-    if not (csrf_check_passed() and news.archive(news_id)):
-        flash("Arkistointi ei onnistunut", "error")
+    if csrf_check_passed() and news.archive(news_id):
+        flashes.archived()
+    else:
+        flashes.archiving_error()
 
     return redirect_to_news()
 
 @app.route("/unarchive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def unarchive_news(news_id):
-    if not (csrf_check_passed() and news.unarchive(news_id)):
-        flash("Arkistoinnin peruminen ei onnistunut", "error")
+    if csrf_check_passed() and news.unarchive(news_id):
+        flashes.unarchived()
+    else:
+        flashes.unarchiving_error()
 
     return redirect_to_news()

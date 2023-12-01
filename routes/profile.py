@@ -1,6 +1,7 @@
-from flask import flash, render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session
 from werkzeug.security import check_password_hash
 from app import app
+from helpers import flashes
 from helpers.decorators import login_required
 from helpers.forms import (
     csrf_check_passed,
@@ -16,6 +17,12 @@ from data import users
 def redirect_to_profile():
     return redirect(url_for("profile"))
 
+def handle_profile_update(update_success: bool):
+    if csrf_check_passed() and update_success:
+        flashes.profile_updated()
+    else:
+        flashes.profile_update_error()
+
 @app.route("/profile")
 @login_required
 def profile():
@@ -28,10 +35,9 @@ def update_date_of_birth():
     date_of_birth = get_date_of_birth()
 
     if invalid_optional_date(date_of_birth):
-        flash("Päivämäärä ei ole kelvollinen", "error")
-
-    if not (csrf_check_passed() and users.update_date_of_birth(date_of_birth)):
-        flash("Tallennus ei onnistunut", "error")
+        flashes.invalid_date()
+    else:
+        handle_profile_update(users.update_date_of_birth(date_of_birth))
 
     return redirect_to_profile()
 
@@ -40,8 +46,7 @@ def update_date_of_birth():
 def update_gender():
     gender = get_gender()
 
-    if not (csrf_check_passed() and users.update_gender(gender)):
-        flash("Tallennus ei onnistunut", "error")
+    handle_profile_update(users.update_gender(gender))
 
     return redirect_to_profile()
 
@@ -51,11 +56,10 @@ def update_zip_code():
     zip_code = get_zip_code()
 
     if invalid_zip_code(zip_code):
-        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        flashes.invalid_zip_code()
         return redirect_to_profile()
-
-    if not (csrf_check_passed() and users.update_zip_code(zip_code)):
-        flash("Tallennus ei onnistunut", "error")
+    else:
+        handle_profile_update(users.update_zip_code(zip_code))
 
     return redirect_to_profile()
 
@@ -64,8 +68,7 @@ def update_zip_code():
 def update_admin_status():
     admin = get_admin_status()
 
-    if not (csrf_check_passed() and users.update_admin_status(admin)):
-        flash("Tallennus ei onnistunut", "error")
+    handle_profile_update(users.update_admin_status(admin))
 
     return redirect_to_profile()
 
@@ -81,14 +84,14 @@ def change_password():
         new_password = request.form["new_password"]
 
         if not password_match:
-            flash("Nykyinen salasana ei täsmää", "error")
+            flashes.password_mismatch()
         elif password_too_short(new_password):
-            flash("Uudessa salasanassa tulee olla vähintään 6 merkkiä", "error")
+            flashes.password_too_short()
         elif csrf_check_passed() and users.change_password(new_password):
-            flash("Salasanan vaihtaminen onnistui")
+            flashes.password_changed()
             return redirect_to_profile()
 
-    flash("Salasanan vaihtaminen ei onnistunut", "error")
+    flashes.password_change_error()
     return render_template("change_password.html",
                             current_password=current_password,
                             new_password=new_password)
@@ -98,7 +101,8 @@ def change_password():
 def delete_current_user():
     if csrf_check_passed() and users.delete_current_user():
         users.logout()
+        flashes.profile_updated()
         return redirect("/")
 
-    flash("Tilin poistaminen ei onnistunut", "error")
+    flashes.profile_update_error()
     return render_template("profile.html")

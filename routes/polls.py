@@ -1,7 +1,8 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from flask import flash, render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request
 from app import app
+from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_zip_code
 from helpers.validators import (
@@ -60,7 +61,7 @@ def view_poll_details(poll_id):
     if poll:
         return render_template("poll_details.html", poll=poll)
 
-    flash("Tietojen haku epäonnistui", "error")
+    flashes.data_fetch_failed()
     return redirect_to_polls()
 
 @app.route("/browse_polls/details/<int:poll_id>/analytics")
@@ -79,14 +80,14 @@ def view_poll_analytics(poll_id):
                                 votes_by_age_group=votes_by_age_group,
                                 votes_by_zip_code=votes_by_zip_code)
 
-    flash("Tietojen haku epäonnistui", "error")
+    flashes.data_fetch_failed()
     return render_poll_template(poll_id)
 
 @app.route("/vote_for/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_for(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, True)):
-        flash("Äänestäminen epäonnistui", "error")
+        flashes.vote_error()
 
     return render_poll_template(poll_id)
 
@@ -94,7 +95,7 @@ def vote_for(poll_id):
 @login_required
 def vote_against(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, False)):
-        flash("Äänestäminen epäonnistui", "error")
+        flashes.vote_error()
 
     return render_poll_template(poll_id)
 
@@ -113,29 +114,29 @@ def add_poll():
     close_on = get_date("close_on")
 
     if no_title(title):
-        flash("Otsikko ei saa olla tyhjä", "error")
+        flashes.no_title()
         form_valid = False
     elif title_too_long(title):
-        flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+        flashes.title_too_long()
         form_valid = False
     elif invalid_zip_code(zip_code):
-        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        flashes.invalid_zip_code()
         form_valid = False
     elif invalid_required_date(open_on):
-        flash("Alkamispäivämäärä ei ole kelvollinen", "error")
+        flashes.invalid_start_date()
         form_valid = False
     elif invalid_required_date(close_on):
-        flash("Päättymispäivämäärä ei ole kelvollinen", "error")
+        flashes.invalid_end_date()
         form_valid = False
     elif start_date_before_end_date(open_on, close_on):
-        flash("Alkamispäivämäärän on oltava ennen päättymispäivämäärää", "error")
+        flashes.start_date_before_end_date()
         form_valid = False
 
     if form_valid and polls.add(title, zip_code, open_on, close_on):
-        flash("Kyselyn tallennus onnistui")
+        flashes.poll_saved()
         return redirect_to_polls()
 
-    flash("Kyselyn tallennus ei onnistunut", "error")
+    flashes.poll_save_error()
     return render_template("add_poll.html",
                             title=title,
                             zip_code=zip_code,
@@ -145,15 +146,19 @@ def add_poll():
 @app.route("/archive_poll/<int:poll_id>", methods=["POST"])
 @admin_required
 def archive_poll(poll_id):
-    if not (csrf_check_passed() and polls.archive(poll_id)):
-        flash("Arkistointi ei onnistunut", "error")
+    if csrf_check_passed() and polls.archive(poll_id):
+        flashes.archived()
+    else:
+        flashes.archiving_error()
 
     return redirect_to_polls()
 
 @app.route("/unarchive_poll/<int:poll_id>", methods=["POST"])
 @admin_required
 def unarchive_poll(poll_id):
-    if not (csrf_check_passed() and polls.unarchive(poll_id)):
-        flash("Arkistoinnin peruminen ei onnistunut", "error")
+    if csrf_check_passed() and polls.unarchive(poll_id):
+        flashes.unarchived()
+    else:
+        flashes.unarchiving_error()
 
     return redirect_to_polls()

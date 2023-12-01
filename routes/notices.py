@@ -1,5 +1,6 @@
-from flask import flash, render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request
 from app import app
+from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_body, get_zip_code, get_street_address
 from helpers.validators import (
@@ -56,14 +57,14 @@ def view_notice_details(notice_id):
     if notice:
         return render_template("notice_details.html", notice=notice, statuses=statuses)
 
-    flash("Tietojen haku epäonnistui", "error")
+    flashes.data_fetch_failed()
     return redirect_to_notices()
 
 @app.route("/support_notice/<int:notice_id>", methods=["POST"])
 @login_required
 def support_notice(notice_id):
     if not (csrf_check_passed() and notices.add_support(notice_id)):
-        flash("Komppaaminen epäonnistui", "error")
+        flashes.support_error()
 
     return redirect(url_for("view_notice_details", notice_id=notice_id))
 
@@ -80,26 +81,26 @@ def add_notice():
     street_address = get_street_address()
 
     if no_title(title):
-        flash("Otsikko ei saa olla tyhjä", "error")
+        flashes.no_title()
         form_valid = False
     elif title_too_long(title):
-        flash("Otsikossa voi olla enintään 100 merkkiä", "error")
+        flashes.title_too_long()
         form_valid = False
     elif body_too_long(body):
-        flash("Lisätiedoissa voi olla enintään 1000 merkkiä", "error")
+        flashes.body_too_long()
         form_valid = False
     elif invalid_zip_code(zip_code):
-        flash("Postinumerossa tulee olla 5 numeroa", "error")
+        flashes.invalid_zip_code()
         form_valid = False
     elif invalid_street_address(street_address):
-        flash("Katuosoite ei ole kelvollinen", "error")
+        flashes.invalid_date()
         form_valid = False
 
     if form_valid and notices.add(title, body, zip_code, street_address):
-        flash("Ilmoituksen tallennus onnistui", "error")
+        flashes.notice_saved()
         return redirect_to_notices()
 
-    flash("Ilmoituksen tallennus ei onnistunut", "error")
+    flashes.notice_save_error()
     return render_template("add_notice.html",
                             title=title,
                             body=body,
@@ -110,7 +111,7 @@ def add_notice():
 @admin_required
 def set_notice_as_acknowledged(notice_id):
     if not (csrf_check_passed() and notices.acknowledge(notice_id)):
-        flash("Tilan päivitys ei onnistunut", "error")
+        flashes.notice_status_update_error()
 
     return render_notice_template(notice_id)
 
@@ -118,7 +119,7 @@ def set_notice_as_acknowledged(notice_id):
 @admin_required
 def set_notice_as_wip(notice_id):
     if not (csrf_check_passed() and notices.wip(notice_id)):
-        flash("Tilan päivitys ei onnistunut", "error")
+        flashes.notice_status_update_error()
 
     return render_notice_template(notice_id)
 
@@ -126,7 +127,7 @@ def set_notice_as_wip(notice_id):
 @admin_required
 def set_notice_as_done(notice_id):
     if not (csrf_check_passed() and notices.done(notice_id)):
-        flash("Tilan päivitys ei onnistunut", "error")
+        flashes.notice_status_update_error()
 
     return render_notice_template(notice_id)
 
@@ -134,22 +135,26 @@ def set_notice_as_done(notice_id):
 @admin_required
 def delete_status(notice_id, status_id):
     if not (csrf_check_passed() and notices.delete_status(status_id)):
-        flash("Merkinnän poistaminen ei onnistunut", "error")
+        flashes.notice_status_delete_error()
 
     return render_notice_template(notice_id)
 
 @app.route("/archive_notice/<int:notice_id>", methods=["POST"])
 @admin_required
 def archive_notice(notice_id):
-    if not (csrf_check_passed() and notices.archive(notice_id)):
-        flash("Arkistointi ei onnistunut", "error")
+    if csrf_check_passed() and notices.archive(notice_id):
+        flashes.archived()
+    else:
+        flashes.archiving_error()
 
     return redirect_to_notices()
 
 @app.route("/unarchive_notice/<int:notice_id>", methods=["POST"])
 @admin_required
 def unarchive_notice(notice_id):
-    if not (csrf_check_passed() and notices.unarchive(notice_id)):
-        flash("Arkistoinnin peruminen ei onnistunut", "error")
+    if csrf_check_passed() and notices.unarchive(notice_id):
+        flashes.unarchived()
+    else:
+        flashes.unarchiving_error()
 
     return redirect_to_notices()
