@@ -101,7 +101,7 @@
                 {% endif %}
             </div>
 
-            {% if session.admin %}
+            {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
             <form class="inlined" action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
                 <input class="input" type="submit" value="Peru huomiointi">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
