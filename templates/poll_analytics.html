@@ -33,7 +33,7 @@
     <pre>{{ group.zip_code if group.zip_code else "N / A" }}                   {{ group.for if group.for else 0 }} | {{ group.against if group.against else 0 }}</pre>
     {% endfor %}
     <pre><hr></pre>
-    <pre>Yhteensä                {{ total_votes }}</pre>
+    <pre>Yhteensä                {{ votes_for }} | {{ votes_against }}</pre>
 </div>
 
 {% endblock %}
