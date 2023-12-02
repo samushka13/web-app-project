@@ -18,6 +18,9 @@ textarea {
     font-size: small;
     margin-top: 5px;
 }
+.caption.no-margin {
+    margin-top: 0px;
+}
 .content {
     background-color: whitesmoke;
     border: 1px solid gray;
@@ -145,4 +148,13 @@ textarea {
     margin-bottom: 20px;
     margin-left: 10px;
     margin-right: 10px;
+}
+.spacer.horizontal {
+    width: 20px;
+}
+.spacer.vertical {
+    height: 10px;
+}
+.spacer.vertical.small {
+    height: 5px;
 }

@@ -53,9 +53,11 @@
                 {% if user.id != session.user_id %}
                     <div class="flex-fill">
                         {% if user.disabled_at %}
-                            <div style="font-size: small; margin-left: 20px; margin-right: 10px;">
+                            <div class="spacer horizontal"></div>
+                            <div class="caption no-margin">
                                 Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
                             </div>
+                            <div class="spacer horizontal"></div>
                         {% endif %}
 
                         <form

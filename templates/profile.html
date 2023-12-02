@@ -26,14 +26,14 @@
         <br>
         <div class="flex-fill">
             <input class="input text" type="date" id="date_of_birth" name="date_of_birth" value="{{ session.date_of_birth }}" max="{{ max_date }}">
-            <div style="width: 20px;"></div>
+            <div class="spacer horizontal"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
     </form>
-    <div style="height: 10px;"></div>
+    <div class="spacer vertical"></div>
     <hr>
     <br>
     <form action="/update_gender" method="post">
@@ -78,14 +78,14 @@
                     {% endif %}
                 </div>
             </div>
-            <div style="width: 20px;"></div>
+            <div class="spacer horizontal"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
     </form>
-    <div style="height: 5px;"></div>
+    <div class="spacer vertical small"></div>
     <hr>
     <br>
     <form action="/update_zip_code" method="post">
@@ -93,14 +93,14 @@
         <br>
         <div class="flex-fill">
             <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ session.zip_code }}">
-            <div style="width: 20px;"></div>
+            <div class="spacer horizontal"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </div>
         </div>
     </form>
-    <div style="height: 10px;"></div>
+    <div class="spacer vertical"></div>
     <hr>
     <br>
     <form action="/update_admin_status" method="post">
@@ -127,7 +127,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div style="width: 20px;"></div>
+            <div class="spacer horizontal"></div>
             <div>
                 <input class="input" type="submit" value="Tallenna">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

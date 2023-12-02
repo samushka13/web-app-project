@@ -24,14 +24,17 @@
             <textarea class="input" id="body" name="body" rows="6" cols="80" maxlength="1000">{{ body }}</textarea>
             <br>
             <br>
-            <label for="zip_code">Mitä postinumeroaluetta uutinen koskee erityisesti?</label>
-            <div class="caption">(vapaaehtoinen)</div>
-            <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
-            <br>
-            <br>
-            <label for="publish_on">Julkaisupäivämäärä</label>
-            <br>
-            <input class="input text" type="date" id="publish_on" name="publish_on" value="{{ publish_on if publish_on else current_date }}" min="{{ current_date }}">
+            <div class="inlined">
+                <label for="zip_code">Postinumero</label>
+                <div class="caption">(vapaaehtoinen)</div>
+                <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+            </div>
+            <div class="inlined spacer horizontal"></div>
+            <div class="inlined">
+                <label for="publish_on">Julkaisupäivämäärä</label>
+                <br>
+                <input class="input text" type="date" id="publish_on" name="publish_on" value="{{ publish_on if publish_on else current_date }}" min="{{ current_date }}">
+            </div>
             <br>
             <br>
             <input class="input" type="submit" value="Lähetä">

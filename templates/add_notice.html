@@ -29,14 +29,17 @@
         <textarea class="input" id="body" name="body" rows="6" cols="80" maxlength="1000">{{ body }}</textarea>
         <br>
         <br>
-        <label for="street_address">Katuosoite</label>
-        <div class="caption">(vapaaehtoinen)</div>
-        <input class="input text" type="text" id="street_address" name="street_address" maxlength="100" value="{{ street_address }}">
-        <br>
-        <br>
-        <label for="zip_code">Postinumero</label>
-        <div class="caption">(vapaaehtoinen)</div>
-        <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+        <div class="inlined">
+            <label for="street_address">Katuosoite</label>
+            <div class="caption">(vapaaehtoinen)</div>
+            <input class="input text" type="text" id="street_address" name="street_address" maxlength="100" value="{{ street_address }}">
+        </div>
+        <div class="inlined spacer horizontal"></div>
+        <div class="inlined">
+            <label for="zip_code">Postinumero</label>
+            <div class="caption">(vapaaehtoinen)</div>
+            <input class="input text" type="number" id="zip_code" name="zip_code" maxlength="5" value="{{ zip_code }}">
+        </div>
         <br>
         <br>
         <input class="input" type="submit" value="Lähetä">
