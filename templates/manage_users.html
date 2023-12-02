@@ -6,7 +6,7 @@
 
 <h2>Hallinnoi käyttäjätilejä</h2>
 
-<form action="/manage_users", method="post">
+<form action="/manage_users">
     <input class="input text" type="text" id="username" name="username" maxlength="50" value="{{ user_input }}">
     <input class="input" type="submit" value="Hae">
     <br>
@@ -18,26 +18,27 @@
         Ei osumia
     </div>
 {% else %}
-    <div>
-        <form class="inlined" action="/manage_users" method="post">
+    <div class="input">
+        <div class="caption input">
+            Yhteensä {{ count }} {{ 'käyttäjätili' if count == 1 else 'käyttäjätiliä' }}
+        </div>
+        <form class="inlined" action="/manage_users">
             {% if idx == 0 %}
                 <input class="input" type="submit" value="← Edelliset" disabled>
             {% else %}
                 <input class="input" type="submit" value="← Edelliset 10">
             {% endif %}
             <input type="hidden" name="username" value="{{ user_input }}">
-            <input type="hidden" name="count" value="{{ count }}">
             <input type="hidden" name="idx" value="{{ idx - 1 }}">
         </form>
 
-        <form class="inlined" action="/manage_users" method="post">
+        <form class="inlined" action="/manage_users">
             {% if idx == last_idx %}
                 <input class="input" type="submit" value="Seuraavat →" disabled>
             {% else %}
                 <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
             {% endif %}
             <input type="hidden" name="username" value="{{ user_input }}">
-            <input type="hidden" name="count" value="{{ count }}">
             <input type="hidden" name="idx" value="{{ idx + 1 }}">
         </form>
     </div>

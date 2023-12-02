@@ -3,7 +3,7 @@ from app import app
 from helpers import flashes
 from helpers.decorators import admin_required
 from helpers.forms import csrf_check_passed
-from helpers.pagination import get_pagination_variables
+from helpers.pagination import get_user_pagination_variables
 from helpers.validators import username_too_long
 from data import users
 
@@ -20,22 +20,22 @@ def render_users_template(idx, last_idx, count, count_on_next_idx, user_list, no
                            no_hits=no_hits,
                            user_input=user_input)
 
-@app.route("/manage_users", methods=["GET", "POST"])
+@app.route("/manage_users")
 @admin_required
 def manage_users():
-    if "username" not in request.form:
-        pagination_vars = get_pagination_variables(users.get_user_count())
+    if "username" not in request.args:
+        pagination_vars = get_user_pagination_variables(users.get_user_count())
         user_list = users.get_users(pagination_vars[0])
         return render_users_template(*pagination_vars, user_list, False, "")
 
-    user_input = request.form["username"]
+    user_input = request.args["username"]
 
     if username_too_long(user_input):
         pagination_vars = [0, 0, 0, 0]
         user_list = []
         flashes.user_search_input_too_long()
     else:
-        pagination_vars = get_pagination_variables(users.get_find_user_count(user_input))
+        pagination_vars = get_user_pagination_variables(users.get_find_user_count(user_input))
         user_list = users.find_users(pagination_vars[0], user_input)
 
     no_hits = len(user_list) == 0
