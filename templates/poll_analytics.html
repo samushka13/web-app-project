@@ -4,12 +4,35 @@
 
 {% block content %}
 
-<form class="inlined" action="/browse_polls/details/{{ poll_id }}">
+{% if session.admin %}
+    <form class="inlined" action="/{{ 'un' if poll.archived_at else '' }}archive_poll/{{ poll.id }}" method="post">
+        <input class="input" type="submit" value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+{% endif %}
+
+{% if not poll.archived_at %}
+    <form class="inlined" action="/vote_for/{{ poll.id }}" method="post">
+        <input class="input" type="submit" value="Kannatan">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+
+    <form class="inlined" action="/vote_against/{{ poll.id }}" method="post">
+        <input class="input" type="submit" value="Vastustan">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+{% endif %}
+
+<form class="inlined" action="/browse_polls/details/{{ poll.id }}">
     <input class="input" type="submit" value="Takaisin kyselyyn">
 </form>
 
+<form class="inlined" action="/browse_polls">
+    <input class="input" type="submit" value="Selaa kyselyitä">
+</form>
+
 <div class="content">
-    <h3>{{ poll_title.title }}</h3>
+    <h3>{{ poll.title }}</h3>
     <pre><hr></pre>
     <pre>Sukupuoli        puolesta | vastaan</pre>
     <pre><hr></pre>
@@ -33,7 +56,7 @@
     <pre>{{ group.zip_code if group.zip_code else "N / A" }}                   {{ group.for if group.for else 0 }} | {{ group.against if group.against else 0 }}</pre>
     {% endfor %}
     <pre><hr></pre>
-    <pre>Yhteensä                {{ votes_for }} | {{ votes_against }}</pre>
+    <pre>Yhteensä                {{ poll.for }} | {{ poll.against }}</pre>
 </div>
 
 {% endblock %}

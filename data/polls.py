@@ -295,19 +295,6 @@ def vote(poll_id: int, vote_type: bool):
 
     return result.fetchone()
 
-def get_poll_title(poll_id: int):
-    sql = """SELECT title
-            FROM polls
-            WHERE id=:poll_id"""
-
-    values = {
-        "poll_id": poll_id
-    }
-
-    result = db.session.execute(text(sql), values)
-
-    return result.fetchone()
-
 def get_votes_by_gender(poll_id: int):
     sql = """SELECT
                 females_for,
