@@ -1,10 +1,10 @@
-# My City
+# My City (Oma kaupunki)
 
 Project work for the course "Databases and Web Programming".
 
 ## Description
 
-My City allows people to easily know what's going on in their city, inform about things that are not as they should be, and vote in various polls.
+My City allows people to easily know what's going on in their city, inform about things that are not as they should be, and vote in various polls. The website language is Finnish.
 
 Users are required to register with the following information:
 - username (unique),
