@@ -3,6 +3,7 @@ from flask import session
 from sqlalchemy.sql import text
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
+from helpers.contants import ITEMS_PER_PAGE
 from db import db
 
 def register(name: str, password: str, date_of_birth: str, gender: str, zip_code: str, admin: bool):
@@ -193,20 +194,48 @@ def delete_current_user():
 
     return result.fetchone()
 
-def get_users():
+def get_user_count():
+    sql = """SELECT COUNT(id)
+            FROM users"""
+
+    result = db.session.execute(text(sql))
+
+    return result.fetchone()[0]
+
+def get_find_user_count(user_input: str):
+    sql = """SELECT COUNT(id)
+            FROM users
+            WHERE name LIKE :user_input"""
+
+    values = {
+        "user_input": f'%{user_input}%'
+    }
+
+    result = db.session.execute(text(sql), values)
+
+    return result.fetchone()[0]
+
+def get_users(idx: int):
     sql = """SELECT
                 id,
                 name,
                 admin,
                 disabled_at
             FROM users
-            ORDER BY name ASC"""
+            ORDER BY name ASC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def find_users(user_input: str):
+def find_users(idx: int, user_input: str):
     sql = """SELECT
                 id,
                 name,
@@ -214,10 +243,14 @@ def find_users(user_input: str):
                 disabled_at
             FROM users
             WHERE name LIKE :user_input
-            ORDER BY name ASC"""
+            ORDER BY name ASC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
     values = {
-        "user_input": f'%{user_input}%'
+        "user_input": f'%{user_input}%',
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
     }
 
     result = db.session.execute(text(sql), values)

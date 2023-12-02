@@ -6,7 +6,7 @@
 
 <h2>Hallinnoi käyttäjätilejä</h2>
 
-<form action="/manage_users">
+<form action="/manage_users", method="post">
     <input class="input text" type="text" id="username" name="username" maxlength="50" value="{{ user_input }}">
     <input class="input" type="submit" value="Hae">
     <br>
@@ -17,36 +17,60 @@
     <div class="content flash">
         Ei osumia
     </div>
-{% endif %}
-
-{% if session.admin %}
-    {% for user in users %}
-        <div class="content user">
-            <div class="flex-fill text">
-                {{ user.name }}
-            </div>
-
-            {% if user.id != session.user_id %}
-                <div class="flex-fill">
-                    {% if user.disabled_at %}
-                        <div style="font-size: small; margin-left: 20px; margin-right: 10px;">
-                            Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
-                        </div>
-                    {% endif %}
-
-                    <form
-                        class="inlined" method="post"
-                        action="/{{ 'enable' if user.disabled_at else 'disable'}}_user/{{ user.id }}">
-                        <input
-                            class="input" type="submit"
-                            value="{{ 'Ota käyttöön' if user.disabled_at else 'Poista käytöstä' }}"
-                        >
-                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    </form>
-                </div>
+{% else %}
+    <div>
+        <form class="inlined" action="/manage_users" method="post">
+            {% if idx == 0 %}
+                <input class="input" type="submit" value="← Edelliset" disabled>
+            {% else %}
+                <input class="input" type="submit" value="← Edelliset 10">
             {% endif %}
-        </div>
-    {% endfor %}
+            <input type="hidden" name="username" value="{{ user_input }}">
+            <input type="hidden" name="count" value="{{ count }}">
+            <input type="hidden" name="idx" value="{{ idx - 1 }}">
+        </form>
+
+        <form class="inlined" action="/manage_users" method="post">
+            {% if idx == last_idx %}
+                <input class="input" type="submit" value="Seuraavat →" disabled>
+            {% else %}
+                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+            {% endif %}
+            <input type="hidden" name="username" value="{{ user_input }}">
+            <input type="hidden" name="count" value="{{ count }}">
+            <input type="hidden" name="idx" value="{{ idx + 1 }}">
+        </form>
+    </div>
+
+    {% if session.admin %}
+        {% for user in users %}
+            <div class="content user">
+                <div class="flex-fill text">
+                    {{ user.name }}
+                </div>
+
+                {% if user.id != session.user_id %}
+                    <div class="flex-fill">
+                        {% if user.disabled_at %}
+                            <div style="font-size: small; margin-left: 20px; margin-right: 10px;">
+                                Poistettu käytöstä {{ user.disabled_at.strftime("%d.%m.%Y %H:%M:%S") }}
+                            </div>
+                        {% endif %}
+
+                        <form
+                            class="inlined" method="post"
+                            action="/{{ 'enable' if user.disabled_at else 'disable'}}_user/{{ user.id }}">
+                            <input
+                                class="input" type="submit"
+                                value="{{ 'Ota käyttöön' if user.disabled_at else 'Poista käytöstä' }}"
+                            >
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endif %}
 
 {% endblock %}
