@@ -54,6 +54,28 @@
         {% endif %}
     </div>
 {% else %}
+    <div>
+        <form class="inlined" action="{{ request.path }}" method="post">
+            {% if idx == 0 %}
+                <input class="input" type="submit" value="← Edelliset" disabled>
+            {% else %}
+                <input class="input" type="submit" value="← Edelliset 10">
+            {% endif %}
+            <input type="hidden" name="count" value="{{ count }}">
+            <input type="hidden" name="idx" value="{{ idx - 1 }}">
+        </form>
+
+        <form class="inlined" action="{{ request.path }}" method="post">
+            {% if idx == last_idx %}
+                <input class="input" type="submit" value="Seuraavat →" disabled>
+            {% else %}
+                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+            {% endif %}
+            <input type="hidden" name="count" value="{{ count }}">
+            <input type="hidden" name="idx" value="{{ idx + 1 }}">
+        </form>
+    </div>
+
     {% for item in news %}
         <div class="content">
             <h3>{{ item.title }}</h3>
@@ -86,6 +108,30 @@
             </div>
         </div>
     {% endfor %}
+
+    {% if news|length not in [0, 1, 2, 3] %}
+        <div>
+            <form class="inlined" action="{{ request.path }}" method="post">
+                {% if idx == 0 %}
+                    <input class="input" type="submit" value="← Edelliset" disabled>
+                {% else %}
+                    <input class="input" type="submit" value="← Edelliset 10">
+                {% endif %}
+                <input type="hidden" name="count" value="{{ count }}">
+                <input type="hidden" name="idx" value="{{ idx - 1 }}">
+            </form>
+
+            <form class="inlined" action="{{ request.path }}" method="post">
+                {% if idx == last_idx %}
+                    <input class="input" type="submit" value="Seuraavat →" disabled>
+                {% else %}
+                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                {% endif %}
+                <input type="hidden" name="count" value="{{ count }}">
+                <input type="hidden" name="idx" value="{{ idx + 1 }}">
+            </form>
+        </div>
+    {% endif %}
 {% endif %}
 
 {% endblock %}

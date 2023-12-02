@@ -4,6 +4,7 @@ from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
+from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
     title_too_long,
@@ -24,32 +25,41 @@ def redirect_to_news():
 
     return redirect(url_for("browse_news"))
 
-def render_news_template(news_list):
-    return render_template("browse_news.html", news=news_list)
+def render_news_template(idx, last_idx, count, count_on_next_idx, news_list):
+    return render_template("browse_news.html",
+                           idx=idx,
+                           last_idx=last_idx,
+                           count=count,
+                           count_on_next_idx=count_on_next_idx,
+                           news=news_list)
 
-@app.route("/browse_news")
+@app.route("/browse_news", methods=["GET", "POST"])
 @login_required
 def browse_news():
-    news_list = news.get_current()
-    return render_news_template(news_list)
+    pagination_vars = get_pagination_variables(news.get_current_count())
+    news_list = news.get_current(pagination_vars[0])
+    return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/upcoming")
 @admin_required
 def browse_upcoming_news():
-    news_list = news.get_upcoming()
-    return render_news_template(news_list)
+    pagination_vars = get_pagination_variables(news.get_upcoming_count())
+    news_list = news.get_upcoming(pagination_vars[0])
+    return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/archived")
 @admin_required
 def browse_archived_news():
-    news_list = news.get_archived()
-    return render_news_template(news_list)
+    pagination_vars = get_pagination_variables(news.get_archived_count())
+    news_list = news.get_archived(pagination_vars[0])
+    return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/nearby")
 @login_required
 def browse_nearby_news():
-    news_list = news.get_nearby()
-    return render_news_template(news_list)
+    pagination_vars = get_pagination_variables(news.get_nearby_count())
+    news_list = news.get_nearby(pagination_vars[0])
+    return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
 @login_required
