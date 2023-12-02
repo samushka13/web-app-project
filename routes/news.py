@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, request
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
+from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code, get_referrer
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
@@ -68,9 +68,10 @@ def view_news_details(news_id):
         news.add_view(news_id)
 
     item = news.get_details(news_id)
+    referrer = get_referrer()
 
     if item:
-        return render_template("news_details.html", item=item)
+        return render_template("news_details.html", item=item, referrer=referrer)
 
     flashes.data_fetch_failed()
     return redirect_to_news()

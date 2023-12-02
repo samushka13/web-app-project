@@ -26,10 +26,11 @@
 {% if poll.for != 0 or poll.against != 0 %}
     <form class="inlined" action="/browse_polls/details/{{ poll.id }}/analytics">
         <input class="input" type="submit" value="Tutki äänestysjakaumia">
+        <input type="hidden" name="referrer" value="{{ referrer }}">
     </form>
 {% endif %}
 
-<form class="inlined" action="/browse_polls">
+<form class="inlined" action="{{ referrer }}">
     <input class="input" type="submit" value="Selaa kyselyitä">
 </form>
 

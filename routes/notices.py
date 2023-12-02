@@ -2,7 +2,13 @@ from flask import render_template, redirect, url_for, request
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_body, get_zip_code, get_street_address
+from helpers.forms import (
+    csrf_check_passed,
+    get_body,
+    get_zip_code,
+    get_street_address,
+    get_referrer
+)
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
@@ -71,9 +77,13 @@ def view_notice_details(notice_id):
 
     notice = notices.get_details(notice_id)
     statuses = notices.get_statuses(notice_id)
+    referrer = get_referrer()
 
     if notice:
-        return render_template("notice_details.html", notice=notice, statuses=statuses)
+        return render_template("notice_details.html",
+                               notice=notice,
+                               statuses=statuses,
+                               referrer=referrer)
 
     flashes.data_fetch_failed()
     return redirect_to_notices()

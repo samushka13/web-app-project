@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, request
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_date, get_zip_code
+from helpers.forms import csrf_check_passed, get_date, get_zip_code, get_referrer_from_args
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     invalid_required_date,
@@ -78,9 +78,10 @@ def browse_nearby_polls():
 @login_required
 def view_poll_details(poll_id):
     poll = polls.get_details(poll_id)
+    referrer = get_referrer_from_args()
 
     if poll:
-        return render_template("poll_details.html", poll=poll)
+        return render_template("poll_details.html", poll=poll, referrer=referrer)
 
     flashes.data_fetch_failed()
     return redirect_to_polls()
@@ -92,13 +93,15 @@ def view_poll_analytics(poll_id):
     votes_by_gender = polls.get_votes_by_gender(poll_id)
     votes_by_age_group = polls.get_votes_by_age_group(poll_id)
     votes_by_zip_code = polls.get_votes_by_zip_code(poll_id)
+    referrer = get_referrer_from_args()
 
     if poll and votes_by_gender and votes_by_age_group and votes_by_zip_code:
         return render_template("poll_analytics.html",
                                 poll=poll,
                                 votes_by_gender=votes_by_gender,
                                 votes_by_age_group=votes_by_age_group,
-                                votes_by_zip_code=votes_by_zip_code)
+                                votes_by_zip_code=votes_by_zip_code,
+                                referrer=referrer)
 
     flashes.data_fetch_failed()
     return render_poll_template(poll_id)
