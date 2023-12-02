@@ -51,21 +51,21 @@ def give_feedback():
     flashes.feedback_send_error()
     return render_template("give_feedback.html", title=title, body=body)
 
-@app.route("/browse_feedback", methods=["GET", "POST"])
+@app.route("/browse_feedback")
 @login_required
 def browse_feedback():
     pagination_vars = get_pagination_variables(feedback.get_new_count())
     feedbacks = feedback.get_new(pagination_vars[0])
     return render_feedbacks_template(*pagination_vars, feedbacks)
 
-@app.route("/browse_feedback/acknowledged", methods=["GET", "POST"])
+@app.route("/browse_feedback/acknowledged")
 @login_required
 def browse_acknowledged_feedback():
     pagination_vars = get_pagination_variables(feedback.get_acknowledged_count())
     feedbacks = feedback.get_acknowledged(pagination_vars[0])
     return render_feedbacks_template(*pagination_vars, feedbacks)
 
-@app.route("/browse_feedback/archived", methods=["GET", "POST"])
+@app.route("/browse_feedback/archived")
 @admin_required
 def browse_archived_feedback():
     pagination_vars = get_pagination_variables(feedback.get_archived_count())

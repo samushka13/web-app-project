@@ -35,28 +35,28 @@ def render_notices_template(idx, last_idx, count, count_on_next_idx, notice_list
 def render_notice_template(notice_id):
     return redirect(url_for("view_notice_details", notice_id=notice_id))
 
-@app.route("/browse_notices", methods=["GET", "POST"])
+@app.route("/browse_notices")
 @login_required
 def browse_notices():
     pagination_vars = get_pagination_variables(notices.get_all_count())
     notice_list = notices.get_all(pagination_vars[0])
     return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/my", methods=["GET", "POST"])
+@app.route("/browse_notices/my")
 @login_required
 def browse_my_notices():
     pagination_vars = get_pagination_variables(notices.get_created_by_user_count())
     notice_list = notices.get_created_by_user(pagination_vars[0])
     return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/archived", methods=["GET", "POST"])
+@app.route("/browse_notices/archived")
 @admin_required
 def browse_archived_notices():
     pagination_vars = get_pagination_variables(notices.get_archived_count())
     notice_list = notices.get_archived(pagination_vars[0])
     return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/nearby", methods=["GET", "POST"])
+@app.route("/browse_notices/nearby")
 @login_required
 def browse_nearby_notices():
     pagination_vars = get_pagination_variables(notices.get_nearby_count())
