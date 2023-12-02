@@ -6,6 +6,19 @@
 
 <h2>Hallinnoi käyttäjätilejä</h2>
 
+<form action="/manage_users">
+    <input class="input text" type="text" id="username" name="username" maxlength="50" value="{{ user_input }}">
+    <input class="input" type="submit" value="Hae">
+    <br>
+    <br>
+</form>
+
+{% if no_hits %}
+    <div class="content flash">
+        Ei osumia
+    </div>
+{% endif %}
+
 {% if session.admin %}
     {% for user in users %}
         <div class="content user">

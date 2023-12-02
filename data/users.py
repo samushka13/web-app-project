@@ -206,6 +206,24 @@ def get_users():
 
     return result.fetchall()
 
+def find_users(user_input: str):
+    sql = """SELECT
+                id,
+                name,
+                admin,
+                disabled_at
+            FROM users
+            WHERE name LIKE :user_input
+            ORDER BY name ASC"""
+
+    values = {
+        "user_input": f'%{user_input}%'
+    }
+
+    result = db.session.execute(text(sql), values)
+
+    return result.fetchall()
+
 def disable_user(user_id: int):
     sql = """UPDATE users
             SET
