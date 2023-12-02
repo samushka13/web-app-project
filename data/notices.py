@@ -1,5 +1,6 @@
 from flask import session
 from sqlalchemy.sql import text
+from helpers.contants import ITEMS_PER_PAGE
 from db import db
 
 def add(title: str, body: str, zip_code: str, street_address: str):
@@ -22,7 +23,59 @@ def add(title: str, body: str, zip_code: str, street_address: str):
 
     return result.fetchone()
 
-def get_all():
+def get_all_count():
+    sql = """SELECT COUNT(id)
+            FROM notices AS N
+            WHERE N.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_created_by_user_count():
+    sql = """SELECT COUNT(id)
+            FROM notices AS N
+            WHERE
+                :user_id=N.created_by
+                AND N.archived_at IS NULL"""
+
+    values = {
+        "user_id": session["user_id"]
+    }
+
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_archived_count():
+    sql = """SELECT COUNT(id)
+            FROM notices AS N
+            WHERE N.archived_at IS NOT NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_nearby_count():
+    sql = """SELECT COUNT(id)
+            FROM notices AS N
+            WHERE
+                N.archived_at IS NULL
+                AND N.zip_code=:zip_code"""
+
+    values = {
+        "zip_code": session["zip_code"]
+    }
+
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_all(idx: int):
     sql = """SELECT
                 N.id,
                 N.title,
@@ -32,13 +85,20 @@ def get_all():
                 N.created_at
             FROM notices AS N
             WHERE N.archived_at IS NULL
-            ORDER BY N.created_at DESC"""
+            ORDER BY N.created_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_created_by_user():
+def get_created_by_user(idx: int):
     sql = """SELECT
                 N.id,
                 N.title,
@@ -50,17 +110,21 @@ def get_created_by_user():
             WHERE
                 :user_id=N.created_by
                 AND N.archived_at IS NULL
-            ORDER BY N.created_at DESC"""
+            ORDER BY N.created_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
     values = {
-        "user_id": session["user_id"]
+        "user_id": session["user_id"],
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
     }
 
     result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_archived():
+def get_archived(idx: int):
     sql = """SELECT
                 N.id,
                 N.title,
@@ -71,13 +135,20 @@ def get_archived():
                 N.archived_at
             FROM notices AS N
             WHERE N.archived_at IS NOT NULL
-            ORDER BY N.created_at DESC"""
+            ORDER BY N.created_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_nearby():
+def get_nearby(idx: int):
     sql = """SELECT
                 N.id,
                 N.title,
@@ -89,10 +160,14 @@ def get_nearby():
             WHERE
                 N.archived_at IS NULL
                 AND N.zip_code=:zip_code
-            ORDER BY N.created_at DESC"""
+            ORDER BY N.created_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
     values = {
-        "zip_code": session["zip_code"]
+        "zip_code": session["zip_code"],
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
     }
 
     result = db.session.execute(text(sql), values)

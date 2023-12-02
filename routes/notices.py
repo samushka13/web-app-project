@@ -3,6 +3,7 @@ from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_body, get_zip_code, get_street_address
+from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
     title_too_long,
@@ -23,35 +24,44 @@ def redirect_to_notices():
 
     return redirect(url_for("browse_notices"))
 
-def render_notices_template(notice_list):
-    return render_template("browse_notices.html", notices=notice_list)
+def render_notices_template(idx, last_idx, count, count_on_next_idx, notice_list):
+    return render_template("browse_notices.html",
+                           idx=idx,
+                           last_idx=last_idx,
+                           count=count,
+                           count_on_next_idx=count_on_next_idx,
+                           notices=notice_list)
 
 def render_notice_template(notice_id):
     return redirect(url_for("view_notice_details", notice_id=notice_id))
 
-@app.route("/browse_notices")
+@app.route("/browse_notices", methods=["GET", "POST"])
 @login_required
 def browse_notices():
-    notice_list = notices.get_all()
-    return render_notices_template(notice_list)
+    pagination_vars = get_pagination_variables(notices.get_all_count())
+    notice_list = notices.get_all(pagination_vars[0])
+    return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/my")
+@app.route("/browse_notices/my", methods=["GET", "POST"])
 @login_required
 def browse_my_notices():
-    notice_list = notices.get_created_by_user()
-    return render_notices_template(notice_list)
+    pagination_vars = get_pagination_variables(notices.get_created_by_user_count())
+    notice_list = notices.get_created_by_user(pagination_vars[0])
+    return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/archived")
+@app.route("/browse_notices/archived", methods=["GET", "POST"])
 @admin_required
 def browse_archived_notices():
-    notice_list = notices.get_archived()
-    return render_notices_template(notice_list)
+    pagination_vars = get_pagination_variables(notices.get_archived_count())
+    notice_list = notices.get_archived(pagination_vars[0])
+    return render_notices_template(*pagination_vars, notice_list)
 
-@app.route("/browse_notices/nearby")
+@app.route("/browse_notices/nearby", methods=["GET", "POST"])
 @login_required
 def browse_nearby_notices():
-    notice_list = notices.get_nearby()
-    return render_notices_template(notice_list)
+    pagination_vars = get_pagination_variables(notices.get_nearby_count())
+    notice_list = notices.get_nearby(pagination_vars[0])
+    return render_notices_template(*pagination_vars, notice_list)
 
 @app.route("/browse_notices/details/<int:notice_id>", methods=["GET", "POST"])
 @login_required
