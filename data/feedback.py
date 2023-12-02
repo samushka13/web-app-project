@@ -1,5 +1,6 @@
 from flask import session
 from sqlalchemy.sql import text
+from helpers.contants import ITEMS_PER_PAGE
 from db import db
 
 def send(title: str, body: str):
@@ -20,7 +21,41 @@ def send(title: str, body: str):
 
     return result.fetchone()
 
-def get_new():
+def get_new_count():
+    sql = """SELECT COUNT(id)
+            FROM feedbacks AS F
+            WHERE
+                F.acknowledged_at IS NULL
+                AND F.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_acknowledged_count():
+    sql = """SELECT COUNT(id)
+            FROM feedbacks AS F
+            WHERE
+                F.acknowledged_at IS NOT NULL
+                AND F.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_archived_count():
+    sql = """SELECT COUNT(id)
+            FROM feedbacks AS F
+            WHERE F.archived_at IS NOT NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_new(idx: int):
     sql = """SELECT
                 F.id,
                 F.title,
@@ -34,13 +69,20 @@ def get_new():
             WHERE 
                 F.acknowledged_at IS NULL
                 AND F.archived_at IS NULL
-            ORDER BY F.sent_at DESC"""
+            ORDER BY F.sent_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_acknowledged():
+def get_acknowledged(idx: int):
     sql = """SELECT
                 F.id,
                 F.title,
@@ -56,13 +98,20 @@ def get_acknowledged():
             WHERE
                 F.acknowledged_at IS NOT NULL
                 AND F.archived_at IS NULL
-            ORDER BY F.sent_at DESC"""
+            ORDER BY F.sent_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_archived():
+def get_archived(idx: int):
     sql = """SELECT
                 F.id,
                 F.title,
@@ -78,9 +127,16 @@ def get_archived():
             JOIN users AS U
             ON U.id=F.sent_by
             WHERE F.archived_at IS NOT NULL
-            ORDER BY F.sent_at DESC"""
+            ORDER BY F.sent_at DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 

@@ -3,6 +3,7 @@ from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_body
+from helpers.pagination import get_pagination_variables
 from helpers.validators import title_too_long, no_title, body_too_long
 from data import feedback
 
@@ -15,8 +16,13 @@ def redirect_to_feedbacks():
 
     return redirect(url_for("browse_feedback"))
 
-def render_feedbacks_template(feedbacks):
-    return render_template("browse_feedback.html", feedbacks=feedbacks)
+def render_feedbacks_template(idx, last_idx, count, count_on_next_idx, feedbacks):
+    return render_template("browse_feedback.html",
+                           idx=idx,
+                           last_idx=last_idx,
+                           count=count,
+                           count_on_next_idx=count_on_next_idx,
+                           feedbacks=feedbacks)
 
 @app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
@@ -45,23 +51,26 @@ def give_feedback():
     flashes.feedback_send_error()
     return render_template("give_feedback.html", title=title, body=body)
 
-@app.route("/browse_feedback")
+@app.route("/browse_feedback", methods=["GET", "POST"])
 @login_required
 def browse_feedback():
-    feedbacks = feedback.get_new()
-    return render_feedbacks_template(feedbacks)
+    pagination_vars = get_pagination_variables(feedback.get_new_count())
+    feedbacks = feedback.get_new(pagination_vars[0])
+    return render_feedbacks_template(*pagination_vars, feedbacks)
 
-@app.route("/browse_feedback/acknowledged")
+@app.route("/browse_feedback/acknowledged", methods=["GET", "POST"])
 @login_required
 def browse_acknowledged_feedback():
-    feedbacks = feedback.get_acknowledged()
-    return render_feedbacks_template(feedbacks)
+    pagination_vars = get_pagination_variables(feedback.get_acknowledged_count())
+    feedbacks = feedback.get_acknowledged(pagination_vars[0])
+    return render_feedbacks_template(*pagination_vars, feedbacks)
 
-@app.route("/browse_feedback/archived")
+@app.route("/browse_feedback/archived", methods=["GET", "POST"])
 @admin_required
 def browse_archived_feedback():
-    feedbacks = feedback.get_archived()
-    return render_feedbacks_template(feedbacks)
+    pagination_vars = get_pagination_variables(feedback.get_archived_count())
+    feedbacks = feedback.get_archived(pagination_vars[0])
+    return render_feedbacks_template(*pagination_vars, feedbacks)
 
 @app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required

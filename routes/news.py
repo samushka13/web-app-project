@@ -40,21 +40,21 @@ def browse_news():
     news_list = news.get_current(pagination_vars[0])
     return render_news_template(*pagination_vars, news_list)
 
-@app.route("/browse_news/upcoming")
+@app.route("/browse_news/upcoming", methods=["GET", "POST"])
 @admin_required
 def browse_upcoming_news():
     pagination_vars = get_pagination_variables(news.get_upcoming_count())
     news_list = news.get_upcoming(pagination_vars[0])
     return render_news_template(*pagination_vars, news_list)
 
-@app.route("/browse_news/archived")
+@app.route("/browse_news/archived", methods=["GET", "POST"])
 @admin_required
 def browse_archived_news():
     pagination_vars = get_pagination_variables(news.get_archived_count())
     news_list = news.get_archived(pagination_vars[0])
     return render_news_template(*pagination_vars, news_list)
 
-@app.route("/browse_news/nearby")
+@app.route("/browse_news/nearby", methods=["GET", "POST"])
 @login_required
 def browse_nearby_news():
     pagination_vars = get_pagination_variables(news.get_nearby_count())
