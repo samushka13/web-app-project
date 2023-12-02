@@ -5,6 +5,7 @@ from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
 from helpers.forms import csrf_check_passed, get_date, get_zip_code
+from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     invalid_required_date,
     no_title,
@@ -27,41 +28,51 @@ def redirect_to_polls():
 
     return redirect(url_for("browse_polls"))
 
-def render_polls_template(poll_list):
-    return render_template("browse_polls.html", polls=poll_list)
+def render_polls_template(idx, last_idx, count, count_on_next_idx, poll_list):
+    return render_template("browse_polls.html",
+                           idx=idx,
+                           last_idx=last_idx,
+                           count=count,
+                           count_on_next_idx=count_on_next_idx,
+                           polls=poll_list)
 
 def render_poll_template(poll_id):
     return redirect(url_for("view_poll_details", poll_id=poll_id))
 
-@app.route("/browse_polls")
+@app.route("/browse_polls", methods=["GET", "POST"])
 @login_required
 def browse_polls():
-    poll_list = polls.get_current()
-    return render_polls_template(poll_list)
+    pagination_vars = get_pagination_variables(polls.get_current_count())
+    poll_list = polls.get_current(pagination_vars[0])
+    return render_polls_template(*pagination_vars, poll_list)
 
-@app.route("/browse_polls/upcoming")
+@app.route("/browse_polls/upcoming", methods=["GET", "POST"])
 @login_required
 def browse_upcoming_polls():
-    poll_list = polls.get_upcoming()
-    return render_polls_template(poll_list)
+    pagination_vars = get_pagination_variables(polls.get_upcoming_count())
+    poll_list = polls.get_upcoming(pagination_vars[0])
+    return render_polls_template(*pagination_vars, poll_list)
 
-@app.route("/browse_polls/past")
+@app.route("/browse_polls/past", methods=["GET", "POST"])
 @login_required
 def browse_past_polls():
-    poll_list = polls.get_past()
-    return render_polls_template(poll_list)
+    pagination_vars = get_pagination_variables(polls.get_past_count())
+    poll_list = polls.get_past(pagination_vars[0])
+    return render_polls_template(*pagination_vars, poll_list)
 
-@app.route("/browse_polls/archived")
+@app.route("/browse_polls/archived", methods=["GET", "POST"])
 @admin_required
 def browse_archived_polls():
-    poll_list = polls.get_archived()
-    return render_polls_template(poll_list)
+    pagination_vars = get_pagination_variables(polls.get_archived_count())
+    poll_list = polls.get_archived(pagination_vars[0])
+    return render_polls_template(*pagination_vars, poll_list)
 
-@app.route("/browse_polls/nearby")
+@app.route("/browse_polls/nearby", methods=["GET", "POST"])
 @login_required
 def browse_nearby_polls():
-    poll_list = polls.get_nearby()
-    return render_polls_template(poll_list)
+    pagination_vars = get_pagination_variables(polls.get_nearby_count())
+    poll_list = polls.get_nearby(pagination_vars[0])
+    return render_polls_template(*pagination_vars, poll_list)
 
 @app.route("/browse_polls/details/<int:poll_id>")
 @login_required

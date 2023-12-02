@@ -1,5 +1,6 @@
 from flask import session
 from sqlalchemy.sql import text
+from helpers.contants import ITEMS_PER_PAGE
 from db import db
 
 def add(title: str, zip_code: str, open_on: str, close_on: str):
@@ -22,7 +23,73 @@ def add(title: str, zip_code: str, open_on: str, close_on: str):
 
     return result.fetchone()
 
-def get_current():
+def get_current_count():
+    sql = """SELECT COUNT(id)
+            FROM polls AS P
+            WHERE
+                P.open_on <= CURRENT_DATE
+                AND P.close_on > CURRENT_DATE
+                AND P.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_upcoming_count():
+    sql = """SELECT COUNT(id)
+            FROM polls AS P
+            WHERE
+                P.open_on > CURRENT_DATE
+                AND P.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_past_count():
+    sql = """SELECT COUNT(id)
+            FROM polls AS P
+            WHERE
+                P.close_on < CURRENT_DATE
+                AND P.archived_at IS NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_archived_count():
+    sql = """SELECT COUNT(id)
+            FROM polls AS P
+            WHERE
+                P.archived_at IS NOT NULL"""
+
+    result = db.session.execute(text(sql))
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_nearby_count():
+    zip_code = session["zip_code"]
+
+    sql = """SELECT COUNT(id)
+            FROM polls AS P
+            WHERE
+                P.archived_at IS NULL
+                AND P.zip_code=:zip_code"""
+
+    values = {
+        "zip_code": zip_code
+    }
+
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
+
+    return result.fetchone()[0]
+
+def get_current(idx: int):
     sql = """SELECT
                 P.id,
                 P.title,
@@ -35,13 +102,20 @@ def get_current():
                 P.open_on <= CURRENT_DATE
                 AND P.close_on > CURRENT_DATE
                 AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC"""
+            ORDER BY P.open_on DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_upcoming():
+def get_upcoming(idx: int):
     sql = """SELECT
                 P.id,
                 P.title,
@@ -53,13 +127,20 @@ def get_upcoming():
             WHERE
                 P.open_on > CURRENT_DATE
                 AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC"""
+            ORDER BY P.open_on DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_past():
+def get_past(idx: int):
     sql = """SELECT
                 P.id,
                 P.title,
@@ -71,13 +152,20 @@ def get_past():
             WHERE
                 P.close_on < CURRENT_DATE
                 AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC"""
+            ORDER BY P.open_on DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_archived():
+def get_archived(idx: int):
     sql = """SELECT
                 P.id,
                 P.title,
@@ -88,13 +176,20 @@ def get_archived():
                 P.archived_at
             FROM polls AS P
             WHERE P.archived_at IS NOT NULL
-            ORDER BY P.open_on DESC"""
+            ORDER BY P.open_on DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
-    result = db.session.execute(text(sql))
+    values = {
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
+    }
+
+    result = db.session.execute(text(sql), values)
 
     return result.fetchall()
 
-def get_nearby():
+def get_nearby(idx: int):
     sql = """SELECT
                 P.id,
                 P.title,
@@ -106,10 +201,14 @@ def get_nearby():
             WHERE
                 P.archived_at IS NULL
                 AND P.zip_code=:zip_code
-            ORDER BY P.open_on DESC"""
+            ORDER BY P.open_on DESC
+            LIMIT (:limit)
+            OFFSET (:offset)"""
 
     values = {
-        "zip_code": session["zip_code"]
+        "zip_code": session["zip_code"],
+        "limit": ITEMS_PER_PAGE,
+        "offset": idx * ITEMS_PER_PAGE
     }
 
     result = db.session.execute(text(sql), values)
