@@ -80,7 +80,6 @@ textarea {
     margin-top: -40px;
 }
 .dropdown {
-    position: relative;
     display: inline-block;
 }
 .dropdown-content {
