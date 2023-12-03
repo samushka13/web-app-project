@@ -9,13 +9,13 @@
 <form class="inlined" action="/browse_feedback">
     <input
         class="input {{ 'active' if request.path == '/browse_feedback' else '' }}"
-        type="submit" value="Uudet"
+        type="submit" value="&#127381;  Uudet"
     >
 </form>
 <form class="inlined" action="/browse_feedback/acknowledged">
     <input
         class="input {{ 'active' if request.path == '/browse_feedback/acknowledged' else '' }}"
-        type="submit" value="Huomioidut"
+        type="submit" value="&#128065;  Huomioidut"
     >
 </form>
 
@@ -23,13 +23,13 @@
     <form class="inlined" action="/browse_feedback/archived">
         <input
             class="input {{ 'active' if request.path == '/browse_feedback/archived' else '' }}"
-            type="submit" value="Arkistoidut"
+            type="submit" value="&#128193;  Arkistoidut"
         >
     </form>
 {% endif %}
 
 <form class="inlined" action="/give_feedback">
-    <input class="input" type="submit" value="Anna palautetta">
+    <input class="input" type="submit" value="&#10133;  Anna palautetta">
 </form>
 
 {% if feedbacks|length == 0 %}
@@ -49,18 +49,18 @@
         </div>
         <form class="inlined" action="{{ request.path }}">
             {% if idx == 0 %}
-                <input class="input" type="submit" value="← Edelliset" disabled>
+                <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
             {% else %}
-                <input class="input" type="submit" value="← Edelliset 10">
+                <input class="input" type="submit" value="&#9194;  Edelliset 10">
             {% endif %}
             <input type="hidden" name="idx" value="{{ idx - 1 }}">
         </form>
 
         <form class="inlined" action="{{ request.path }}">
             {% if idx == last_idx %}
-                <input class="input" type="submit" value="Seuraavat →" disabled>
+                <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
             {% else %}
-                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
             {% endif %}
             <input type="hidden" name="idx" value="{{ idx + 1 }}">
         </form>
@@ -88,10 +88,11 @@
                         class="inlined" method="post"
                         action="/{{ 'acknowledge' if request.path == '/browse_feedback' else 'archive' }}_feedback/{{ feedback.id }}"
                     >
-                        <input
-                            class="input" type="submit"
-                            value="{{ 'Merkitse huomioiduksi' if request.path == '/browse_feedback' else 'Arkistoi' }}"
-                        >
+                    {% if request.path == "/browse_feedback" %}
+                        <input class="input" type="submit" value="&#128065;  Merkitse huomioiduksi">
+                        {% else %}
+                        <input class="input" type="submit" value="&#128193;  Arkistoi">
+                        {% endif %}
                         <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
@@ -113,7 +114,7 @@
                     </div>
                     {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
                         <form action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
-                            <input class="input" type="submit" value="Peru huomiointi">
+                            <input class="input" type="submit" value="&#128065;  Peru huomiointi">
                             <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
@@ -133,7 +134,7 @@
                     >
                         <input
                             class="input" type="submit"
-                            value="{{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
+                            value="&#128193;  {{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
                         >
                         <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -147,18 +148,18 @@
         <div>
             <form class="inlined" action="{{ request.path }}">
                 {% if idx == 0 %}
-                    <input class="input" type="submit" value="← Edelliset" disabled>
+                    <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
                 {% else %}
-                    <input class="input" type="submit" value="← Edelliset 10">
+                    <input class="input" type="submit" value="&#9194;  Edelliset 10">
                 {% endif %}
                 <input type="hidden" name="idx" value="{{ idx - 1 }}">
             </form>
 
             <form class="inlined" action="{{ request.path }}">
                 {% if idx == last_idx %}
-                    <input class="input" type="submit" value="Seuraavat →" disabled>
+                    <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
                 {% else %}
-                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
                 {% endif %}
                 <input type="hidden" name="idx" value="{{ idx + 1 }}">
             </form>

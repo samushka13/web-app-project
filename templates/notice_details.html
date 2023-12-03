@@ -6,32 +6,32 @@
 
 {% if session.admin %}
     <form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="Merkitse huomioiduksi">
+        <input class="input" type="submit" value="&#128065;  Merkitse huomioiduksi">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="Merkitse työn alle">
+        <input class="input" type="submit" value="&#128679;  Merkitse työn alle">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="Merkitse valmiiksi">
+        <input class="input" type="submit" value="&#9989;  Merkitse valmiiksi">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <form class="inlined" action="/{{ 'un' if notice.archived_at else '' }}archive_notice/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="{{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}">
+        <input class="input" type="submit" value="&#128193;  {{ 'Peru arkistointi' if notice.archived_at else 'Arkistoi' }}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% endif %}
 
 {% if not notice.archived_at %}
     <form class="inlined" action="/support_notice/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="Komppaa">
+        <input class="input" type="submit" value="&#128077;  Komppaa">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% endif %}
 
 <form class="inlined" action="{{ referrer }}">
-    <input class="input" type="submit" value="Selaa ilmoituksia">
+    <input class="input" type="submit" value="&#11013;  Selaa ilmoituksia">
 </form>
 
 <div class="content">

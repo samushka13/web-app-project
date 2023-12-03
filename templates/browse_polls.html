@@ -9,25 +9,25 @@
 <form class="inlined" action="/browse_polls/nearby">
     <input
         class="input {{ 'active' if request.path == '/browse_polls/nearby' else ''}}"
-        type="submit" value="Lähistölläni"
+        type="submit" value="&#127968;  Lähistölläni"
     >
 </form>
 <form class="inlined" action="/browse_polls">
     <input
         class="input {{ 'active' if request.path == '/browse_polls' else ''}}"
-        type="submit" value="Käynnissä"
+        type="submit" value="&#8987;  Käynnissä"
     >
 </form>
 <form class="inlined" action="/browse_polls/upcoming">
     <input
         class="input {{ 'active' if request.path == '/browse_polls/upcoming' else ''}}"
-        type="submit" value="Tulevat"
+        type="submit" value="&#128337;  Tulevat"
     >
 </form>
 <form class="inlined" action="/browse_polls/past">
     <input
         class="input {{ 'active' if request.path == '/browse_polls/past' else ''}}"
-        type="submit" value="Menneet"
+        type="submit" value="&#128345;  Menneet"
     >
 </form>
 
@@ -35,11 +35,11 @@
     <form class="inlined" action="/browse_polls/archived">
         <input
             class="input {{ 'active' if request.path == '/browse_polls/archived' else ''}}"
-            type="submit" value="Arkistoidut"
+            type="submit" value="&#128193;  Arkistoidut"
         >
     </form>
     <form class="inlined" action="/add_poll">
-        <input class="input" type="submit" value="Lisää kysely">
+        <input class="input" type="submit" value="&#10133;  Lisää kysely">
     </form>
 {% endif %}
 
@@ -70,18 +70,18 @@
         </div>
         <form class="inlined" action="{{ request.path }}">
             {% if idx == 0 %}
-                <input class="input" type="submit" value="← Edelliset" disabled>
+                <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
             {% else %}
-                <input class="input" type="submit" value="← Edelliset 10">
+                <input class="input" type="submit" value="&#9194;  Edelliset 10">
             {% endif %}
             <input type="hidden" name="idx" value="{{ idx - 1 }}">
         </form>
 
         <form class="inlined" action="{{ request.path }}">
             {% if idx == last_idx %}
-                <input class="input" type="submit" value="Seuraavat →" disabled>
+                <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
             {% else %}
-                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
             {% endif %}
             <input type="hidden" name="idx" value="{{ idx + 1 }}">
         </form>
@@ -103,7 +103,7 @@
                         >
                             <input
                                 class="input" type="submit"
-                                value="{{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
+                                value="&#128193;  {{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}"
                             >
                             <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -111,7 +111,7 @@
                     {% endif %}
 
                     <form class="inlined" action="/browse_polls/details/{{ poll.id }}">
-                        <input class="input" type="submit" value="Lue lisää">
+                        <input class="input" type="submit" value="&#128269;  Lue lisää">
                         <input type="hidden" name="referrer" value="{{ request.path }}">
                     </form>
                 </div>
@@ -123,18 +123,18 @@
         <div>
             <form class="inlined" action="{{ request.path }}">
                 {% if idx == 0 %}
-                    <input class="input" type="submit" value="← Edelliset" disabled>
+                    <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
                 {% else %}
-                    <input class="input" type="submit" value="← Edelliset 10">
+                    <input class="input" type="submit" value="&#9194;  Edelliset 10">
                 {% endif %}
                 <input type="hidden" name="idx" value="{{ idx - 1 }}">
             </form>
 
             <form class="inlined" action="{{ request.path }}">
                 {% if idx == last_idx %}
-                    <input class="input" type="submit" value="Seuraavat →" disabled>
+                    <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
                 {% else %}
-                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
                 {% endif %}
                 <input type="hidden" name="idx" value="{{ idx + 1 }}">
             </form>

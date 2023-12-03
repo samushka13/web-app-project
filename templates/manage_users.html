@@ -8,7 +8,7 @@
 
 <form action="/manage_users">
     <input class="input text" type="text" id="username" name="username" maxlength="50" value="{{ user_input }}">
-    <input class="input" type="submit" value="Hae">
+    <input class="input" type="submit" value="&#128270;  Hae">
     <br>
     <br>
 </form>
@@ -24,9 +24,9 @@
         </div>
         <form class="inlined" action="/manage_users">
             {% if idx == 0 %}
-                <input class="input" type="submit" value="← Edelliset" disabled>
+                <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
             {% else %}
-                <input class="input" type="submit" value="← Edelliset 10">
+                <input class="input" type="submit" value="&#9194;  Edelliset 10">
             {% endif %}
             <input type="hidden" name="username" value="{{ user_input }}">
             <input type="hidden" name="idx" value="{{ idx - 1 }}">
@@ -34,9 +34,9 @@
 
         <form class="inlined" action="/manage_users">
             {% if idx == last_idx %}
-                <input class="input" type="submit" value="Seuraavat →" disabled>
+                <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
             {% else %}
-                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }} →">
+                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
             {% endif %}
             <input type="hidden" name="username" value="{{ user_input }}">
             <input type="hidden" name="idx" value="{{ idx + 1 }}">
@@ -63,10 +63,12 @@
                         <form
                             class="inlined" method="post"
                             action="/{{ 'enable' if user.disabled_at else 'disable'}}_user/{{ user.id }}">
-                            <input
-                                class="input" type="submit"
-                                value="{{ 'Ota käyttöön' if user.disabled_at else 'Poista käytöstä' }}"
-                            >
+                            {% if user.disabled_at %}
+                                <input class="input" type="submit" value="&#128308;  Ota käyttöön">
+                            {% else %}
+                                <input class="input" type="submit" value="&#128994;  Poista käytöstä">
+                            {% endif %}
+
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     </div>

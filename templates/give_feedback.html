@@ -7,7 +7,7 @@
 <h2>Anna palautetta</h2>
 
 <form action="/browse_feedback">
-    <input class="input" type="submit" value="Selaa palautteita">
+    <input class="input" type="submit" value="&#11013;  Selaa palautteita">
 </form>
 
 <div class="content form">
@@ -22,8 +22,8 @@
         <div class="caption">(vapaaehtoinen)</div>
         <textarea class="input" id="body" name="body" rows="6" cols="80" maxlength="1000">{{ body }}</textarea>
         <br>
-        <br>
-        <input class="input" type="submit" value="Lähetä">
+        <div class="spacer vertical"></div>
+        <input class="input" type="submit" value="&#128190;  Lähetä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 </div>
