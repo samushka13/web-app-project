@@ -1,0 +1,27 @@
+<!doctype html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Poista käyttäjätili</h2>
+
+<form class="inlined" action="/profile">
+    <input class="input" type="submit" value="&#11013;  Takaisin">
+</form>
+
+<div class="content form">
+    <form action="/delete_current_user" method="post">
+        <br>
+        <label for="password">Syötä salasana</label>
+        <br>
+        <input class="input text" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
+        <br>
+        <div class="spacer vertical"></div>
+        <input class="input" type="submit" value="&#128163;  Poista käyttäjätili">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <br>
+    </form>
+</div>
+
+{% endblock %}

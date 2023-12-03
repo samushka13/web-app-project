@@ -39,6 +39,9 @@ def password_changed():
 def password_change_error():
     return flash("Salasanan vaihtaminen ei onnistunut")
 
+def wrong_password():
+    return flash("Väärä salasana")
+
 def account_deleted():
     return flash("Tilin poistaminen onnistui")
 

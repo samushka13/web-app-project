@@ -6,9 +6,8 @@
 
 <h2>Profiilini</h2>
 
-<form class="inlined" action="/delete_current_user" method="post">
+<form class="inlined" action="/delete_account">
     <input class="input" type="submit" value="&#128163;  Poista käyttäjätili">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 <form class="inlined" action="/change_password">

@@ -95,13 +95,25 @@ def change_password():
     flashes.password_change_error()
     return render_template("change_password.html", current=current, new=new)
 
+@app.route("/delete_account")
+@login_required
+def delete_account():
+    return render_template("delete_account.html")
+
 @app.route("/delete_current_user", methods=["POST"])
 @login_required
 def delete_current_user():
-    if csrf_check_passed() and users.delete_current_user():
-        users.logout()
-        flashes.profile_updated()
-        return redirect("/")
+    if "password_hash" in session:
+        password = request.form["password"]
+        password_match = check_password_hash(session["password_hash"], password)
 
-    flashes.profile_update_error()
-    return render_template("profile.html")
+        if not password_match:
+            flashes.wrong_password()
+        elif csrf_check_passed() and users.delete_current_user():
+            users.logout()
+            flashes.account_deleted()
+            return redirect("/")
+        else:
+            flashes.account_delete_error()
+
+    return redirect(url_for("delete_account"))
