@@ -31,12 +31,12 @@ def render_users_template(idx,
 @app.route("/manage_users")
 @admin_required
 def manage_users():
-    if "username" not in request.args:
+    if "search" not in request.args:
         pagination_vars = get_pagination_variables(users.get_user_count())
         user_list = users.get_users(pagination_vars[0])
         return render_users_template(*pagination_vars, user_list, False, "")
 
-    user_input = request.args["username"]
+    user_input = request.args["search"]
 
     if username_too_long(user_input):
         pagination_vars = [0, 0, 0, 0]
