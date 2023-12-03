@@ -28,12 +28,13 @@ def redirect_to_polls():
 
     return redirect(url_for("browse_polls"))
 
-def render_polls_template(idx, last_idx, count, count_on_next_idx, poll_list):
+def render_polls_template(idx, last_idx, count, count_on_next_idx, page_numbers, poll_list):
     return render_template("browse_polls.html",
                            idx=idx,
                            last_idx=last_idx,
                            count=count,
                            count_on_next_idx=count_on_next_idx,
+                           page_numbers=page_numbers,
                            polls=poll_list)
 
 def render_poll_template(poll_id):

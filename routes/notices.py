@@ -30,12 +30,13 @@ def redirect_to_notices():
 
     return redirect(url_for("browse_notices"))
 
-def render_notices_template(idx, last_idx, count, count_on_next_idx, notice_list):
+def render_notices_template(idx, last_idx, count, count_on_next_idx, page_numbers, notice_list):
     return render_template("browse_notices.html",
                            idx=idx,
                            last_idx=last_idx,
                            count=count,
                            count_on_next_idx=count_on_next_idx,
+                           page_numbers=page_numbers,
                            notices=notice_list)
 
 def render_notice_template(notice_id):

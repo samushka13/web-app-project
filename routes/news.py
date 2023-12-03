@@ -25,12 +25,13 @@ def redirect_to_news():
 
     return redirect(url_for("browse_news"))
 
-def render_news_template(idx, last_idx, count, count_on_next_idx, news_list):
+def render_news_template(idx, last_idx, count, count_on_next_idx, page_numbers, news_list):
     return render_template("browse_news.html",
                            idx=idx,
                            last_idx=last_idx,
                            count=count,
                            count_on_next_idx=count_on_next_idx,
+                           page_numbers=page_numbers,
                            news=news_list)
 
 @app.route("/browse_news")

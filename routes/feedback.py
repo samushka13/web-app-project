@@ -16,12 +16,13 @@ def redirect_to_feedbacks():
 
     return redirect(url_for("browse_feedback"))
 
-def render_feedbacks_template(idx, last_idx, count, count_on_next_idx, feedbacks):
+def render_feedbacks_template(idx, last_idx, count, count_on_next_idx, page_numbers, feedbacks):
     return render_template("browse_feedback.html",
                            idx=idx,
                            last_idx=last_idx,
                            count=count,
                            count_on_next_idx=count_on_next_idx,
+                           page_numbers=page_numbers,
                            feedbacks=feedbacks)
 
 @app.route("/give_feedback", methods=["GET", "POST"])

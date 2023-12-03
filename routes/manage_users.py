@@ -10,12 +10,20 @@ from data import users
 def redirect_to_users():
     return redirect(url_for("manage_users"))
 
-def render_users_template(idx, last_idx, count, count_on_next_idx, user_list, no_hits, user_input):
+def render_users_template(idx,
+                          last_idx,
+                          count,
+                          count_on_next_idx,
+                          page_numbers,
+                          user_list,
+                          no_hits,
+                          user_input):
     return render_template("manage_users.html",
                            idx=idx,
                            last_idx=last_idx,
                            count=count,
                            count_on_next_idx=count_on_next_idx,
+                           page_numbers=page_numbers,
                            users=user_list,
                            no_hits=no_hits,
                            user_input=user_input)

@@ -68,6 +68,25 @@
             <input type="hidden" name="idx" value="{{ idx - 1 }}">
         </form>
 
+        {% if page_numbers not in [0, 1] %}
+            <div class="dropdown">
+                <input class="input" type="submit" value="Siirry sivulle">
+                <div class="dropdown-content">
+                    {% for page_number in page_numbers %}
+                        <form action="{{ request.path }}">
+                            {% if page_number == idx + 1 %}
+                            <input type="submit" value="{{ page_number }}" disabled>
+                            {% else %}
+                            <input type="submit" value="{{ page_number }}">
+                            {% endif %}
+                            <input type="hidden" name="username" value="{{ user_input }}">
+                            <input type="hidden" name="idx" value="{{ page_number - 1 }}">
+                        </form>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
         <form class="inlined" action="{{ request.path }}">
             {% if idx == last_idx %}
                 <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
@@ -128,6 +147,25 @@
                 {% endif %}
                 <input type="hidden" name="idx" value="{{ idx - 1 }}">
             </form>
+
+            {% if page_numbers not in [0, 1] %}
+                <div class="dropdown">
+                    <input class="input" type="submit" value="Siirry sivulle">
+                    <div class="dropdown-content">
+                        {% for page_number in page_numbers %}
+                            <form action="{{ request.path }}">
+                                {% if page_number == idx + 1 %}
+                                <input type="submit" value="{{ page_number }}" disabled>
+                                {% else %}
+                                <input type="submit" value="{{ page_number }}">
+                                {% endif %}
+                                <input type="hidden" name="username" value="{{ user_input }}">
+                                <input type="hidden" name="idx" value="{{ page_number - 1 }}">
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
 
             <form class="inlined" action="{{ request.path }}">
                 {% if idx == last_idx %}

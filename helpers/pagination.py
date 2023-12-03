@@ -12,7 +12,9 @@ def get_pagination_variables(item_count_in_db):
     if "idx" in request.args:
         idx = int(request.args["idx"])
 
-    last_idx = max(0, math.ceil(count / ITEMS_PER_PAGE) - 1)
+    page_count = math.ceil(count / ITEMS_PER_PAGE)
+    last_idx = max(0, page_count - 1)
     count_on_next_idx = min(ITEMS_PER_PAGE, count - (idx + 1) * ITEMS_PER_PAGE)
+    page_numbers = range(1, page_count + 1)
 
-    return idx, last_idx, count, count_on_next_idx
+    return idx, last_idx, count, count_on_next_idx, page_numbers
