@@ -63,7 +63,8 @@ def get_nearby_count():
     sql = """SELECT COUNT(id)
             FROM news AS N
             WHERE
-                N.archived_at IS NULL
+                N.publish_on <= CURRENT_DATE
+                AND N.archived_at IS NULL
                 AND N.zip_code=:zip_code"""
 
     values = {
@@ -159,7 +160,8 @@ def get_nearby(idx: int):
                 N.created_at
             FROM news AS N
             WHERE
-                N.archived_at IS NULL
+                N.publish_on <= CURRENT_DATE
+                AND N.archived_at IS NULL
                 AND N.zip_code=:zip_code
             ORDER BY N.publish_on DESC
             LIMIT (:limit)
