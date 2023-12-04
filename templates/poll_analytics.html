@@ -18,11 +18,13 @@
 {% if not poll.archived_at and "upcoming" not in referrer and "past" not in referrer %}
     <form class="inlined" action="/vote_for/{{ poll.id }}" method="post">
         <input class="input" type="submit" value="&#128077;  Kannatan">
+        <input type="hidden" name="referrer" value="{{ request.path }}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 
     <form class="inlined" action="/vote_against/{{ poll.id }}" method="post">
         <input class="input" type="submit" value="&#128078;  Vastustan">
+        <input type="hidden" name="referrer" value="{{ request.path }}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% endif %}

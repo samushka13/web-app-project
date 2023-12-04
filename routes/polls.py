@@ -4,7 +4,13 @@ from flask import render_template, redirect, url_for, request
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_date, get_zip_code, get_referrer_from_args
+from helpers.forms import (
+    csrf_check_passed,
+    get_date,
+    get_zip_code,
+    get_referrer,
+    get_referrer_from_args
+)
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     invalid_required_date,
@@ -113,6 +119,11 @@ def vote_for(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, True)):
         flashes.vote_error()
 
+    referrer = get_referrer()
+
+    if "analytics" in referrer:
+        return redirect(url_for("view_poll_analytics", poll_id=poll_id))
+
     return render_poll_template(poll_id)
 
 @app.route("/vote_against/<int:poll_id>", methods=["POST"])
@@ -120,6 +131,11 @@ def vote_for(poll_id):
 def vote_against(poll_id):
     if not (csrf_check_passed() and polls.vote(poll_id, False)):
         flashes.vote_error()
+
+    referrer = get_referrer()
+
+    if "analytics" in referrer:
+        return redirect(url_for("view_poll_analytics", poll_id=poll_id))
 
     return render_poll_template(poll_id)
 
