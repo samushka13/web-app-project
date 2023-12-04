@@ -23,7 +23,8 @@ CREATE TABLE users (
     zip_code CHAR(5),
     admin BOOLEAN,
     disabled_at TIMESTAMP,
-    disabled_by INTEGER REFERENCES users
+    disabled_by INTEGER REFERENCES users,
+    deleted_at TIMESTAMP
 );
 
 CREATE TABLE news (

@@ -12,7 +12,7 @@ def register(name: str, password: str, date_of_birth: str, gender: str, zip_code
     try:
         sql = """INSERT INTO users
                     (name, password, date_of_birth, gender, zip_code, admin)
-                 VALUES
+                VALUES
                     (:name, :password, :date_of_birth, :gender, :zip_code, :admin)
                 RETURNING id"""
 
@@ -43,7 +43,9 @@ def login(name: str, password: str):
                 admin,
                 disabled_at
             FROM users
-            WHERE name=:name"""
+            WHERE
+                name=:name
+                AND deleted_at IS NULL"""
 
     result = db.session.execute(text(sql), { "name": name })
     user = result.fetchone()
@@ -79,7 +81,9 @@ def logout():
 def update_date_of_birth(date_of_birth: str):
     sql = """UPDATE users
             SET date_of_birth=:date_of_birth
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -100,7 +104,9 @@ def update_date_of_birth(date_of_birth: str):
 def update_gender(gender: str):
     sql = """UPDATE users
             SET gender=:gender
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -121,7 +127,9 @@ def update_gender(gender: str):
 def update_zip_code(zip_code: str):
     sql = """UPDATE users
             SET zip_code=:zip_code
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -142,7 +150,9 @@ def update_zip_code(zip_code: str):
 def update_admin_status(admin: bool):
     sql = """UPDATE users
             SET admin=:admin
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -165,7 +175,9 @@ def change_password(password: str):
 
     sql = """UPDATE users
             SET password=:password
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -184,8 +196,11 @@ def change_password(password: str):
     return item
 
 def delete_current_user():
-    sql = """DELETE FROM users
-            WHERE id=:id
+    sql = """UPDATE users
+            SET deleted_at=NOW()
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -199,7 +214,8 @@ def delete_current_user():
 
 def get_user_count():
     sql = """SELECT COUNT(id)
-            FROM users"""
+            FROM users
+            WHERE deleted_at IS NULL"""
 
     result = db.session.execute(text(sql))
 
@@ -208,7 +224,9 @@ def get_user_count():
 def get_find_user_count(user_input: str):
     sql = """SELECT COUNT(id)
             FROM users
-            WHERE name LIKE :user_input"""
+            WHERE
+                name LIKE :user_input
+                AND deleted_at IS NULL"""
 
     values = {
         "user_input": f'%{user_input}%'
@@ -225,6 +243,7 @@ def get_users(idx: int):
                 admin,
                 disabled_at
             FROM users
+            WHERE deleted_at IS NULL
             ORDER BY name ASC
             LIMIT (:limit)
             OFFSET (:offset)"""
@@ -245,7 +264,9 @@ def find_users(idx: int, user_input: str):
                 admin,
                 disabled_at
             FROM users
-            WHERE name LIKE :user_input
+            WHERE
+                name LIKE :user_input
+                AND deleted_at IS NULL
             ORDER BY name ASC
             LIMIT (:limit)
             OFFSET (:offset)"""
@@ -265,7 +286,9 @@ def disable_user(user_id: int):
             SET
                 disabled_at=NOW(),
                 disabled_by=:disabled_by
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
@@ -283,7 +306,9 @@ def enable_user(user_id: int):
             SET
                 disabled_at=NULL,
                 disabled_by=NULL
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND deleted_at IS NULL
             RETURNING id"""
 
     values = {
