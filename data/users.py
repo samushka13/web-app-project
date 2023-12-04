@@ -67,6 +67,9 @@ def login(name: str, password: str):
     csrf_token = os.urandom(16).hex()
     session["csrf_token"] = csrf_token
 
+    session["referrer"] = ""
+    session["sub_referrer"] = ""
+
     return "success"
 
 def logout():

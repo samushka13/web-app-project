@@ -117,14 +117,12 @@
                             {% else %}
                                 <input class="input" type="submit" value="&#128193;  Arkistoi">
                             {% endif %}
-                            <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     {% endif %}
 
                     <form class="inlined" action="/browse_news/details/{{ item.id }}" method="post">
                         <input class="input" type="submit" value="&#128269;  Lue lisää">
-                        <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
                 </div>

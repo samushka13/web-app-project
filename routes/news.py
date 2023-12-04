@@ -1,9 +1,9 @@
 from datetime import datetime
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code, get_referrer
+from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
@@ -15,13 +15,12 @@ from helpers.validators import (
 from data import news
 
 def redirect_to_news():
-    if "referrer" in request.form:
-        if "nearby" in request.form["referrer"]:
-            return redirect(url_for("browse_nearby_news"))
-        if "upcoming" in request.form["referrer"]:
-            return redirect(url_for("browse_upcoming_news"))
-        if "archived" in request.form["referrer"]:
-            return redirect(url_for("browse_archived_news"))
+    if "nearby" in session["referrer"]:
+        return redirect(url_for("browse_nearby_news"))
+    if "upcoming" in session["referrer"]:
+        return redirect(url_for("browse_upcoming_news"))
+    if "archived" in session["referrer"]:
+        return redirect(url_for("browse_archived_news"))
 
     return redirect(url_for("browse_news"))
 
@@ -39,6 +38,7 @@ def render_news_template(idx, last_idx, count, count_on_next_idx, page_numbers, 
 def browse_news():
     pagination_vars = get_pagination_variables(news.get_current_count())
     news_list = news.get_current(pagination_vars[0])
+    session["referrer"] = "/browse_news"
     return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/upcoming")
@@ -46,6 +46,7 @@ def browse_news():
 def browse_upcoming_news():
     pagination_vars = get_pagination_variables(news.get_upcoming_count())
     news_list = news.get_upcoming(pagination_vars[0])
+    session["referrer"] = "/browse_news/upcoming"
     return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/archived")
@@ -53,6 +54,7 @@ def browse_upcoming_news():
 def browse_archived_news():
     pagination_vars = get_pagination_variables(news.get_archived_count())
     news_list = news.get_archived(pagination_vars[0])
+    session["referrer"] = "/browse_news/archived"
     return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/nearby")
@@ -60,6 +62,7 @@ def browse_archived_news():
 def browse_nearby_news():
     pagination_vars = get_pagination_variables(news.get_nearby_count())
     news_list = news.get_nearby(pagination_vars[0])
+    session["referrer"] = "/browse_news/nearby"
     return render_news_template(*pagination_vars, news_list)
 
 @app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
@@ -68,11 +71,13 @@ def view_news_details(news_id):
     if request.method == "POST" and csrf_check_passed():
         news.add_view(news_id)
 
+    if "news" not in session["referrer"]:
+        session["referrer"] = "/browse_news"
+
     item = news.get_details(news_id)
-    referrer = get_referrer()
 
     if item:
-        return render_template("news_details.html", item=item, referrer=referrer)
+        return render_template("news_details.html", item=item)
 
     flashes.data_fetch_failed()
     return redirect_to_news()
@@ -80,6 +85,9 @@ def view_news_details(news_id):
 @app.route("/add_news", methods=["GET", "POST"])
 @admin_required
 def add_news():
+    if "news" not in session["referrer"]:
+        session["referrer"] = "/browse_news"
+
     if request.method == "GET":
         current_date = datetime.today().date()
         return render_template("add_news.html", current_date=current_date)

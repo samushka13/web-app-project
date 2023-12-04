@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
@@ -8,11 +8,10 @@ from helpers.validators import title_too_long, no_title, body_too_long
 from data import feedback
 
 def redirect_to_feedbacks():
-    if "referrer" in request.form:
-        if "acknowledged" in request.form["referrer"]:
-            return redirect(url_for("browse_acknowledged_feedback"))
-        if "archived" in request.form["referrer"]:
-            return redirect(url_for("browse_archived_feedback"))
+    if "acknowledged" in session["referrer"]:
+        return redirect(url_for("browse_acknowledged_feedback"))
+    if "archived" in session["referrer"]:
+        return redirect(url_for("browse_archived_feedback"))
 
     return redirect(url_for("browse_feedback"))
 
@@ -28,6 +27,9 @@ def render_feedbacks_template(idx, last_idx, count, count_on_next_idx, page_numb
 @app.route("/give_feedback", methods=["GET", "POST"])
 @login_required
 def give_feedback():
+    if "feedback" not in session["referrer"]:
+        session["referrer"] = "/browse_feedback"
+
     if request.method == "GET":
         return render_template("give_feedback.html")
 
@@ -57,6 +59,7 @@ def give_feedback():
 def browse_feedback():
     pagination_vars = get_pagination_variables(feedback.get_new_count())
     feedbacks = feedback.get_new(pagination_vars[0])
+    session["referrer"] = "/browse_feedback"
     return render_feedbacks_template(*pagination_vars, feedbacks)
 
 @app.route("/browse_feedback/acknowledged")
@@ -64,6 +67,7 @@ def browse_feedback():
 def browse_acknowledged_feedback():
     pagination_vars = get_pagination_variables(feedback.get_acknowledged_count())
     feedbacks = feedback.get_acknowledged(pagination_vars[0])
+    session["referrer"] = "/browse_feedback/acknowledged"
     return render_feedbacks_template(*pagination_vars, feedbacks)
 
 @app.route("/browse_feedback/archived")
@@ -71,6 +75,7 @@ def browse_acknowledged_feedback():
 def browse_archived_feedback():
     pagination_vars = get_pagination_variables(feedback.get_archived_count())
     feedbacks = feedback.get_archived(pagination_vars[0])
+    session["referrer"] = "/browse_feedback/archived"
     return render_feedbacks_template(*pagination_vars, feedbacks)
 
 @app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])

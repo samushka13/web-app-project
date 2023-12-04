@@ -1,14 +1,8 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, session
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import (
-    csrf_check_passed,
-    get_body,
-    get_zip_code,
-    get_street_address,
-    get_referrer
-)
+from helpers.forms import csrf_check_passed, get_body, get_zip_code, get_street_address
 from helpers.pagination import get_pagination_variables
 from helpers.validators import (
     no_title,
@@ -20,13 +14,12 @@ from helpers.validators import (
 from data import notices
 
 def redirect_to_notices():
-    if "referrer" in request.form:
-        if "nearby" in request.form["referrer"]:
-            return redirect(url_for("browse_nearby_notices"))
-        if "my" in request.form["referrer"]:
-            return redirect(url_for("browse_my_notices"))
-        if "archived" in request.form["referrer"]:
-            return redirect(url_for("browse_archived_notices"))
+    if "nearby" in session["referrer"]:
+        return redirect(url_for("browse_nearby_notices"))
+    if "my" in session["referrer"]:
+        return redirect(url_for("browse_my_notices"))
+    if "archived" in session["referrer"]:
+        return redirect(url_for("browse_archived_notices"))
 
     return redirect(url_for("browse_notices"))
 
@@ -47,6 +40,7 @@ def render_notice_template(notice_id):
 def browse_notices():
     pagination_vars = get_pagination_variables(notices.get_all_count())
     notice_list = notices.get_all(pagination_vars[0])
+    session["referrer"] = "/browse_notices"
     return render_notices_template(*pagination_vars, notice_list)
 
 @app.route("/browse_notices/my")
@@ -54,6 +48,7 @@ def browse_notices():
 def browse_my_notices():
     pagination_vars = get_pagination_variables(notices.get_created_by_user_count())
     notice_list = notices.get_created_by_user(pagination_vars[0])
+    session["referrer"] = "/browse_notices/my"
     return render_notices_template(*pagination_vars, notice_list)
 
 @app.route("/browse_notices/archived")
@@ -61,6 +56,7 @@ def browse_my_notices():
 def browse_archived_notices():
     pagination_vars = get_pagination_variables(notices.get_archived_count())
     notice_list = notices.get_archived(pagination_vars[0])
+    session["referrer"] = "/browse_notices/archived"
     return render_notices_template(*pagination_vars, notice_list)
 
 @app.route("/browse_notices/nearby")
@@ -68,23 +64,23 @@ def browse_archived_notices():
 def browse_nearby_notices():
     pagination_vars = get_pagination_variables(notices.get_nearby_count())
     notice_list = notices.get_nearby(pagination_vars[0])
+    session["referrer"] = "/browse_notices/nearby"
     return render_notices_template(*pagination_vars, notice_list)
 
 @app.route("/browse_notices/details/<int:notice_id>", methods=["GET", "POST"])
 @login_required
 def view_notice_details(notice_id):
+    if "notice" not in session["referrer"]:
+        session["referrer"] = "/browse_notices"
+
     if request.method == "POST" and csrf_check_passed():
         notices.add_view(notice_id)
 
     notice = notices.get_details(notice_id)
     statuses = notices.get_statuses(notice_id)
-    referrer = get_referrer()
 
     if notice:
-        return render_template("notice_details.html",
-                               notice=notice,
-                               statuses=statuses,
-                               referrer=referrer)
+        return render_template("notice_details.html", notice=notice, statuses=statuses)
 
     flashes.data_fetch_failed()
     return redirect_to_notices()
@@ -100,6 +96,9 @@ def support_notice(notice_id):
 @app.route("/add_notice", methods=["GET", "POST"])
 @login_required
 def add_notice():
+    if "notice" not in session["referrer"]:
+        session["referrer"] = "/browse_notices"
+
     if request.method == "GET":
         return render_template("add_notice.html")
 

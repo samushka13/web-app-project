@@ -113,7 +113,6 @@
                         {% else %}
                         <input class="input" type="submit" value="&#128193;  Arkistoi">
                         {% endif %}
-                        <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
                 {% endif %}
@@ -135,7 +134,6 @@
                     {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
                         <form action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
                             <input class="input" type="submit" value="&#10006; &#128065;  Peru huomiointi">
-                            <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     {% endif %}
@@ -154,7 +152,6 @@
                         {% else %}
                             <input class="input" type="submit" value="&#128193;  Arkistoi">
                         {% endif %}
-                        <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>
                 </div>

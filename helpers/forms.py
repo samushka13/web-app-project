@@ -62,19 +62,3 @@ def get_max_date_of_birth():
     max_date = current_date - relativedelta(years=MIN_USER_AGE)
 
     return max_date
-
-def get_referrer():
-    referrer = ""
-
-    if "referrer" in request.form:
-        referrer = request.form["referrer"]
-
-    return referrer
-
-def get_referrer_from_args():
-    referrer = ""
-
-    if "referrer" in request.args:
-        referrer = request.args["referrer"]
-
-    return referrer
