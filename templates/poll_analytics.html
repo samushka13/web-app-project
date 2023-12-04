@@ -15,7 +15,7 @@
     </form>
 {% endif %}
 
-{% if not poll.archived_at %}
+{% if not poll.archived_at and "upcoming" not in referrer and "past" not in referrer %}
     <form class="inlined" action="/vote_for/{{ poll.id }}" method="post">
         <input class="input" type="submit" value="&#128077;  Kannatan">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
