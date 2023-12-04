@@ -134,7 +134,7 @@
                     </div>
                     {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
                         <form action="/unacknowledge_feedback/{{ feedback.id }}" method="post">
-                            <input class="input" type="submit" value="&#128065;  Peru huomiointi">
+                            <input class="input" type="submit" value="&#10006; &#128065;  Peru huomiointi">
                             <input type="hidden" name="referrer" value="{{ request.path }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
@@ -148,14 +148,12 @@
                         Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
                         {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
                     </div>
-                    <form
-                        method="post"
-                        action="/{{ 'un' if feedback.archived_at else '' }}archive_feedback/{{ feedback.id }}"
-                    >
-                        <input
-                            class="input" type="submit"
-                            value="&#128193;  {{ 'Peru arkistointi' if feedback.archived_at else 'Arkistoi' }}"
-                        >
+                    <form method="post" action="/{{ 'un' if feedback.archived_at else '' }}archive_feedback/{{ feedback.id }}">
+                        {% if feedback.archived_at %}
+                            <input class="input" type="submit" value="&#10006; &#128193;  Peru arkistointi">
+                        {% else %}
+                            <input class="input" type="submit" value="&#128193;  Arkistoi">
+                        {% endif %}
                         <input type="hidden" name="referrer" value="{{ request.path }}">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     </form>

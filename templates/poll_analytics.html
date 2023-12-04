@@ -6,7 +6,11 @@
 
 {% if session.admin %}
     <form class="inlined" action="/{{ 'un' if poll.archived_at else '' }}archive_poll/{{ poll.id }}" method="post">
-        <input class="input" type="submit" value="&#128193;  {{ 'Peru arkistointi' if poll.archived_at else 'Arkistoi' }}">
+        {% if poll.archived_at %}
+            <input class="input" type="submit" value="&#10006; &#128193;  Peru arkistointi">
+        {% else %}
+            <input class="input" type="submit" value="&#128193;  Arkistoi">
+        {% endif %}
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 {% endif %}
