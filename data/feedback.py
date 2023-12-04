@@ -163,7 +163,9 @@ def unacknowledge(feedback_id: int):
             SET
                 acknowledged_at=NULL,
                 acknowledged_by=NULL
-            WHERE id=:id
+            WHERE
+                id=:id
+                AND archived_at IS NULL
             RETURNING id"""
 
     values = {
