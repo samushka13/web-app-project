@@ -22,17 +22,17 @@
         <div class="caption input">
             Yhteensä {{ count }} {{ 'käyttäjätili' if count == 1 else 'käyttäjätiliä' }}
         </div>
-        <form class="inlined" action="/manage_users">
-            {% if idx == 0 %}
-                <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
-            {% else %}
-                <input class="input" type="submit" value="&#9194;  Edelliset 10">
-            {% endif %}
-            <input type="hidden" name="username" value="{{ user_input }}">
-            <input type="hidden" name="idx" value="{{ idx - 1 }}">
-        </form>
 
-        {% if page_numbers not in [0, 1] %}
+        {% if page_numbers|length not in [0, 1] %}
+            <form class="inlined" action="/manage_users">
+                {% if idx == 0 %}
+                    <input class="input" type="submit" value="&#9194;  Edelliset" disabled>
+                {% else %}
+                    <input class="input" type="submit" value="&#9194;  Edelliset 10">
+                {% endif %}
+                <input type="hidden" name="idx" value="{{ idx - 1 }}">
+            </form>
+
             <div class="dropdown">
                 <input class="input" type="submit" value="⬇️  Siirry sivulle  ⬇️">
                 <div class="dropdown-content">
@@ -49,17 +49,16 @@
                     {% endfor %}
                 </div>
             </div>
-        {% endif %}
 
-        <form class="inlined" action="/manage_users">
-            {% if idx == last_idx %}
-                <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
-            {% else %}
-                <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
-            {% endif %}
-            <input type="hidden" name="username" value="{{ user_input }}">
-            <input type="hidden" name="idx" value="{{ idx + 1 }}">
-        </form>
+            <form class="inlined" action="/manage_users">
+                {% if idx == last_idx %}
+                    <input class="input" type="submit" value="Seuraavat  &#9193;" disabled>
+                {% else %}
+                    <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
+                {% endif %}
+                <input type="hidden" name="idx" value="{{ idx + 1 }}">
+            </form>
+        {% endif %}
     </div>
 
     {% if session.admin %}
