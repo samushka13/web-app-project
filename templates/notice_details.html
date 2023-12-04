@@ -5,18 +5,21 @@
 {% block content %}
 
 {% if session.admin %}
-    <form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="&#128065;  Merkitse huomioiduksi">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-    <form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="&#128679;  Merkitse työn alle">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-    <form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
-        <input class="input" type="submit" value="&#9989;  Merkitse valmiiksi">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
+    {% if not notice.archived_at %}
+        <form class="inlined" action="/notice/acknowledge/{{ notice.id }}" method="post">
+            <input class="input" type="submit" value="&#128065;  Merkitse huomioiduksi">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        <form class="inlined" action="/notice/wip/{{ notice.id }}" method="post">
+            <input class="input" type="submit" value="&#128679;  Merkitse työn alle">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        <form class="inlined" action="/notice/done/{{ notice.id }}" method="post">
+            <input class="input" type="submit" value="&#9989;  Merkitse valmiiksi">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+    {% endif %}
+
     <form class="inlined" action="/{{ 'un' if notice.archived_at else '' }}archive_notice/{{ notice.id }}" method="post">
         {% if notice.archived_at %}
             <input class="input" type="submit" value="&#10006; &#128193;  Peru arkistointi">
