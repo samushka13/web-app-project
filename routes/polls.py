@@ -11,7 +11,7 @@ from helpers.validators import (
     no_title,
     title_too_long,
     invalid_zip_code,
-    start_date_before_end_date
+    start_date_after_end_date
 )
 from data import polls
 
@@ -152,8 +152,8 @@ def add_poll():
     elif invalid_required_date(close_on):
         flashes.invalid_end_date()
         form_valid = False
-    elif start_date_before_end_date(open_on, close_on):
-        flashes.start_date_before_end_date()
+    elif start_date_after_end_date(open_on, close_on):
+        flashes.start_date_after_end_date()
         form_valid = False
 
     if form_valid and polls.add(title, zip_code, open_on, close_on):

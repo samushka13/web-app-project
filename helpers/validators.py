@@ -40,5 +40,5 @@ def title_too_long(title: str):
 def body_too_long(body: str):
     return body and len(body) > BODY_MAX_LENGTH
 
-def start_date_before_end_date(start: str, end: str):
+def start_date_after_end_date(start: str, end: str):
     return datetime.strptime(start, "%Y-%m-%d") > datetime.strptime(end, "%Y-%m-%d")

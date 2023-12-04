@@ -102,7 +102,7 @@ def invalid_start_date():
 def invalid_end_date():
     return error_flash("Päättymispäivämäärä ei ole kelvollinen")
 
-def start_date_before_end_date():
+def start_date_after_end_date():
     return error_flash("Päättymispäivämäärä ei voi olla ennen alkamispäivämäärää")
 
 def poll_saved():
