@@ -111,8 +111,20 @@ def poll_saved():
 def poll_save_error():
     return error_flash("Kyselyn tallennus ei onnistunut")
 
+def vote_success():
+    return success_flash("Äänestäminen onnistui")
+
 def vote_error():
     return error_flash("Äänestäminen ei onnistunut")
+
+def vote_error_poll_archived():
+    return error_flash("Äänestäminen ei onnistunut (kysely on arkistoitu)")
+
+def vote_error_poll_past():
+    return error_flash("Äänestäminen ei onnistunut (äänestysaika on päättynyt)")
+
+def vote_error_poll_upcoming():
+    return error_flash("Äänestäminen ei onnistunut (äänestysaika ei ole alkanut)")
 
 def feedback_sent():
     return success_flash("Palautteen lähettäminen onnistui")

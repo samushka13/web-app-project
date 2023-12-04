@@ -278,6 +278,35 @@ def unarchive(poll_id: int):
     return result.fetchone()
 
 def vote(poll_id: int, vote_type: bool):
+    sql = """SELECT
+                id,
+                archived_at IS NOT NULL as "archived",
+                close_on <= CURRENT_DATE as "past",
+                open_on > CURRENT_DATE as "upcoming"
+            FROM polls
+            WHERE id=:id"""
+
+    values = {
+        "id": poll_id,
+    }
+
+    result = db.session.execute(text(sql), values)
+    db.session.commit()
+
+    poll = result.fetchone()
+
+    if not poll:
+        return None
+
+    if poll[1]:
+        return "archived-poll"
+
+    if poll[2]:
+        return "past-poll"
+
+    if poll[3]:
+        return "upcoming-poll"
+
     sql = """INSERT INTO votes
                 (poll_id, vote, voted_at, voted_by)
             VALUES

@@ -39,6 +39,28 @@ def render_polls_template(idx, last_idx, count, count_on_next_idx, page_numbers,
 def render_poll_template(poll_id):
     return redirect(url_for("view_poll_details", poll_id=poll_id))
 
+def handle_voting(poll_id: int, vote: bool):
+    if not csrf_check_passed():
+        flashes.vote_error()
+    else:
+        response = polls.vote(poll_id, vote)
+
+        if response == "archived-poll":
+            flashes.vote_error_poll_archived()
+        elif response == "past-poll":
+            flashes.vote_error_poll_past()
+        elif response == "upcoming-poll":
+            flashes.vote_error_poll_upcoming()
+        elif response:
+            flashes.vote_success()
+        else:
+            flashes.vote_error()
+
+    if "analytics" in session["sub_referrer"]:
+        return redirect(url_for("view_poll_analytics", poll_id=poll_id))
+
+    return render_poll_template(poll_id)
+
 @app.route("/browse_polls")
 @login_required
 def browse_polls():
@@ -113,24 +135,12 @@ def view_poll_analytics(poll_id):
 @app.route("/vote_for/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_for(poll_id):
-    if not (csrf_check_passed() and polls.vote(poll_id, True)):
-        flashes.vote_error()
-
-    if "analytics" in session["sub_referrer"]:
-        return redirect(url_for("view_poll_analytics", poll_id=poll_id))
-
-    return render_poll_template(poll_id)
+    return handle_voting(poll_id, True)
 
 @app.route("/vote_against/<int:poll_id>", methods=["POST"])
 @login_required
 def vote_against(poll_id):
-    if not (csrf_check_passed() and polls.vote(poll_id, False)):
-        flashes.vote_error()
-
-    if "analytics" in session["sub_referrer"]:
-        return redirect(url_for("view_poll_analytics", poll_id=poll_id))
-
-    return render_poll_template(poll_id)
+    return handle_voting(poll_id, False)
 
 @app.route("/add_poll", methods=["GET", "POST"])
 @admin_required
