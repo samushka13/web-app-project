@@ -221,15 +221,15 @@ def get_user_count():
 
     return result.fetchone()[0]
 
-def get_find_user_count(user_input: str):
+def get_find_user_count(search: str):
     sql = """SELECT COUNT(id)
             FROM users
             WHERE
-                name LIKE :user_input
+                name LIKE :search
                 AND deleted_at IS NULL"""
 
     values = {
-        "user_input": f'%{user_input}%'
+        "search": f'%{search}%'
     }
 
     result = db.session.execute(text(sql), values)
@@ -257,7 +257,7 @@ def get_users(idx: int):
 
     return result.fetchall()
 
-def find_users(idx: int, user_input: str):
+def find_users(idx: int, search: str):
     sql = """SELECT
                 id,
                 name,
@@ -265,14 +265,14 @@ def find_users(idx: int, user_input: str):
                 disabled_at
             FROM users
             WHERE
-                name LIKE :user_input
+                name LIKE :search
                 AND deleted_at IS NULL
             ORDER BY name ASC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
     values = {
-        "user_input": f'%{user_input}%',
+        "search": f'%{search}%',
         "limit": ITEMS_PER_PAGE,
         "offset": idx * ITEMS_PER_PAGE
     }

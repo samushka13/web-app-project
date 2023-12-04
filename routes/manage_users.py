@@ -7,8 +7,8 @@ from helpers.pagination import get_pagination_variables
 from helpers.validators import username_too_long
 from data import users
 
-def redirect_to_users():
-    return redirect(url_for("manage_users"))
+def redirect_to_users(search: str, idx: int):
+    return redirect(url_for("manage_users", search=search, idx=idx))
 
 def render_users_template(idx,
                           last_idx,
@@ -17,7 +17,7 @@ def render_users_template(idx,
                           page_numbers,
                           user_list,
                           no_hits,
-                          user_input):
+                          search):
     return render_template("manage_users.html",
                            idx=idx,
                            last_idx=last_idx,
@@ -26,7 +26,7 @@ def render_users_template(idx,
                            page_numbers=page_numbers,
                            users=user_list,
                            no_hits=no_hits,
-                           user_input=user_input)
+                           search=search)
 
 @app.route("/manage_users")
 @admin_required
@@ -36,19 +36,19 @@ def manage_users():
         user_list = users.get_users(pagination_vars[0])
         return render_users_template(*pagination_vars, user_list, False, "")
 
-    user_input = request.args["search"]
+    search = request.args["search"]
 
-    if username_too_long(user_input):
+    if username_too_long(search):
         pagination_vars = [0, 0, 0, 0]
         user_list = []
-        flashes.user_search_input_too_long()
+        flashes.search_input_too_long()
     else:
-        pagination_vars = get_pagination_variables(users.get_find_user_count(user_input))
-        user_list = users.find_users(pagination_vars[0], user_input)
+        pagination_vars = get_pagination_variables(users.get_find_user_count(search))
+        user_list = users.find_users(pagination_vars[0], search)
 
     no_hits = len(user_list) == 0
 
-    return render_users_template(*pagination_vars, user_list, no_hits, user_input)
+    return render_users_template(*pagination_vars, user_list, no_hits, search)
 
 @app.route("/disable_user/<int:user_id>", methods=["POST"])
 @admin_required
@@ -56,7 +56,10 @@ def disable_user(user_id):
     if not (csrf_check_passed() and users.disable_user(user_id)):
         flashes.account_disable_error()
 
-    return redirect_to_users()
+    search = request.form["search"]
+    idx = request.form["idx"]
+
+    return redirect_to_users(search, idx)
 
 @app.route("/enable_user/<int:user_id>", methods=["POST"])
 @admin_required
@@ -64,4 +67,7 @@ def enable_user(user_id):
     if not (csrf_check_passed() and users.enable_user(user_id)):
         flashes.account_enable_error()
 
-    return redirect_to_users()
+    search = request.form["search"]
+    idx = request.form["idx"]
+
+    return redirect_to_users(search, idx)

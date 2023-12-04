@@ -54,7 +54,7 @@ def account_deleted():
 def account_delete_error():
     return error_flash("Tilin poistaminen ei onnistunut")
 
-def user_search_input_too_long():
+def search_input_too_long():
     return error_flash("Haussa voi olla enintään 50 merkkiä")
 
 def account_disable_error():

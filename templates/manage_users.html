@@ -7,7 +7,7 @@
 <h2>Hallinnoi käyttäjätilejä</h2>
 
 <form action="/manage_users">
-    <input class="input text" type="text" id="search" name="search" maxlength="50" value="{{ user_input }}">
+    <input class="input text" type="text" id="search" name="search" maxlength="50" value="{{ search }}">
     <input class="input" type="submit" value="&#128270;  Hae">
     <br>
     <br>
@@ -30,6 +30,7 @@
                 {% else %}
                     <input class="input" type="submit" value="&#9194;  Edelliset 10">
                 {% endif %}
+                <input type="hidden" name="search" value="{{ search }}">
                 <input type="hidden" name="idx" value="{{ idx - 1 }}">
             </form>
 
@@ -43,7 +44,7 @@
                             {% else %}
                             <input type="submit" value="{{ page_number }}">
                             {% endif %}
-                            <input type="hidden" name="username" value="{{ user_input }}">
+                            <input type="hidden" name="search" value="{{ search }}">
                             <input type="hidden" name="idx" value="{{ page_number - 1 }}">
                         </form>
                     {% endfor %}
@@ -56,6 +57,7 @@
                 {% else %}
                     <input class="input" type="submit" value="Seuraavat {{ count_on_next_idx }}  &#9193;">
                 {% endif %}
+                <input type="hidden" name="search" value="{{ search }}">
                 <input type="hidden" name="idx" value="{{ idx + 1 }}">
             </form>
         {% endif %}
@@ -86,7 +88,8 @@
                             {% else %}
                                 <input class="input" type="submit" value="&#128994;  Poista käytöstä">
                             {% endif %}
-
+                            <input type="hidden" name="search" value="{{ search }}">
+                            <input type="hidden" name="idx" value="{{ idx }}">
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         </form>
                     </div>
