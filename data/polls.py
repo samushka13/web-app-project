@@ -77,8 +77,10 @@ def get_nearby_count():
     sql = """SELECT COUNT(id)
             FROM polls AS P
             WHERE
-                P.archived_at IS NULL
-                AND P.zip_code=:zip_code"""
+                P.open_on <= CURRENT_DATE
+                AND P.close_on > CURRENT_DATE
+                AND P.zip_code=:zip_code
+                AND P.archived_at IS NULL"""
 
     values = {
         "zip_code": zip_code
@@ -199,8 +201,10 @@ def get_nearby(idx: int):
                 P.created_at
             FROM polls AS P
             WHERE
-                P.archived_at IS NULL
+                P.open_on <= CURRENT_DATE
+                AND P.close_on > CURRENT_DATE
                 AND P.zip_code=:zip_code
+                AND P.archived_at IS NULL
             ORDER BY P.open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
