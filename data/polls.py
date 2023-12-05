@@ -228,14 +228,17 @@ def get_details(poll_id: int):
                 U.name as "created_by",
                 (SELECT name FROM users WHERE id=P.archived_by) as "archived_by",
                 (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=True) as "for",
-                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False) as "against"
+                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False) as "against",
+                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=True AND voted_by=:user_id) as "user_for",
+                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False AND voted_by=:user_id) as "user_against"
             FROM polls AS P
             JOIN users AS U
                 ON U.id=P.created_by
             WHERE P.id=:poll_id"""
 
     values = {
-        "poll_id": poll_id
+        "poll_id": poll_id,
+        "user_id": session["user_id"]
     }
 
     result = db.session.execute(text(sql), values)
