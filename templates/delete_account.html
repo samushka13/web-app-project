@@ -17,6 +17,14 @@
         <br>
         <input class="input text" type="password" id="password" name="password" minlength="6" maxlength="50" value="{{ password }}">
         <br>
+        <br>
+        <div class="caption">
+            Tilisi vain merkitään poistetuksi, jotta esimerkiksi luomasi sisällöt säilyvät ennallaan.
+        </div>
+        <div class="caption">
+            Mikäli haluat tietosi täysin tuhotuksi, ole yhteydessä sivuston ylläpitäjiin.
+        </div>
+        <br>
         <div class="spacer vertical"></div>
         <input class="input" type="submit" value="&#128163;  Poista käyttäjätili">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
