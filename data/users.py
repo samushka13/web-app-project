@@ -221,7 +221,7 @@ def get_user_count():
 
     return result.fetchone()[0]
 
-def get_find_user_count(search: str):
+def get_search_user_count(search: str):
     sql = """SELECT COUNT(id)
             FROM users
             WHERE
@@ -257,7 +257,7 @@ def get_users(idx: int):
 
     return result.fetchall()
 
-def find_users(idx: int, search: str):
+def search_users(idx: int, search: str):
     sql = """SELECT
                 id,
                 name,

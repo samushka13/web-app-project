@@ -10,7 +10,7 @@ def invalid_credentials():
     return error_flash("Väärä käyttäjänimi tai salasana")
 
 def account_disabled():
-    return success_flash("Tili on poistettu käytöstä")
+    return error_flash("Tili on poistettu käytöstä")
 
 def username_too_short():
     return error_flash("Käyttäjänimessä tulee olla vähintään 6 merkkiä")
@@ -63,8 +63,8 @@ def account_disable_error():
 def account_enable_error():
     return error_flash("Tilin ottaminen käyttöön ei onnistunut")
 
-def no_title():
-    return error_flash("Otsikko ei saa olla tyhjä")
+def title_too_short():
+    return error_flash("Otsikko on liian lyhyt")
 
 def title_too_long():
     return error_flash("Otsikossa voi olla enintään 100 merkkiä")

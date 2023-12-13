@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from flask import request, session
 from helpers.contants import GENDERS, DATE_LENGTH, MIN_USER_AGE
 
-def csrf_check_passed():
+def csrf_check_ok():
     return session["csrf_token"] == request.form["csrf_token"]
 
 def get_date(date_value: str):

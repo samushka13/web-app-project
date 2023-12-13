@@ -3,10 +3,10 @@ from flask import render_template, redirect, url_for, request, session
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_date, get_body, get_zip_code
-from helpers.pagination import get_pagination_variables
+from helpers.forms import csrf_check_ok, get_date, get_body, get_zip_code
+from helpers.pagination import get_pagination_data
 from helpers.validators import (
-    no_title,
+    title_too_short,
     title_too_long,
     body_too_long,
     invalid_zip_code,
@@ -36,39 +36,39 @@ def render_news_template(idx, last_idx, count, count_on_next_idx, page_numbers, 
 @app.route("/browse_news")
 @login_required
 def browse_news():
-    pagination_vars = get_pagination_variables(news.get_current_count())
-    news_list = news.get_current(pagination_vars[0])
+    pagination_data = get_pagination_data(news.get_current_count())
+    news_list = news.get_current(pagination_data[0])
     session["referrer"] = "/browse_news"
-    return render_news_template(*pagination_vars, news_list)
+    return render_news_template(*pagination_data, news_list)
 
 @app.route("/browse_news/upcoming")
 @admin_required
 def browse_upcoming_news():
-    pagination_vars = get_pagination_variables(news.get_upcoming_count())
-    news_list = news.get_upcoming(pagination_vars[0])
+    pagination_data = get_pagination_data(news.get_upcoming_count())
+    news_list = news.get_upcoming(pagination_data[0])
     session["referrer"] = "/browse_news/upcoming"
-    return render_news_template(*pagination_vars, news_list)
+    return render_news_template(*pagination_data, news_list)
 
 @app.route("/browse_news/archived")
 @admin_required
 def browse_archived_news():
-    pagination_vars = get_pagination_variables(news.get_archived_count())
-    news_list = news.get_archived(pagination_vars[0])
+    pagination_data = get_pagination_data(news.get_archived_count())
+    news_list = news.get_archived(pagination_data[0])
     session["referrer"] = "/browse_news/archived"
-    return render_news_template(*pagination_vars, news_list)
+    return render_news_template(*pagination_data, news_list)
 
 @app.route("/browse_news/nearby")
 @login_required
 def browse_nearby_news():
-    pagination_vars = get_pagination_variables(news.get_nearby_count())
-    news_list = news.get_nearby(pagination_vars[0])
+    pagination_data = get_pagination_data(news.get_nearby_count())
+    news_list = news.get_nearby(pagination_data[0])
     session["referrer"] = "/browse_news/nearby"
-    return render_news_template(*pagination_vars, news_list)
+    return render_news_template(*pagination_data, news_list)
 
 @app.route("/browse_news/details/<int:news_id>", methods=["GET", "POST"])
 @login_required
 def view_news_details(news_id):
-    if request.method == "POST" and csrf_check_passed():
+    if request.method == "POST" and csrf_check_ok():
         news.add_view(news_id)
 
     if "news" not in session["referrer"]:
@@ -92,14 +92,14 @@ def add_news():
         current_date = datetime.today().date()
         return render_template("add_news.html", current_date=current_date)
 
-    form_valid = csrf_check_passed()
+    form_valid = csrf_check_ok()
     title = request.form["title"]
     body = get_body()
     zip_code = get_zip_code()
     publish_on = get_date("publish_on")
 
-    if no_title(title):
-        flashes.no_title()
+    if title_too_short(title):
+        flashes.title_too_short()
         form_valid = False
     elif title_too_long(title):
         flashes.title_too_long()
@@ -128,7 +128,7 @@ def add_news():
 @app.route("/archive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def archive_news(news_id):
-    if csrf_check_passed() and news.archive(news_id):
+    if csrf_check_ok() and news.archive(news_id):
         flashes.archived()
     else:
         flashes.archiving_error()
@@ -138,7 +138,7 @@ def archive_news(news_id):
 @app.route("/unarchive_news/<int:news_id>", methods=["POST"])
 @admin_required
 def unarchive_news(news_id):
-    if csrf_check_passed() and news.unarchive(news_id):
+    if csrf_check_ok() and news.unarchive(news_id):
         flashes.unarchived()
     else:
         flashes.unarchiving_error()

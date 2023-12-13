@@ -2,9 +2,9 @@ from flask import render_template, redirect, url_for, request, session
 from app import app
 from helpers import flashes
 from helpers.decorators import login_required, admin_required
-from helpers.forms import csrf_check_passed, get_body
-from helpers.pagination import get_pagination_variables
-from helpers.validators import title_too_long, no_title, body_too_long
+from helpers.forms import csrf_check_ok, get_body
+from helpers.pagination import get_pagination_data
+from helpers.validators import title_too_long, title_too_short, body_too_long
 from data import feedback
 
 def redirect_to_feedbacks():
@@ -33,12 +33,12 @@ def give_feedback():
     if request.method == "GET":
         return render_template("give_feedback.html")
 
-    form_valid = csrf_check_passed()
+    form_valid = csrf_check_ok()
     title = request.form["title"]
     body = get_body()
 
-    if no_title(title):
-        flashes.no_title()
+    if title_too_short(title):
+        flashes.title_too_short()
         form_valid = False
     elif title_too_long(title):
         flashes.title_too_long()
@@ -57,31 +57,31 @@ def give_feedback():
 @app.route("/browse_feedback")
 @login_required
 def browse_feedback():
-    pagination_vars = get_pagination_variables(feedback.get_new_count())
-    feedbacks = feedback.get_new(pagination_vars[0])
+    pagination_data = get_pagination_data(feedback.get_new_count())
+    feedbacks = feedback.get_new(pagination_data[0])
     session["referrer"] = "/browse_feedback"
-    return render_feedbacks_template(*pagination_vars, feedbacks)
+    return render_feedbacks_template(*pagination_data, feedbacks)
 
 @app.route("/browse_feedback/acknowledged")
 @login_required
 def browse_acknowledged_feedback():
-    pagination_vars = get_pagination_variables(feedback.get_acknowledged_count())
-    feedbacks = feedback.get_acknowledged(pagination_vars[0])
+    pagination_data = get_pagination_data(feedback.get_acknowledged_count())
+    feedbacks = feedback.get_acknowledged(pagination_data[0])
     session["referrer"] = "/browse_feedback/acknowledged"
-    return render_feedbacks_template(*pagination_vars, feedbacks)
+    return render_feedbacks_template(*pagination_data, feedbacks)
 
 @app.route("/browse_feedback/archived")
 @admin_required
 def browse_archived_feedback():
-    pagination_vars = get_pagination_variables(feedback.get_archived_count())
-    feedbacks = feedback.get_archived(pagination_vars[0])
+    pagination_data = get_pagination_data(feedback.get_archived_count())
+    feedbacks = feedback.get_archived(pagination_data[0])
     session["referrer"] = "/browse_feedback/archived"
-    return render_feedbacks_template(*pagination_vars, feedbacks)
+    return render_feedbacks_template(*pagination_data, feedbacks)
 
 @app.route("/acknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def acknowledge_feedback(feedback_id):
-    if csrf_check_passed() and feedback.acknowledge(feedback_id):
+    if csrf_check_ok() and feedback.acknowledge(feedback_id):
         flashes.acknowledged()
     else:
         flashes.acknowledging_error()
@@ -91,7 +91,7 @@ def acknowledge_feedback(feedback_id):
 @app.route("/unacknowledge_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def unacknowledge_feedback(feedback_id):
-    if csrf_check_passed() and feedback.unacknowledge(feedback_id):
+    if csrf_check_ok() and feedback.unacknowledge(feedback_id):
         flashes.unacknowledged()
     else:
         flashes.unacknowledging_error()
@@ -101,7 +101,7 @@ def unacknowledge_feedback(feedback_id):
 @app.route("/archive_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def archive_feedback(feedback_id):
-    if csrf_check_passed() and feedback.archive(feedback_id):
+    if csrf_check_ok() and feedback.archive(feedback_id):
         flashes.archived()
     else:
         flashes.archiving_error()
@@ -111,7 +111,7 @@ def archive_feedback(feedback_id):
 @app.route("/unarchive_feedback/<int:feedback_id>", methods=["POST"])
 @admin_required
 def unarchive_feedback(feedback_id):
-    if csrf_check_passed() and feedback.unarchive(feedback_id):
+    if csrf_check_ok() and feedback.unarchive(feedback_id):
         flashes.unarchived()
     else:
         flashes.unarchiving_error()

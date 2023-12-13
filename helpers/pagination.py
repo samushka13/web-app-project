@@ -2,7 +2,7 @@ import math
 from flask import request
 from helpers.contants import ITEMS_PER_PAGE
 
-def get_pagination_variables(item_count_in_db):
+def get_pagination_data(item_count_in_db):
     count = 0
     idx = 0
 

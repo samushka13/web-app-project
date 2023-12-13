@@ -5,7 +5,7 @@ from helpers import flashes
 from helpers.contants import GENDERS
 from helpers.decorators import login_required
 from helpers.forms import (
-    csrf_check_passed,
+    csrf_check_ok,
     get_date_of_birth,
     get_gender,
     get_zip_code,
@@ -19,7 +19,7 @@ def redirect_to_profile():
     return redirect(url_for("profile"))
 
 def handle_profile_update(update_success: bool):
-    if csrf_check_passed() and update_success:
+    if csrf_check_ok() and update_success:
         flashes.profile_updated()
     else:
         flashes.profile_update_error()
@@ -88,7 +88,7 @@ def change_password():
             flashes.password_mismatch()
         elif password_too_short(new):
             flashes.password_too_short()
-        elif csrf_check_passed() and users.change_password(new):
+        elif csrf_check_ok() and users.change_password(new):
             flashes.password_changed()
             return redirect_to_profile()
 
@@ -109,7 +109,7 @@ def delete_current_user():
 
         if not password_match:
             flashes.wrong_password()
-        elif csrf_check_passed() and users.delete_current_user():
+        elif csrf_check_ok() and users.delete_current_user():
             users.logout()
             flashes.account_deleted()
             return redirect("/")
