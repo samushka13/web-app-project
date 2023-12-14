@@ -39,6 +39,10 @@ Only admins can:
 
 ## Installation
 
+The project can only be run locally. Therefore, you need to ensure that your system environment meets the basic requirements. For example, working Python and PostgreSQL installations are required (tested on v3.9 and v14.10, respectively). Instructions for installing these on your system can be easily found on the web.
+
+After your environment is all set, the project can be run with the following instructions:
+
 1. Clone the repository.
 
 2. Go to its root folder.
@@ -55,11 +59,11 @@ Only admins can:
 
     `pip install -r ./requirements.txt`
 
-6. Add a .env file with `DATABASE_URL` and `SECRET_KEY`:
+6. Add a `.env` file that includes:
 
     ```
     DATABASE_URL=<your_local_database_address>
-    SECRET_KEY=<a_random_string_to_enable_app_sessions_properly>
+    SECRET_KEY=<random_string_to_enable_sessions_properly>
     ```
 
     The `DATABASE_URL` depends on your system and PostgreSQL setup.
@@ -75,6 +79,6 @@ Only admins can:
 7. Set your database to use the required schema with: 
     `psql database_name < schema.sql`
 
-8. Run the app with:
+8. Run the project with:
 
     `flask run`
