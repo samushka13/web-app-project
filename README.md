@@ -76,7 +76,8 @@ After your environment is all set, the project can be run with the following ins
     >>> secrets.token_hex(16)
     ```
 
-7. Set your database to use the required schema with: 
+7. Set your database to use the required schema with:
+
     `psql database_name < schema.sql`
 
 8. Run the project with:
