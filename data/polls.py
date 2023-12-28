@@ -25,11 +25,11 @@ def add(title: str, zip_code: str, open_on: str, close_on: str):
 
 def get_current_count():
     sql = """SELECT COUNT(id)
-            FROM polls AS P
+            FROM polls
             WHERE
-                P.open_on <= CURRENT_DATE
-                AND P.close_on > CURRENT_DATE
-                AND P.archived_at IS NULL"""
+                open_on <= CURRENT_DATE
+                AND close_on > CURRENT_DATE
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -38,10 +38,10 @@ def get_current_count():
 
 def get_upcoming_count():
     sql = """SELECT COUNT(id)
-            FROM polls AS P
+            FROM polls
             WHERE
-                P.open_on > CURRENT_DATE
-                AND P.archived_at IS NULL"""
+                open_on > CURRENT_DATE
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -50,10 +50,10 @@ def get_upcoming_count():
 
 def get_past_count():
     sql = """SELECT COUNT(id)
-            FROM polls AS P
+            FROM polls
             WHERE
-                P.close_on < CURRENT_DATE
-                AND P.archived_at IS NULL"""
+                close_on < CURRENT_DATE
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -62,9 +62,9 @@ def get_past_count():
 
 def get_archived_count():
     sql = """SELECT COUNT(id)
-            FROM polls AS P
+            FROM polls
             WHERE
-                P.archived_at IS NOT NULL"""
+                archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -75,12 +75,12 @@ def get_nearby_count():
     zip_code = session["zip_code"]
 
     sql = """SELECT COUNT(id)
-            FROM polls AS P
+            FROM polls
             WHERE
-                P.open_on <= CURRENT_DATE
-                AND P.close_on > CURRENT_DATE
-                AND P.zip_code=:zip_code
-                AND P.archived_at IS NULL"""
+                open_on <= CURRENT_DATE
+                AND close_on > CURRENT_DATE
+                AND zip_code=:zip_code
+                AND archived_at IS NULL"""
 
     values = {
         "zip_code": zip_code
@@ -93,18 +93,18 @@ def get_nearby_count():
 
 def get_current(idx: int):
     sql = """SELECT
-                P.id,
-                P.title,
-                P.zip_code,
-                P.open_on,
-                P.close_on,
-                P.created_at
-            FROM polls AS P
+                id,
+                title,
+                zip_code,
+                open_on,
+                close_on,
+                created_at
+            FROM polls
             WHERE
-                P.open_on <= CURRENT_DATE
-                AND P.close_on > CURRENT_DATE
-                AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC
+                open_on <= CURRENT_DATE
+                AND close_on > CURRENT_DATE
+                AND archived_at IS NULL
+            ORDER BY open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -119,17 +119,17 @@ def get_current(idx: int):
 
 def get_upcoming(idx: int):
     sql = """SELECT
-                P.id,
-                P.title,
-                P.zip_code,
-                P.open_on,
-                P.close_on,
-                P.created_at
-            FROM polls AS P
+                id,
+                title,
+                zip_code,
+                open_on,
+                close_on,
+                created_at
+            FROM polls
             WHERE
-                P.open_on > CURRENT_DATE
-                AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC
+                open_on > CURRENT_DATE
+                AND archived_at IS NULL
+            ORDER BY open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -144,17 +144,17 @@ def get_upcoming(idx: int):
 
 def get_past(idx: int):
     sql = """SELECT
-                P.id,
-                P.title,
-                P.zip_code,
-                P.open_on,
-                P.close_on,
-                P.created_at
-            FROM polls AS P
+                id,
+                title,
+                zip_code,
+                open_on,
+                close_on,
+                created_at
+            FROM polls
             WHERE
-                P.close_on < CURRENT_DATE
-                AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC
+                close_on < CURRENT_DATE
+                AND archived_at IS NULL
+            ORDER BY open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -169,16 +169,16 @@ def get_past(idx: int):
 
 def get_archived(idx: int):
     sql = """SELECT
-                P.id,
-                P.title,
-                P.zip_code,
-                P.open_on,
-                P.close_on,
-                P.created_at,
-                P.archived_at
-            FROM polls AS P
-            WHERE P.archived_at IS NOT NULL
-            ORDER BY P.open_on DESC
+                id,
+                title,
+                zip_code,
+                open_on,
+                close_on,
+                created_at,
+                archived_at
+            FROM polls
+            WHERE archived_at IS NOT NULL
+            ORDER BY open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -193,19 +193,19 @@ def get_archived(idx: int):
 
 def get_nearby(idx: int):
     sql = """SELECT
-                P.id,
-                P.title,
-                P.zip_code,
-                P.open_on,
-                P.close_on,
-                P.created_at
-            FROM polls AS P
+                id,
+                title,
+                zip_code,
+                open_on,
+                close_on,
+                created_at
+            FROM polls
             WHERE
-                P.open_on <= CURRENT_DATE
-                AND P.close_on > CURRENT_DATE
-                AND P.zip_code=:zip_code
-                AND P.archived_at IS NULL
-            ORDER BY P.open_on DESC
+                open_on <= CURRENT_DATE
+                AND close_on > CURRENT_DATE
+                AND zip_code=:zip_code
+                AND archived_at IS NULL
+            ORDER BY open_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 

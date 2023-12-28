@@ -25,10 +25,10 @@ def add(title: str, body: str, zip_code: str, publish_on: str):
 
 def get_current_count():
     sql = """SELECT COUNT(id)
-            FROM news AS N
+            FROM news
             WHERE
-                N.publish_on <= CURRENT_DATE
-                AND N.archived_at IS NULL"""
+                publish_on <= CURRENT_DATE
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -37,10 +37,10 @@ def get_current_count():
 
 def get_upcoming_count():
     sql = """SELECT COUNT(id)
-            FROM news AS N
+            FROM news
             WHERE
-                N.publish_on > CURRENT_DATE
-                AND N.archived_at IS NULL"""
+                publish_on > CURRENT_DATE
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -49,8 +49,8 @@ def get_upcoming_count():
 
 def get_archived_count():
     sql = """SELECT COUNT(id)
-            FROM news AS N
-            WHERE N.archived_at IS NOT NULL"""
+            FROM news
+            WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -61,11 +61,11 @@ def get_nearby_count():
     zip_code = session["zip_code"]
 
     sql = """SELECT COUNT(id)
-            FROM news AS N
+            FROM news
             WHERE
-                N.publish_on <= CURRENT_DATE
-                AND N.archived_at IS NULL
-                AND N.zip_code=:zip_code"""
+                publish_on <= CURRENT_DATE
+                AND archived_at IS NULL
+                AND zip_code=:zip_code"""
 
     values = {
         "zip_code": zip_code
@@ -78,16 +78,16 @@ def get_nearby_count():
 
 def get_current(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.publish_on
-            FROM news AS N
+                id,
+                title,
+                body,
+                zip_code,
+                publish_on
+            FROM news
             WHERE
-                N.publish_on <= CURRENT_DATE
-                AND N.archived_at IS NULL
-            ORDER BY N.publish_on DESC
+                publish_on <= CURRENT_DATE
+                AND archived_at IS NULL
+            ORDER BY publish_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -102,16 +102,16 @@ def get_current(idx: int):
 
 def get_upcoming(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.publish_on
-            FROM news AS N
+                id,
+                title,
+                body,
+                zip_code,
+                publish_on
+            FROM news
             WHERE
-                N.publish_on > CURRENT_DATE
-                AND N.archived_at IS NULL
-            ORDER BY N.publish_on ASC
+                publish_on > CURRENT_DATE
+                AND archived_at IS NULL
+            ORDER BY publish_on ASC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -126,16 +126,16 @@ def get_upcoming(idx: int):
 
 def get_archived(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.publish_on,
-                N.created_at,
-                N.archived_at
-            FROM news AS N
-            WHERE N.archived_at IS NOT NULL
-            ORDER BY N.publish_on DESC
+                id,
+                title,
+                body,
+                zip_code,
+                publish_on,
+                created_at,
+                archived_at
+            FROM news
+            WHERE archived_at IS NOT NULL
+            ORDER BY publish_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -152,18 +152,18 @@ def get_nearby(idx: int):
     zip_code = session["zip_code"]
 
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.publish_on,
-                N.created_at
-            FROM news AS N
+                id,
+                title,
+                body,
+                zip_code,
+                publish_on,
+                created_at
+            FROM news
             WHERE
-                N.publish_on <= CURRENT_DATE
-                AND N.archived_at IS NULL
-                AND N.zip_code=:zip_code
-            ORDER BY N.publish_on DESC
+                publish_on <= CURRENT_DATE
+                AND archived_at IS NULL
+                AND zip_code=:zip_code
+            ORDER BY publish_on DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 

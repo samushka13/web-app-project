@@ -25,8 +25,8 @@ def add(title: str, body: str, zip_code: str, street_address: str):
 
 def get_all_count():
     sql = """SELECT COUNT(id)
-            FROM notices AS N
-            WHERE N.archived_at IS NULL"""
+            FROM notices
+            WHERE archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -35,10 +35,10 @@ def get_all_count():
 
 def get_created_by_user_count():
     sql = """SELECT COUNT(id)
-            FROM notices AS N
+            FROM notices
             WHERE
-                :user_id=N.created_by
-                AND N.archived_at IS NULL"""
+                created_by=:user_id
+                AND archived_at IS NULL"""
 
     values = {
         "user_id": session["user_id"]
@@ -51,8 +51,8 @@ def get_created_by_user_count():
 
 def get_archived_count():
     sql = """SELECT COUNT(id)
-            FROM notices AS N
-            WHERE N.archived_at IS NOT NULL"""
+            FROM notices
+            WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -61,10 +61,10 @@ def get_archived_count():
 
 def get_nearby_count():
     sql = """SELECT COUNT(id)
-            FROM notices AS N
+            FROM notices
             WHERE
-                N.archived_at IS NULL
-                AND N.zip_code=:zip_code"""
+                archived_at IS NULL
+                AND zip_code=:zip_code"""
 
     values = {
         "zip_code": session["zip_code"]
@@ -77,15 +77,15 @@ def get_nearby_count():
 
 def get_all(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.street_address,
-                N.created_at
-            FROM notices AS N
-            WHERE N.archived_at IS NULL
-            ORDER BY N.created_at DESC
+                id,
+                title,
+                body,
+                zip_code,
+                street_address,
+                created_at
+            FROM notices
+            WHERE archived_at IS NULL
+            ORDER BY created_at DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -100,17 +100,17 @@ def get_all(idx: int):
 
 def get_created_by_user(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.street_address,
-                N.created_at
-            FROM notices AS N
+                id,
+                title,
+                body,
+                zip_code,
+                street_address,
+                created_at
+            FROM notices
             WHERE
-                :user_id=N.created_by
-                AND N.archived_at IS NULL
-            ORDER BY N.created_at DESC
+                created_by=:user_id
+                AND archived_at IS NULL
+            ORDER BY created_at DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -126,16 +126,16 @@ def get_created_by_user(idx: int):
 
 def get_archived(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.street_address,
-                N.created_at,
-                N.archived_at
-            FROM notices AS N
-            WHERE N.archived_at IS NOT NULL
-            ORDER BY N.created_at DESC
+                id,
+                title,
+                body,
+                zip_code,
+                street_address,
+                created_at,
+                archived_at
+            FROM notices
+            WHERE archived_at IS NOT NULL
+            ORDER BY created_at DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 
@@ -150,17 +150,17 @@ def get_archived(idx: int):
 
 def get_nearby(idx: int):
     sql = """SELECT
-                N.id,
-                N.title,
-                N.body,
-                N.zip_code,
-                N.street_address,
-                N.created_at
-            FROM notices AS N
+                id,
+                title,
+                body,
+                zip_code,
+                street_address,
+                created_at
+            FROM notices
             WHERE
-                N.archived_at IS NULL
-                AND N.zip_code=:zip_code
-            ORDER BY N.created_at DESC
+                archived_at IS NULL
+                AND zip_code=:zip_code
+            ORDER BY created_at DESC
             LIMIT (:limit)
             OFFSET (:offset)"""
 

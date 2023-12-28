@@ -23,10 +23,10 @@ def send(title: str, body: str):
 
 def get_new_count():
     sql = """SELECT COUNT(id)
-            FROM feedbacks AS F
+            FROM feedbacks
             WHERE
-                F.acknowledged_at IS NULL
-                AND F.archived_at IS NULL"""
+                acknowledged_at IS NULL
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -35,10 +35,10 @@ def get_new_count():
 
 def get_acknowledged_count():
     sql = """SELECT COUNT(id)
-            FROM feedbacks AS F
+            FROM feedbacks
             WHERE
-                F.acknowledged_at IS NOT NULL
-                AND F.archived_at IS NULL"""
+                acknowledged_at IS NOT NULL
+                AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
@@ -47,8 +47,8 @@ def get_acknowledged_count():
 
 def get_archived_count():
     sql = """SELECT COUNT(id)
-            FROM feedbacks AS F
-            WHERE F.archived_at IS NOT NULL"""
+            FROM feedbacks
+            WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
     db.session.commit()
