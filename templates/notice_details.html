@@ -94,7 +94,7 @@
     {% if notice.archived_at %}
         <div class="flex-fill text">
             {% if session.admin %}
-                Arkistoinut: {{ notice.archived_by if notice.archived_by else "-" }} @ 
+                Arkistoinut: {{ notice.archived_by or "-" }} @ 
             {% else %}
                 Arkistoitu
             {% endif %}

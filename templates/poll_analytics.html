@@ -17,7 +17,7 @@
 
 {% if not poll.archived_at and "upcoming" not in session.referrer and "past" not in session.referrer %}
     <form class="inlined" action="/vote_for/{{ poll.id }}" method="post">
-        {% if poll.user_for %}
+        {% if poll.user_for != 0 %}
             <input class="input" type="submit" value="&#128077;  Puolesta" disabled>
         {% else %}
             <input class="input" type="submit" value="&#128077;  Puolesta">
@@ -26,7 +26,7 @@
     </form>
 
     <form class="inlined" action="/vote_against/{{ poll.id }}" method="post">
-        {% if poll.user_against %}
+        {% if poll.user_against != 0 %}
             <input class="input" type="submit" value="&#128078;  Vastaan" disabled>
         {% else %}
             <input class="input" type="submit" value="&#128078;  Vastaan">
@@ -51,7 +51,7 @@
     <pre>Naiset                  {{ votes_by_gender.females_for }} | {{ votes_by_gender.females_against }}</pre>
     <pre>Miehet                  {{ votes_by_gender.males_for }} | {{ votes_by_gender.males_against }}</pre>
     <pre>Muut                    {{ votes_by_gender.others_for }} | {{ votes_by_gender.others_against }}</pre>
-    <pre>N / A                   {{ votes_by_gender.no_genders_for }} | {{ votes_by_gender.no_genders_against }}</pre>
+    <pre>N / A                   {{ votes_by_gender.nones_for }} | {{ votes_by_gender.nones_against }}</pre>
     <pre><hr></pre>
     <pre>Ikäryhmä         puolesta | vastaan</pre>
     <pre><hr></pre>
@@ -60,12 +60,12 @@
     <pre>40-49                   {{ votes_by_age_group.group_3_for }} | {{ votes_by_age_group.group_3_against }}</pre>
     <pre>50-59                   {{ votes_by_age_group.group_4_for }} | {{ votes_by_age_group.group_4_against }}</pre>
     <pre>60-                     {{ votes_by_age_group.group_5_for }} | {{ votes_by_age_group.group_5_against }}</pre>
-    <pre>N / A                   {{ votes_by_age_group.no_group_for }} | {{ votes_by_age_group.no_group_against }}</pre>
+    <pre>N / A                   {{ votes_by_age_group.group_none_for }} | {{ votes_by_age_group.group_none_against }}</pre>
     <pre><hr></pre>
     <pre>Alue             puolesta | vastaan</pre>
     <pre><hr></pre>
     {% for group in votes_by_zip_code %}
-    <pre>{{ group.zip_code if group.zip_code else "N / A" }}                   {{ group.for if group.for else 0 }} | {{ group.against if group.against else 0 }}</pre>
+    <pre>{{ group.zip_code or "N / A" }}                   {{ group.for }} | {{ group.against }}</pre>
     {% endfor %}
     <pre><hr></pre>
     <pre>Yhteensä                {{ poll.for }} | {{ poll.against }}</pre>

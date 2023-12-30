@@ -27,13 +27,13 @@
             <div class="inlined">
                 <label for="open_on">Alkaa</label>
                 <br>
-                <input class="input text" type="date" id="open_on" name="open_on" value="{{ open_on if open_on else current_date }}" min="{{ current_date }}">
+                <input class="input text" type="date" id="open_on" name="open_on" value="{{ open_on or current_date }}" min="{{ current_date }}">
             </div>
             <div class="inlined spacer horizontal"></div>
             <div class="inlined">
                 <label for="close_on">Päättyy</label>
                 <br>
-                <input class="input text" type="date" id="close_on" name="close_on" value="{{ close_on if close_on else future_date }}" min="{{ current_date }}">
+                <input class="input text" type="date" id="close_on" name="close_on" value="{{ close_on or future_date }}" min="{{ current_date }}">
             </div>
             <br>
             <br>

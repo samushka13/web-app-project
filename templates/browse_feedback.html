@@ -123,11 +123,11 @@
                     <div class="inlined with-margin">
                         {% if feedback.acknowledged_at %}
                             {% if session.admin %}
-                                Huomioinut: {{ feedback.acknowledged_by if feedback.acknowledged_by else "-" }} @ 
+                                Huomioinut: {{ feedback.acknowledged_by or "-" }} @ 
                             {% else %}
                                 Huomioitu
                             {% endif %}
-                            {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.acknowledged_at else "-" }} 
+                            {{ feedback.acknowledged_at.strftime("%d.%m.%Y %H:%M:%S") }} 
                         {% endif %}
                     </div>
                     {% if session.admin and request.path == "/browse_feedback/acknowledged" %}
@@ -142,7 +142,7 @@
             {% if session.admin and request.path == "/browse_feedback/archived" %}
                 <div class="flex-fill">
                     <div>
-                        Arkistoinut: {{ feedback.archived_by if feedback.archived_by else "-" }} @ 
+                        Arkistoinut: {{ feedback.archived_by or "-" }} @ 
                         {{ feedback.archived_at.strftime("%d.%m.%Y %H:%M:%S") if feedback.archived_at else "-" }}
                     </div>
                     <form method="post" action="/{{ 'un' if feedback.archived_at else '' }}archive_feedback/{{ feedback.id }}">

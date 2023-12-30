@@ -33,7 +33,7 @@
             <div class="inlined">
                 <label for="publish_on">Julkaisupäivämäärä</label>
                 <br>
-                <input class="input text" type="date" id="publish_on" name="publish_on" value="{{ publish_on if publish_on else current_date }}" min="{{ current_date }}">
+                <input class="input text" type="date" id="publish_on" name="publish_on" value="{{ publish_on or current_date }}" min="{{ current_date }}">
             </div>
             <br>
             <br>

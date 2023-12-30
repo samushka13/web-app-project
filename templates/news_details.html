@@ -47,8 +47,8 @@
     {% if session.admin and item.archived_at %}
         <hr>
         <div class="flex-fill text">
-            Arkistoinut: {{ item.archived_by if item.archived_by else "-" }} @ 
-            {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") if item.archived_at else "-" }}
+            Arkistoinut: {{ item.archived_by or "-" }} @ 
+            {{ item.archived_at.strftime("%d.%m.%Y %H:%M:%S") }}
         </div>
     {% endif %}
 </div>
