@@ -29,7 +29,6 @@ def get_all_count():
             WHERE archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -45,7 +44,6 @@ def get_created_by_user_count():
     }
 
     result = db.session.execute(text(sql), values)
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -55,7 +53,6 @@ def get_archived_count():
             WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -71,7 +68,6 @@ def get_nearby_count():
     }
 
     result = db.session.execute(text(sql), values)
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -86,8 +82,8 @@ def get_all(idx: int):
             FROM notices
             WHERE archived_at IS NULL
             ORDER BY created_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -111,8 +107,8 @@ def get_created_by_user(idx: int):
                 created_by=:user_id
                 AND archived_at IS NULL
             ORDER BY created_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "user_id": session["user_id"],
@@ -136,8 +132,8 @@ def get_archived(idx: int):
             FROM notices
             WHERE archived_at IS NOT NULL
             ORDER BY created_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -161,8 +157,8 @@ def get_nearby(idx: int):
                 archived_at IS NULL
                 AND zip_code=:zip_code
             ORDER BY created_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "zip_code": session["zip_code"],
@@ -186,11 +182,22 @@ def get_details(notice_id: int):
                 U.id as "user_id",
                 U.name as "created_by",
                 (SELECT name FROM users WHERE id=N.archived_by) as "archived_by",
-                (SELECT COUNT(viewed_by) FROM notice_views WHERE notice_id=:notice_id) as "total_views",
-                (SELECT COUNT(DISTINCT viewed_by) FROM notice_views WHERE notice_id=:notice_id) as "unique_views",
-                (SELECT COUNT(supported_by) FROM notice_supports WHERE notice_id=:notice_id) as "total_supports",
-                (SELECT COUNT(DISTINCT supported_by) FROM notice_supports WHERE notice_id=:notice_id) as "unique_supports"
-            FROM notices AS N
+                V.total_views,
+                V.unique_views,
+                S.total_supports,
+                S.unique_supports
+            FROM
+                (SELECT
+                    COUNT(viewed_by) as "total_views",
+                    COUNT(DISTINCT viewed_by) as "unique_views"
+                FROM notice_views
+                WHERE notice_id=:notice_id) AS V,
+                (SELECT
+                    COUNT(supported_by) as "total_supports",
+                    COUNT(DISTINCT supported_by) as "unique_supports"
+                FROM notice_supports
+                WHERE notice_id=:notice_id) AS S,
+                notices AS N
             JOIN users AS U
                 ON U.id=N.created_by
             WHERE N.id=:notice_id"""

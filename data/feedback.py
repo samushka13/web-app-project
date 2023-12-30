@@ -29,7 +29,6 @@ def get_new_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -41,7 +40,6 @@ def get_acknowledged_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -51,7 +49,6 @@ def get_archived_count():
             WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -65,13 +62,13 @@ def get_new(idx: int):
                 U.name as "sent_by"
             FROM feedbacks AS F
             JOIN users AS U
-            ON U.id=F.sent_by
+                ON U.id=F.sent_by
             WHERE 
                 F.acknowledged_at IS NULL
                 AND F.archived_at IS NULL
             ORDER BY F.sent_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -94,13 +91,13 @@ def get_acknowledged(idx: int):
                 U.name as "sent_by"
             FROM feedbacks AS F
             JOIN users AS U
-            ON U.id=F.sent_by
+                ON U.id=F.sent_by
             WHERE
                 F.acknowledged_at IS NOT NULL
                 AND F.archived_at IS NULL
             ORDER BY F.sent_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -125,11 +122,11 @@ def get_archived(idx: int):
                 (SELECT name FROM users WHERE id=F.archived_by) as "archived_by"
             FROM feedbacks AS F
             JOIN users AS U
-            ON U.id=F.sent_by
+                ON U.id=F.sent_by
             WHERE F.archived_at IS NOT NULL
             ORDER BY F.sent_at DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,

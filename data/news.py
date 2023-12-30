@@ -31,7 +31,6 @@ def get_current_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -43,7 +42,6 @@ def get_upcoming_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -53,7 +51,6 @@ def get_archived_count():
             WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -72,7 +69,6 @@ def get_nearby_count():
     }
 
     result = db.session.execute(text(sql), values)
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -88,8 +84,8 @@ def get_current(idx: int):
                 publish_on <= CURRENT_DATE
                 AND archived_at IS NULL
             ORDER BY publish_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -112,8 +108,8 @@ def get_upcoming(idx: int):
                 publish_on > CURRENT_DATE
                 AND archived_at IS NULL
             ORDER BY publish_on ASC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -136,8 +132,8 @@ def get_archived(idx: int):
             FROM news
             WHERE archived_at IS NOT NULL
             ORDER BY publish_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -164,8 +160,8 @@ def get_nearby(idx: int):
                 AND archived_at IS NULL
                 AND zip_code=:zip_code
             ORDER BY publish_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "zip_code": zip_code,
@@ -189,9 +185,15 @@ def get_details(news_id: int):
                 U.id as "user_id",
                 U.name as "created_by",
                 (SELECT name FROM users WHERE id=N.archived_by) as "archived_by",
-                (SELECT COUNT(viewed_by) FROM news_views WHERE news_id=:news_id) as "total_views",
-                (SELECT COUNT(DISTINCT viewed_by) FROM news_views WHERE news_id=:news_id) as "unique_views"
-            FROM news AS N
+                V.total_views,
+                V.unique_views
+            FROM
+                (SELECT
+                    COUNT(viewed_by) as "total_views",
+                    COUNT(DISTINCT viewed_by) as "unique_views"
+                FROM news_views
+                WHERE news_id=:news_id) AS V,
+                news AS N
             JOIN users AS U
                 ON U.id=N.created_by
             WHERE N.id=:news_id"""

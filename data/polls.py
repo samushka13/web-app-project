@@ -32,7 +32,6 @@ def get_current_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -56,18 +55,15 @@ def get_past_count():
                 AND archived_at IS NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
 def get_archived_count():
     sql = """SELECT COUNT(id)
             FROM polls
-            WHERE
-                archived_at IS NOT NULL"""
+            WHERE archived_at IS NOT NULL"""
 
     result = db.session.execute(text(sql))
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -87,7 +83,6 @@ def get_nearby_count():
     }
 
     result = db.session.execute(text(sql), values)
-    db.session.commit()
 
     return result.fetchone()[0]
 
@@ -105,8 +100,8 @@ def get_current(idx: int):
                 AND close_on > CURRENT_DATE
                 AND archived_at IS NULL
             ORDER BY open_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -130,8 +125,8 @@ def get_upcoming(idx: int):
                 open_on > CURRENT_DATE
                 AND archived_at IS NULL
             ORDER BY open_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -155,8 +150,8 @@ def get_past(idx: int):
                 close_on < CURRENT_DATE
                 AND archived_at IS NULL
             ORDER BY open_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -179,8 +174,8 @@ def get_archived(idx: int):
             FROM polls
             WHERE archived_at IS NOT NULL
             ORDER BY open_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -206,8 +201,8 @@ def get_nearby(idx: int):
                 AND zip_code=:zip_code
                 AND archived_at IS NULL
             ORDER BY open_on DESC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "zip_code": session["zip_code"],
@@ -231,11 +226,27 @@ def get_details(poll_id: int):
                 U.id as "user_id",
                 U.name as "created_by",
                 (SELECT name FROM users WHERE id=P.archived_by) as "archived_by",
-                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=True) as "for",
-                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False) as "against",
-                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=True AND voted_by=:user_id) as "user_for",
-                (SELECT COUNT(DISTINCT voted_by) FROM votes WHERE poll_id=:poll_id AND vote=False AND voted_by=:user_id) as "user_against"
-            FROM polls AS P
+                V.for,
+                V.against,
+                V.user_for,
+                V.user_against
+            FROM
+                (SELECT
+                    COALESCE(SUM(CASE WHEN vote=True THEN 1 ELSE 0 END), 0)
+                        as "for",
+                    COALESCE(SUM(CASE WHEN vote=False THEN 1 ELSE 0 END), 0)
+                        as "against",
+                    COALESCE(SUM(CASE WHEN vote=True AND voted_by=:user_id THEN 1 ELSE 0 END), 0)
+                        as "user_for",
+                    COALESCE(SUM(CASE WHEN vote=False AND voted_by=:user_id THEN 1 ELSE 0 END), 0)
+                        as "user_against"
+                FROM
+                    (SELECT DISTINCT
+                        vote,
+                        voted_by
+                    FROM votes
+                    WHERE poll_id=:poll_id) AS T) AS V,
+                polls AS P
             JOIN users AS U
                 ON U.id=P.created_by
             WHERE P.id=:poll_id"""
@@ -298,7 +309,6 @@ def vote(poll_id: int, vote_type: bool):
     }
 
     result = db.session.execute(text(sql), values)
-    db.session.commit()
 
     poll = result.fetchone()
 
@@ -333,63 +343,31 @@ def vote(poll_id: int, vote_type: bool):
 
 def get_votes_by_gender(poll_id: int):
     sql = """SELECT
-                females_for,
-                females_against,
-                males_for,
-                males_against,
-                others_for,
-                others_against,
-                no_genders_for,
-                no_genders_against
+                COALESCE(SUM(CASE WHEN vote=True AND gender='female' THEN 1 ELSE 0 END), 0)
+                    as "females_for",
+                COALESCE(SUM(CASE WHEN vote=False AND gender='female' THEN 1 ELSE 0 END), 0)
+                    as "females_against",
+                COALESCE(SUM(CASE WHEN vote=True AND gender='male' THEN 1 ELSE 0 END), 0)
+                    as "males_for",
+                COALESCE(SUM(CASE WHEN vote=False AND gender='male' THEN 1 ELSE 0 END), 0)
+                    as "males_against",
+                COALESCE(SUM(CASE WHEN vote=True AND gender='other' THEN 1 ELSE 0 END), 0)
+                    as "others_for",
+                COALESCE(SUM(CASE WHEN vote=False AND gender='other' THEN 1 ELSE 0 END), 0)
+                    as "others_against",
+                COALESCE(SUM(CASE WHEN vote=True AND gender IS NULL THEN 1 ELSE 0 END), 0)
+                    as "nones_for",
+                COALESCE(SUM(CASE WHEN vote=False AND gender IS NULL THEN 1 ELSE 0 END), 0)
+                    as "nones_against"
             FROM
-                (SELECT COUNT(DISTINCT U.id) AS females_for
-                    FROM votes AS V
-                    JOIN users AS U
+                (SELECT DISTINCT
+                    U.gender,
+                    V.vote,
+                    V.voted_by
+                FROM votes AS V
+                JOIN users AS U
                     ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND U.gender='female')
-                    AS females_for,
-                (SELECT COUNT(DISTINCT U.id) AS females_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND U.gender='female')
-                    AS females_against,
-                (SELECT COUNT(DISTINCT U.id) AS males_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND U.gender='male')
-                    AS males_for,
-                (SELECT COUNT(DISTINCT U.id) AS males_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND U.gender='male')
-                    AS males_against,
-                (SELECT COUNT(DISTINCT U.id) AS others_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND U.gender='other')
-                    AS others_for,
-                (SELECT COUNT(DISTINCT U.id) AS others_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND U.gender='other')
-                    AS others_against,
-                (SELECT COUNT(DISTINCT U.id) AS no_genders_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND U.gender IS NULL)
-                    AS no_genders_for,
-                (SELECT COUNT(DISTINCT U.id) AS no_genders_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND U.gender IS NULL)
-                    AS no_genders_against"""
+                WHERE V.poll_id=:poll_id) AS T"""
 
     values = {
         "poll_id": poll_id
@@ -401,91 +379,39 @@ def get_votes_by_gender(poll_id: int):
 
 def get_votes_by_age_group(poll_id: int):
     sql = """SELECT
-                group_1_for,
-                group_1_against,
-                group_2_for,
-                group_2_against,
-                group_3_for,
-                group_3_against,
-                group_4_for,
-                group_4_against,
-                group_5_for,
-                group_5_against,
-                no_group_for,
-                no_group_against
+                COALESCE(SUM(CASE WHEN vote=True AND age < 30 THEN 1 ELSE 0 END), 0)
+                    as "group_1_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age < 30 THEN 1 ELSE 0 END), 0)
+                    as "group_1_against",
+                COALESCE(SUM(CASE WHEN vote=True AND age BETWEEN 30 AND 40 THEN 1 ELSE 0 END), 0)
+                    as "group_2_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age BETWEEN 30 AND 40 THEN 1 ELSE 0 END), 0)
+                    as "group_2_against",
+                COALESCE(SUM(CASE WHEN vote=True AND age BETWEEN 40 AND 50 THEN 1 ELSE 0 END), 0)
+                    as "group_3_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age BETWEEN 40 AND 50 THEN 1 ELSE 0 END), 0)
+                    as "group_3_against",
+                COALESCE(SUM(CASE WHEN vote=True AND age BETWEEN 50 AND 60 THEN 1 ELSE 0 END), 0)
+                    as "group_4_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age BETWEEN 50 AND 60 THEN 1 ELSE 0 END), 0)
+                    as "group_4_against",
+                COALESCE(SUM(CASE WHEN vote=True AND age > 60 THEN 1 ELSE 0 END), 0)
+                    as "group_5_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age > 60 THEN 1 ELSE 0 END), 0)
+                    as "group_5_against",
+                COALESCE(SUM(CASE WHEN vote=True AND age IS NULL THEN 1 ELSE 0 END), 0)
+                    as "group_none_for",
+                COALESCE(SUM(CASE WHEN vote=False AND age IS NULL THEN 1 ELSE 0 END), 0)
+                    as "group_none_against"
             FROM
-                (SELECT COUNT(DISTINCT U.id) AS group_1_for
-                    FROM votes AS V
-                    JOIN users AS U
+                (SELECT DISTINCT
+                    DATE_PART('year', AGE(date_of_birth)) as "age",
+                    V.vote,
+                    V.voted_by
+                FROM votes AS V
+                JOIN users AS U
                     ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND DATE_PART('year', AGE(U.date_of_birth)) < 30)
-                    AS group_1_for,
-                (SELECT COUNT(DISTINCT U.id) AS group_1_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND DATE_PART('year', AGE(U.date_of_birth)) < 30)
-                    AS group_1_against,
-                (SELECT COUNT(DISTINCT U.id) AS group_2_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 30 AND 40))
-                    AS group_2_for,
-                (SELECT COUNT(DISTINCT U.id) AS group_2_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 30 AND 40))
-                    AS group_2_against,
-                (SELECT COUNT(DISTINCT U.id) AS group_3_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 40 AND 50))
-                    AS group_3_for,
-                (SELECT COUNT(DISTINCT U.id) AS group_3_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 40 AND 50))
-                    AS group_3_against,
-                (SELECT COUNT(DISTINCT U.id) AS group_4_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 50 AND 60))
-                    AS group_4_for,
-                (SELECT COUNT(DISTINCT U.id) AS group_4_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND (DATE_PART('year', AGE(U.date_of_birth)) BETWEEN 50 AND 60))
-                    AS group_4_against,
-                (SELECT COUNT(DISTINCT U.id) AS group_5_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND DATE_PART('year', AGE(U.date_of_birth)) > 60)
-                    AS group_5_for,
-                (SELECT COUNT(DISTINCT U.id) AS group_5_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND DATE_PART('year', AGE(U.date_of_birth)) > 60)
-                    AS group_5_against,
-                (SELECT COUNT(DISTINCT U.id) AS no_group_for
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=True AND U.date_of_birth IS NULL)
-                    AS no_group_for,
-                (SELECT COUNT(DISTINCT U.id) AS no_group_against
-                    FROM votes AS V
-                    JOIN users AS U
-                    ON U.id=V.voted_by
-                    WHERE poll_id=:poll_id AND V.vote=False AND U.date_of_birth IS NULL)
-                    AS no_group_against"""
+                WHERE V.poll_id=:poll_id) AS T"""
 
     values = {
         "poll_id": poll_id
@@ -497,29 +423,20 @@ def get_votes_by_age_group(poll_id: int):
 
 def get_votes_by_zip_code(poll_id: int):
     sql = """SELECT
-                T1.zip_code,
-                T1.count AS "for",
-                T2.count AS "against"
+                zip_code,
+                COALESCE(SUM(CASE WHEN vote=True THEN 1 ELSE 0 END), 0) as "for",
+                COALESCE(SUM(CASE WHEN vote=False THEN 1 ELSE 0 END), 0) as "against"
             FROM
-                (SELECT
-                    COUNT(DISTINCT V.voted_by),
+                (SELECT DISTINCT
+                    V.vote,
+                    V.voted_by,
                     U.zip_code
                 FROM votes AS V
                 JOIN users AS U
-                ON U.id=V.voted_by
-                WHERE poll_id=:poll_id AND V.vote=True
-                GROUP BY U.zip_code) AS T1
-            FULL OUTER JOIN
-                (SELECT
-                    COUNT(DISTINCT V.voted_by),
-                    U.zip_code
-                FROM votes AS V
-                JOIN users AS U
-                ON U.id=V.voted_by
-                WHERE poll_id=:poll_id AND V.vote=False
-                GROUP BY U.zip_code) AS T2
-                ON T1.zip_code=T2.zip_code
-                """
+                    ON U.id=V.voted_by
+                WHERE poll_id=:poll_id) AS T
+            GROUP BY zip_code
+            ORDER BY zip_code"""
 
     values = {
         "poll_id": poll_id

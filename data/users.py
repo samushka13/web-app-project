@@ -245,8 +245,8 @@ def get_users(idx: int):
             FROM users
             WHERE deleted_at IS NULL
             ORDER BY name ASC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "limit": ITEMS_PER_PAGE,
@@ -268,8 +268,8 @@ def search_users(idx: int, search: str):
                 name LIKE :search
                 AND deleted_at IS NULL
             ORDER BY name ASC
-            LIMIT (:limit)
-            OFFSET (:offset)"""
+            LIMIT :limit
+            OFFSET :offset"""
 
     values = {
         "search": f'%{search}%',
